@@ -17,10 +17,10 @@ const Header = () => {
             href: "/leafletMap",
             label: "LeafletMap",
         },
-        {
-            href: "/GeoJsonLayerMap",
-            label: "GeoJsonLayerMap",
-        },
+        // {
+        //     href: "/GeoJsonLayerMap",
+        //     label: "GeoJsonLayerMap",
+        // },
     ];
 
     return (

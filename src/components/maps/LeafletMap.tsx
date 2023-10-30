@@ -162,6 +162,7 @@ function LeafletMap() {
                     </ul>
                 </aside>
             </div>
+
             <MapContainer
                 center={position}
                 zoom={17}

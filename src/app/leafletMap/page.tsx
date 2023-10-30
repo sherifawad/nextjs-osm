@@ -1,6 +1,6 @@
 import LeafletMap from "@/components/maps/LeafletMap";
 import Container from "@/components/ui/Container";
-
+export const dynamic = "force-dynamic";
 function page() {
     return (
         <Container>
