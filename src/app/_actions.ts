@@ -16,7 +16,13 @@ export const getSuggestions = async (searchInput: string) => {
         };
         const query = new URLSearchParams(params).toString();
         const response = await fetch(
-            "https://nominatim.openstreetmap.org/search?" + query
+            "https://nominatim.openstreetmap.org/search?" + query,
+            {
+                method: "GET",
+                headers: {
+                    "Accept-Language": "ar",
+                },
+            }
         );
         const data: unknown = await response.json();
 
