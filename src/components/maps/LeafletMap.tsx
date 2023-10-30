@@ -1,11 +1,5 @@
 "use client";
-import React, {
-    FormEvent,
-    SyntheticEvent,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import z from "zod";
