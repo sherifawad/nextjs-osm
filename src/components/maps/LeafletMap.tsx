@@ -1,5 +1,4 @@
 "use client";
-import { useSearchParams } from "next/navigation";
 import React, {
     FormEvent,
     SyntheticEvent,
@@ -13,27 +12,19 @@ import z from "zod";
 import L from "leaflet";
 import { getSuggestions } from "@/app/_actions";
 import { Tominatim } from "@/lib/types";
-import Link from "next/link";
 import SearchForm from "../SearchForm";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import {
-    LucideSidebarClose,
-    MapPin,
-    MapPinned,
-    PanelRightClose,
-    ShieldClose,
-    SidebarClose,
-} from "lucide-react";
+import { MapPinned, ShieldClose } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
+import { tantaMosques } from "@/lib/data/tanta/tanta-mosq";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const icon = L.icon({
-    iconUrl: "./pinmap.svg",
-    iconSize: [20, 20],
-    // iconUrl: MapPin.toString(),
+    iconUrl: "./mosque.svg",
+    iconSize: [38, 38],
 });
 
-// const position = [51.505, -0.09];
 const position = {
     lat: 30.786883,
     lng: 30.999614,
@@ -52,63 +43,23 @@ function ResetCenterView({ lat, lon }: { lon: number; lat: number }) {
 
     return null;
 }
-const data = [
-    "gsdlgjlksgjlkjgjsljssglkjgljgjjlskjgkljfgjgkdsjfsdfsgs",
-    "gjsgjsdgljlsgjlkjglkjlkjgolnboiijijrenbojojbsoejoiju099fsfsfsfn lkjgolnboiijijrenbojojbsoejoiju0",
-    "gkjlkgjklnmnglkskngoijhgnlgn vkmnkjvn",
-];
-
-// const getSuggestions = debounce(async (inputValue, setSuggestions) => {
-//     try {
-//         const params = {
-//             q: inputValue,
-//             featuretype: "administrative",
-//             format: "json",
-//             addressdetails: 1,
-//             limit: 5,
-//             extratags: 1,
-//         };
-//         const query = new URLSearchParams(params).toString();
-//         const response = await fetch(
-//             "https://nominatim.openstreetmap.org/search?" + query
-//         );
-//         const data = await response.json();
-
-//         console.log(data);
-//         const formattedSuggestions = data
-//             .filter(
-//                 (result) =>
-//                     ["local_authority", "administrative", "political"].includes(
-//                         result.type
-//                     ) && result.extratags.wikipedia
-//             )
-//             .map((result) => {
-//                 const wikiname = result.extratags.wikipedia,
-//                     wikititle = wikiname && wikiname.split(":")[1];
-//                 return {
-//                     label: wikititle,
-//                     id: result.osm_id,
-//                     nominame: result.display_name,
-//                 };
-//             });
-
-//         setSuggestions(formattedSuggestions);
-//     } catch (error) {
-//         console.error("Error fetching suggestions:", error);
-//     }
-// }, 300);
 
 function LeafletMap() {
-    // const searchParams = useSearchParams();
-    // const location = searchParams.get("location");
-    // getSuggestions("tanta");
+    const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const initialLat = searchParams.get("lat");
+    const initialLon = searchParams.get("lon");
 
     const [searchStatus, setSearchStatus] = useState<string | undefined>(
         undefined
     );
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [suggestions, setSuggestions] = useState<Tominatim[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<Tominatim>();
+    const [selectedLocation, setSelectedLocation] = useState<Tominatim>({
+        lat: Number(initialLat),
+        lon: Number(initialLon),
+    });
     const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
     const SheetRef = useRef<HTMLButtonElement>(null);
 
@@ -117,6 +68,12 @@ function LeafletMap() {
             SheetRef.current?.click();
         }
     }, [searchStatus]);
+
+    const handleLocationSelection = (location: Tominatim) => {
+        if (!location) return;
+        setSelectedLocation(location);
+        router.replace(`?lat=${location.lat}&lon=${location.lon}`);
+    };
 
     const handleSubmitAction = async (e: SyntheticEvent) => {
         setErrorMessage("");
@@ -160,10 +117,6 @@ function LeafletMap() {
                     onSubmit={handleSubmitAction}
                     className="bg-slate-100 dark:bg-slate-600 p-2"
                 >
-                    {/* <input type="search" placeholder="Search" name="search" />
-                    <button type="submit" disabled={searchStatus === "pending"}>
-                        Search
-                    </button> */}
                     <SearchForm />
                 </form>
                 <aside
@@ -195,14 +148,10 @@ function LeafletMap() {
                     <ul className="grid grid-cols-1  gap-4 w-full justify-start overflow-hidden  ">
                         {suggestions.map((suggest) => (
                             <li key={suggest.osm_id}>
-                                {/* <Link
-                                    href={`?lat=${suggest.lat}&lon=${suggest.lon}`}
-                                >
-                                    {suggest.display_name}
-                                </Link> */}
                                 <button
+                                    // href={`?lat=${suggest.lat}&lon=${suggest.lon}`}
                                     onClick={() => {
-                                        setSelectedLocation(suggest);
+                                        handleLocationSelection(suggest);
                                     }}
                                     className="pb-4 px-4 w-full"
                                 >
@@ -221,26 +170,25 @@ function LeafletMap() {
             </div>
             <MapContainer
                 center={position}
-                zoom={20}
+                zoom={17}
                 className="h-full w-full z-0"
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {selectedLocation && (
+                {tantaMosques.map((data) => (
                     <Marker
+                        key={`${data.lat}-${data.lon}`}
                         position={{
-                            lat: selectedLocation.lat,
-                            lng: selectedLocation.lon,
+                            lat: data.lat,
+                            lng: data.lon,
                         }}
                         icon={icon}
                     >
-                        <Popup>
-                            A pretty CSS3 popup. <br /> Easily customizable.
-                        </Popup>
+                        <Popup>{data.label_ar}</Popup>
                     </Marker>
-                )}
+                ))}
                 {selectedLocation && (
                     <ResetCenterView
                         lat={selectedLocation.lat}

@@ -18,7 +18,7 @@ export const ominatimAddressSchema = z.object({
 });
 
 export const ominatimSchema = z.object({
-    address: ominatimAddressSchema,
+    address: ominatimAddressSchema.optional(),
     addresstype: z.coerce.string().optional(),
     boundingbox: z.array(z.string()).length(4).optional(),
     class: z.coerce.string().optional(),
