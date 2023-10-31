@@ -3,25 +3,26 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Moon, ShoppingCart, Sun } from "lucide-react";
+import { LocateFixed, Menu, Moon, ShoppingCart, Sun } from "lucide-react";
 import { Button } from "../ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Container from "../ui/Container";
+
+const routes = [
+    {
+        href: "/leafletMap",
+        label: "LeafletMap",
+    },
+    // {
+    //     href: "/GeoJsonLayerMap",
+    //     label: "GeoJsonLayerMap",
+    // },
+];
 
 const Header = () => {
     const { theme, setTheme } = useTheme();
     const activeLink = usePathname();
-
-    const routes = [
-        {
-            href: "/leafletMap",
-            label: "LeafletMap",
-        },
-        // {
-        //     href: "/GeoJsonLayerMap",
-        //     label: "GeoJsonLayerMap",
-        // },
-    ];
+    const router = useRouter();
 
     return (
         <header className="flex sm:justify-between h-20 items-center px-4 border-b ">
@@ -103,6 +104,7 @@ const Header = () => {
                             <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                             <span className="sr-only">Toggle Theme</span>
                         </Button>
+
                         {/* <ProfileButton />  */}
                     </div>
                 </div>

@@ -1,9 +1,17 @@
-import { Search } from "lucide-react";
+import { LocateFixed, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 
-function SearchForm() {
+type SearchFormProps = {
+    getLocationHandler?: () => void;
+    showLocationButton?: boolean;
+};
+
+function SearchForm({
+    getLocationHandler = () => {},
+    showLocationButton = false,
+}: SearchFormProps) {
     return (
         <div className="flex w-full items-center ">
             <Input
@@ -12,6 +20,17 @@ function SearchForm() {
                 name="search"
                 className="border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md"
             />
+            {showLocationButton && (
+                <Button
+                    type="button"
+                    variant={"secondary"}
+                    size={"default"}
+                    className="bg-background  hover:bg-background rounded-none"
+                    onClick={getLocationHandler}
+                >
+                    <LocateFixed className="h-6 w-6 rotate-0 scale-100 transition-all hover:-rotate-90 " />
+                </Button>
+            )}
             <Button type="submit" className="rounded-l-none">
                 <Search />
             </Button>

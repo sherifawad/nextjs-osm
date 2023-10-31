@@ -14,9 +14,15 @@ import { tantaMosques } from "@/lib/data/tanta/tanta-mosq";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const icon = L.icon({
+const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
     iconSize: [38, 38],
+    iconAnchor: [23, 29],
+});
+const icon = L.icon({
+    iconUrl: "./pinmap.svg",
+    iconSize: [20, 38],
+    iconAnchor: [28, 19],
 });
 
 const position = {
@@ -69,6 +75,24 @@ function LeafletMap() {
         router.replace(`?lat=${location.lat}&lon=${location.lon}`);
     };
 
+    const handleGetLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            (location) => {
+                router.replace(
+                    `?lat=${location.coords.latitude}&lon=${location.coords.longitude}`
+                );
+                setSelectedLocation({
+                    lat: location.coords.latitude,
+                    lon: location.coords.longitude,
+                    display_name: "your location",
+                });
+            },
+            (error) => {
+                alert(error.message);
+            }
+        );
+    };
+
     const handleSubmitAction = async (e: SyntheticEvent) => {
         setErrorMessage("");
         setSearchStatus("pending");
@@ -111,7 +135,10 @@ function LeafletMap() {
                     onSubmit={handleSubmitAction}
                     className="bg-slate-100 dark:bg-slate-600 p-2"
                 >
-                    <SearchForm />
+                    <SearchForm
+                        showLocationButton
+                        getLocationHandler={handleGetLocation}
+                    />
                 </form>
                 <aside
                     className={`${
@@ -172,6 +199,17 @@ function LeafletMap() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                {selectedLocation && (
+                    <Marker
+                        position={{
+                            lat: selectedLocation.lat,
+                            lng: selectedLocation.lon,
+                        }}
+                        icon={icon}
+                    >
+                        <Popup>{selectedLocation.display_name}</Popup>
+                    </Marker>
+                )}
                 {tantaMosques.map((data) => (
                     <Marker
                         key={`${data.lat}-${data.lon}`}
@@ -179,7 +217,7 @@ function LeafletMap() {
                             lat: data.lat,
                             lng: data.lon,
                         }}
-                        icon={icon}
+                        icon={iconMarker}
                     >
                         <Popup>{data.label_ar}</Popup>
                     </Marker>
