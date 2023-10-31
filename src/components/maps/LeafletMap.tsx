@@ -1,9 +1,18 @@
 "use client";
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+    MapContainer,
+    Marker,
+    Popup,
+    TileLayer,
+    useMap,
+    Polyline,
+    CircleMarker,
+    Tooltip,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import z from "zod";
-import L from "leaflet";
+import L, { LatLngExpression, point } from "leaflet";
 import { getSuggestions } from "@/app/_actions";
 import { Tominatim } from "@/lib/types";
 import SearchForm from "../SearchForm";
@@ -13,6 +22,7 @@ import { Skeleton } from "../ui/skeleton";
 import { tantaMosques } from "@/lib/data/tanta/tanta-mosq";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
@@ -22,13 +32,27 @@ const iconMarker = L.icon({
 const icon = L.icon({
     iconUrl: "./pinmap.svg",
     iconSize: [20, 38],
-    iconAnchor: [28, 19],
+    iconAnchor: [12, 28],
 });
 
 const position = {
     lat: 30.786883,
     lng: 30.999614,
 };
+
+const kabaPostion = {
+    lat: 21.42249,
+    lon: 39.8262,
+};
+
+// custom cluster icon
+// const createClusterCustomIcon = function (cluster) {
+//     return L.divIcon({
+//         html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
+//         className: "custom-marker-cluster",
+//         iconSize: point(33, 33, true),
+//     });
+// };
 
 function ResetCenterView({ lat, lon }: { lon: number; lat: number }) {
     const map = useMap();
@@ -97,6 +121,7 @@ function LeafletMap() {
         setErrorMessage("");
         setSearchStatus("pending");
         setSuggestionsListOpen(true);
+        setSuggestions([]);
 
         e.preventDefault();
 
@@ -199,6 +224,24 @@ function LeafletMap() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                <CircleMarker
+                    center={[kabaPostion.lat, kabaPostion.lon]}
+                    radius={50}
+                    // fillOpacity={circleOpacity}
+                    stroke={false}
+                >
+                    <Tooltip direction="right" offset={[-8, -2]} opacity={1}>
+                        <span>الكعبة : المسجد الحرام</span>
+                    </Tooltip>
+                </CircleMarker>
+                {selectedLocation && (
+                    <Polyline
+                        positions={[
+                            [selectedLocation.lat, selectedLocation.lon],
+                            [kabaPostion.lat, kabaPostion.lon],
+                        ]}
+                    />
+                )}
                 {selectedLocation && (
                     <Marker
                         position={{
@@ -210,18 +253,23 @@ function LeafletMap() {
                         <Popup>{selectedLocation.display_name}</Popup>
                     </Marker>
                 )}
-                {tantaMosques.map((data) => (
-                    <Marker
-                        key={`${data.lat}-${data.lon}`}
-                        position={{
-                            lat: data.lat,
-                            lng: data.lon,
-                        }}
-                        icon={iconMarker}
-                    >
-                        <Popup>{data.label_ar}</Popup>
-                    </Marker>
-                ))}
+                <MarkerClusterGroup
+                    chunkedLoading
+                    // iconCreateFunction={createClusterCustomIcon}
+                >
+                    {tantaMosques.map((data) => (
+                        <Marker
+                            key={`${data.lat}-${data.lon}`}
+                            position={{
+                                lat: data.lat,
+                                lng: data.lon,
+                            }}
+                            icon={iconMarker}
+                        >
+                            <Popup>{data.label_ar}</Popup>
+                        </Marker>
+                    ))}
+                </MarkerClusterGroup>
                 {selectedLocation && (
                     <ResetCenterView
                         lat={selectedLocation.lat}
