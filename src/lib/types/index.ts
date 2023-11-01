@@ -1,6 +1,13 @@
 import z from "zod";
 import { ominatimSchema } from "../validations/nominatim";
 
+export type SearchStatus =
+    | "pending"
+    | "complete"
+    | "error"
+    | "success"
+    | undefined;
+
 export type Tominatim = z.infer<typeof ominatimSchema>;
 
 export type fetchStatus = {

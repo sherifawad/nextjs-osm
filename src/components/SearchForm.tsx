@@ -1,6 +1,5 @@
 import { LocateFixed, Search } from "lucide-react";
 import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 
 type SearchFormProps = {
