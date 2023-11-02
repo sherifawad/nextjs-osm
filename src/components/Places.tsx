@@ -42,7 +42,9 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
     const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
 
     useEffect(() => {
-        searchPlace(initialSearch);
+        if (initialSearch) {
+            searchPlace(initialSearch);
+        }
     }, [initialSearch]);
 
     const onGeoSuccess = (locationInput: GeolocationPosition) => {

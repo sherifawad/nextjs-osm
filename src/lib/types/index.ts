@@ -10,6 +10,11 @@ export type SearchStatus =
 
 export type Tominatim = z.infer<typeof ominatimSchema>;
 
+export type TPosition = {
+    lat: number;
+    lon: number;
+};
+
 export type fetchStatus = {
     idle: "idle";
     pending: "pending";

@@ -11,12 +11,26 @@ import {
     useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L, { type LeafletMouseEvent } from "leaflet";
+import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import { tantaMosques } from "@/lib/data/tanta/tanta-mosq";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import { useEffect, useRef } from "react";
-import { Tominatim } from "@/lib/types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { TPosition, Tominatim } from "@/lib/types";
+import { Button } from "../ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import { addMosqueLocation } from "@/app/_actions";
 
 const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
@@ -29,43 +43,12 @@ const icon = L.icon({
     iconAnchor: [12, 28],
 });
 
-const position = {
-    lat: 30.786883,
-    lng: 30.999614,
-};
-
 const kabaPostion = {
     lat: 21.42249,
     lon: 39.8262,
 };
 
-// custom cluster icon
-// const createClusterCustomIcon = function (cluster) {
-//     return L.divIcon({
-//         html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
-//         className: "custom-marker-cluster",
-//         iconSize: point(33, 33, true),
-//     });
-// };
-
-// function ResetCenterView({ lat, lon }: { lon: number; lat: number }) {
-//     const map = useMap();
-
-//     useEffect(() => {
-//         if (lat && lon) {
-//             map.setView(L.latLng(lat, lon), map.getZoom(), {
-//                 animate: true,
-//             });
-//         }
-//     }, [map, lat, lon]);
-
-//     return null;
-// }
-
 type LeafletMapProps = {
-    // location: Signal<Tominatim>;
-    // location: Tominatim;
-    // setLocation: Dispatch<React.SetStateAction<Tominatim>>;
     initialLat?: number;
     initialLon?: number;
 };
@@ -74,37 +57,56 @@ function LeafletMap({
     initialLat = kabaPostion.lat,
     initialLon = kabaPostion.lon,
 }: LeafletMapProps) {
-    // const initialLat = location.lat;
-    // const initialLon = location.lon;
-    // const initialLat = isNaN(Number(latPars))
-    //     ? kabaPostion.lat
-    //     : Number(latPars);
-    // const initialLon = isNaN(Number(lonPars))
-    //     ? kabaPostion.lon
-    //     : Number(lonPars);
-
-    // const SheetRef = useRef<HTMLButtonElement>(null);
-    // const PopOverRef = useRef<HTMLButtonElement>(null);
+    const [showPopUp, setShowPopUp] = useState(false);
+    const [clickedPosition, setClickedPosition] =
+        useState<TPosition>(kabaPostion);
+    const router = useRouter();
+    const popUpRef = useRef<TMarker<any>>(null);
 
     const onContextMenuClick = (event: LeafletMouseEvent) => {
         event.originalEvent.preventDefault();
-        console.log(
-            "🚀 ~ file: LeafletMap.tsx:103 ~ onContextMenuClick ~ event:",
-            event.originalEvent
-        );
-        // setPosition({
-        //     xy: {
-        //         x: event.originalEvent.clientX,
-        //         y: event.originalEvent.clientY,
-        //     } as PointXY,
-        //     latlon: event.latlng,
-        // } as ClickPosition);
+        const { lat, lng } = event.latlng;
+        if (!lat || !lng) return;
+        router.replace(`?lat=${lat}&lon=${lng}`);
+        setClickedPosition({ lat, lon: lng });
+        setShowPopUp(true);
+        popUpRef.current?.openPopup();
     };
+
+    const addMosqueDialog = useMemo(
+        () => (
+            <AlertDialog>
+                <AlertDialogTrigger>
+                    <Button>Add new Mosque Location</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <form action={addMosqueLocation}>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Add new Mosque Location
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete your account and remove your
+                                data from our servers.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="pt-4">
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction type="submit">
+                                Continue
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </form>
+                </AlertDialogContent>
+            </AlertDialog>
+        ),
+        []
+    );
 
     return (
         <MapContainer
             center={[initialLat, initialLon]}
-            // center={[location.value.lat, location.value.lon]}
             zoom={17}
             className="h-full w-full z-0"
         >
@@ -122,14 +124,6 @@ function LeafletMap({
                     <span>الكعبة : المسجد الحرام</span>
                 </Tooltip>
             </CircleMarker>
-            {/* {location.value && (
-                <Polyline
-                    positions={[
-                        [location.value.lat, location.value.lon],
-                        [kabaPostion.lat, kabaPostion.lon],
-                    ]}
-                />
-            )} */}
             <Polyline
                 positions={[
                     [initialLat, initialLon],
@@ -143,17 +137,6 @@ function LeafletMap({
                 }}
                 icon={icon}
             ></Marker>
-            {/* {location.value && (
-                <Marker
-                    position={{
-                        lat: location.value.lat,
-                        lng: location.value.lon,
-                    }}
-                    icon={icon}
-                >
-                    <Popup>{location.value.display_name}</Popup>
-                </Marker>
-            )} */}
             <MarkerClusterGroup
                 chunkedLoading
                 // iconCreateFunction={createClusterCustomIcon}
@@ -171,14 +154,6 @@ function LeafletMap({
                     </Marker>
                 ))}
             </MarkerClusterGroup>
-            {/* <ResetCenterView lat={initialLat} lon={initialLon} /> */}
-
-            {/* {location.value && (
-                <ResetCenterView
-                    lat={location.value.lat}
-                    lon={location.value.lon}
-                />
-            )} */}
             <CampaignMapEventHandler
                 lat={initialLat}
                 lon={initialLon}
@@ -186,6 +161,29 @@ function LeafletMap({
                     contextmenu: onContextMenuClick,
                 }}
             />
+            {showPopUp ? (
+                <Marker
+                    ref={popUpRef}
+                    position={{
+                        lat: clickedPosition.lat,
+                        lng: clickedPosition.lon,
+                    }}
+                    icon={icon}
+                >
+                    <Popup>
+                        <div>
+                            <p>
+                                Latitude: <span>{clickedPosition.lat}</span>
+                            </p>
+                            <p>
+                                Longitude: <span>{clickedPosition.lon}</span>
+                            </p>
+
+                            {addMosqueDialog}
+                        </div>
+                    </Popup>
+                </Marker>
+            ) : null}
         </MapContainer>
     );
 }
