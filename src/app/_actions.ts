@@ -41,6 +41,7 @@ export const getSuggestions = async (searchInput: string) => {
 };
 
 export const addMosqueLocation = async () => {
+    //TODO: check if the user has permission to suggest a location
     try {
         const headersData = headers();
 
@@ -55,6 +56,8 @@ export const addMosqueLocation = async () => {
         };
         const validatedSearchParams =
             leafletMapPageSearchParameterSchema.safeParse(searchParams);
+        //TODO: add the suggestion the database to be added later
+
         if (!validatedSearchParams.success) return null;
     } catch (error) {
         return null;
