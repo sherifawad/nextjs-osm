@@ -1,10 +1,13 @@
+import { AuthProvider } from "./auth-provider";
 import { ThemeProvider } from "./theme-provider";
 
 function Providers({ children }: React.PropsWithChildren) {
     return (
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                {children}
+            </ThemeProvider>
+        </AuthProvider>
     );
 }
 
