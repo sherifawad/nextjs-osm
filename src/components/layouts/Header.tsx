@@ -9,6 +9,7 @@ import UserButton from "@/components/user-button";
 import DarkModeToggle from "../darkMode-toggle";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+import { headers } from "next/headers";
 
 const routes = [
     {

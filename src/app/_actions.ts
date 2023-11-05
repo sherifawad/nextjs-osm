@@ -1,7 +1,9 @@
 "use server";
 
+import { authOptions } from "@/lib/authOptions";
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
+import { getServerSession } from "next-auth";
 
 import { headers } from "next/headers";
 
@@ -42,6 +44,8 @@ export const getSuggestions = async (searchInput: string) => {
 
 export const addMosqueLocation = async () => {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) return null;
         const headersData = headers();
 
         const referer = headersData.get("referer");
@@ -55,6 +59,10 @@ export const addMosqueLocation = async () => {
         };
         const validatedSearchParams =
             leafletMapPageSearchParameterSchema.safeParse(searchParams);
+        console.log(
+            "🚀 ~ file: _actions.ts:61 ~ addMosqueLocation ~ validatedSearchParams:",
+            validatedSearchParams.success
+        );
         if (!validatedSearchParams.success) return null;
     } catch (error) {
         return null;

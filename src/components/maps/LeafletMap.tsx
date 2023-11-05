@@ -15,7 +15,7 @@ import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import { tantaMosques } from "@/lib/data/tanta/tanta-mosq";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TPosition, Tominatim } from "@/lib/types";
 import { Button } from "../ui/button";
 import {
@@ -31,6 +31,8 @@ import {
 } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { addMosqueLocation } from "@/app/_actions";
+import { signIn, useSession } from "next-auth/react";
+import AddPlaceForm from "../forms/add-place-form";
 
 const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
@@ -57,6 +59,8 @@ function LeafletMap({
     initialLat = kabaPostion.lat,
     initialLon = kabaPostion.lon,
 }: LeafletMapProps) {
+    const { data: Session, status } = useSession();
+
     const [showPopUp, setShowPopUp] = useState(false);
     const [clickedPosition, setClickedPosition] =
         useState<TPosition>(kabaPostion);
@@ -74,34 +78,20 @@ function LeafletMap({
     };
 
     const addMosqueDialog = useMemo(
-        () => (
-            <AlertDialog>
-                <AlertDialogTrigger>
-                    <Button>Add new Mosque Location</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <form action={addMosqueLocation}>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Add new Mosque Location
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete your account and remove your
-                                data from our servers.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="pt-4">
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction type="submit">
-                                Continue
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </form>
-                </AlertDialogContent>
-            </AlertDialog>
-        ),
-        []
+        () =>
+            status === "authenticated" ? (
+                <AlertDialog>
+                    <AlertDialogTrigger>
+                        <Button>Add new Mosque Location</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AddPlaceForm />
+                    </AlertDialogContent>
+                </AlertDialog>
+            ) : (
+                <Button onClick={() => signIn()}>Login to Add Mosque</Button>
+            ),
+        [status]
     );
 
     return (
@@ -171,14 +161,13 @@ function LeafletMap({
                     icon={icon}
                 >
                     <Popup>
-                        <div>
+                        <div className="text-center">
                             <p>
                                 Latitude: <span>{clickedPosition.lat}</span>
                             </p>
                             <p>
                                 Longitude: <span>{clickedPosition.lon}</span>
                             </p>
-
                             {addMosqueDialog}
                         </div>
                     </Popup>
