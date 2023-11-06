@@ -1,6 +1,11 @@
 import z from "zod";
 import { ominatimSchema } from "../validations/nominatim";
 
+// combine types into better format
+export type Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
+
 export type SearchStatus =
     | "pending"
     | "complete"

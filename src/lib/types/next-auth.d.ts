@@ -1,5 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import "next-auth/jwt";
+import { REPUTATIONType } from "../validations/generated-zod-schemas/inputTypeSchemas/REPUTATIONSchema";
+import { RoleType } from "../validations/generated-zod-schemas/inputTypeSchemas/RoleSchema";
 
 declare module "next-auth" {
     /**
@@ -7,12 +9,13 @@ declare module "next-auth" {
      */
     interface Session {
         user: {
-            /** The user's postal address. */
-            address: string;
+            role: RoleType;
+            reputation: REPUTATIONType;
+            id: string;
         } & DefaultSession["user"];
     }
     interface token {
-        username: string;
+        // id: string;
     }
 }
 
@@ -21,6 +24,8 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
     interface JWT {
         /** The user's role. */
-        userRole?: "admin";
+        role: RoleType;
+        reputation: REPUTATIONType;
+        id: string;
     }
 }

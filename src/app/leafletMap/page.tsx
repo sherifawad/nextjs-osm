@@ -3,6 +3,7 @@ import Container from "@/components/ui/Container";
 
 import dynamic from "next/dynamic";
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
+import { db } from "@/lib/prisma";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
     ssr: false,
@@ -14,7 +15,8 @@ const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 type leafletMapPageProps = {
     searchParams: { [key: string]: string[] | string | undefined };
 };
-function leafletMapPage({ searchParams }: leafletMapPageProps) {
+async function leafletMapPage({ searchParams }: leafletMapPageProps) {
+    const dataBasePlaces = await db.place.findMany();
     let initialLat: number | undefined = undefined;
     let initialLon: number | undefined = undefined;
     let initialSearch: string | undefined = undefined;
@@ -37,6 +39,7 @@ function leafletMapPage({ searchParams }: leafletMapPageProps) {
                     <LeafletMap
                         initialLat={initialLat}
                         initialLon={initialLon}
+                        places={dataBasePlaces}
                     />
                 </div>
             </div>

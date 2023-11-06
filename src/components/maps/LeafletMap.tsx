@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { addMosqueLocation } from "@/app/_actions";
 import { signIn, useSession } from "next-auth/react";
 import AddPlaceForm from "../forms/add-place-form";
+import { Place } from "@/lib/validations/generated-zod-schemas";
 
 const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
@@ -53,11 +54,13 @@ const kabaPostion = {
 type LeafletMapProps = {
     initialLat?: number;
     initialLon?: number;
+    places: Place[];
 };
 
 function LeafletMap({
     initialLat = kabaPostion.lat,
     initialLon = kabaPostion.lon,
+    places,
 }: LeafletMapProps) {
     const { data: Session, status } = useSession();
 
@@ -79,7 +82,7 @@ function LeafletMap({
 
     const addMosqueDialog = useMemo(
         () =>
-            status === "authenticated" ? (
+            status === "authenticated" && Session.user.reputation !== "FAKE" ? (
                 <AlertDialog>
                     <AlertDialogTrigger>
                         <Button>Add new Mosque Location</Button>
@@ -91,7 +94,7 @@ function LeafletMap({
             ) : (
                 <Button onClick={() => signIn()}>Login to Add Mosque</Button>
             ),
-        [status]
+        [Session?.user.reputation, status]
     );
 
     return (
@@ -131,16 +134,16 @@ function LeafletMap({
                 chunkedLoading
                 // iconCreateFunction={createClusterCustomIcon}
             >
-                {tantaMosques.map((data) => (
+                {places?.map((data) => (
                     <Marker
-                        key={`${data.lat}-${data.lon}`}
+                        key={data.id}
                         position={{
-                            lat: data.lat,
-                            lng: data.lon,
+                            lat: data.latitude,
+                            lng: data.longitude,
                         }}
                         icon={iconMarker}
                     >
-                        <Popup>{data.label_ar}</Popup>
+                        <Popup>{data.name}</Popup>
                     </Marker>
                 ))}
             </MarkerClusterGroup>
