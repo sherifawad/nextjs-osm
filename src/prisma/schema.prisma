@@ -79,7 +79,8 @@ model Place {
   id        String   @id @default(cuid())
   latitude  Float
   longitude Float
-  arName    String
+  name      String
+  arName    String?
   enName    String?
   verified  Boolean  @default(false)
   image     String?
