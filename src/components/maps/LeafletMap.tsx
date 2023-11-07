@@ -34,6 +34,7 @@ import { addMosqueLocation } from "@/app/_actions";
 import { signIn, useSession } from "next-auth/react";
 import AddPlaceForm from "../forms/add-place-form";
 import { Place } from "@/lib/validations/generated-zod-schemas";
+import { PlaceMarkPopUp } from "./map-popups";
 
 const iconMarker = L.icon({
     iconUrl: "./mosque.svg",
@@ -143,7 +144,9 @@ function LeafletMap({
                         }}
                         icon={iconMarker}
                     >
-                        <Popup>{data.name}</Popup>
+                        <Popup>
+                            <PlaceMarkPopUp place={data} />
+                        </Popup>
                     </Marker>
                 ))}
             </MarkerClusterGroup>

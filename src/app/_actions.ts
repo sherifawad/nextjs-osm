@@ -2,12 +2,19 @@
 
 import { authOptions } from "@/lib/authOptions";
 import { db } from "@/lib/prisma";
-import { AddPlaceFormState } from "@/lib/types/forms-types";
+import {
+    AddPlaceFormState,
+    EditPlaceForm,
+    EditPlaceFormState,
+} from "@/lib/types/forms-types";
 import {
     addPlaceSchema,
     leafletMapPageSearchParameterSchema,
 } from "@/lib/validations";
-import { PlaceUpdateInputSchema } from "@/lib/validations/generated-zod-schemas";
+import {
+    Place,
+    PlaceUpdateInputSchema,
+} from "@/lib/validations/generated-zod-schemas";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -233,27 +240,53 @@ export const removeMosqueLocation = async (id: unknown) => {
     }
 };
 
-export const updateMosqueLocation = async (place: unknown) => {
+export const updateMosqueLocation = async (
+    prevState: EditPlaceFormState,
+    formData: FormData
+): Promise<EditPlaceFormState> => {
     const schema = PlaceUpdateInputSchema.and(
-        z.object({ id: z.string().cuid() })
+        z.object({
+            id: z.string().cuid(),
+            name: z.string().min(1),
+            Latitude: z.coerce.number(),
+            Longitude: z.coerce.number(),
+        })
     );
+    const place = {
+        id: formData.get("id") as string,
+        name: formData.get("name") as string,
+        Latitude: formData.get("latitude") as unknown as number,
+        Longitude: formData.get("longitude") as unknown as number,
+        arName: formData.get("arName") as string | null,
+        enName: formData.get("enName") as string | null,
+        verified: formData.get("verified") as unknown as boolean,
+        image: formData.get("image") as string | null,
+    };
+
     try {
         const placeData = schema.safeParse(place);
+        console.log("🚀 ~ file: _actions.ts:261 ~ placeData:", placeData);
         if (!placeData.success) {
-            const errorMap = placeData.error.flatten().formErrors;
+            const errorMap = placeData.error.flatten().fieldErrors;
+
             return {
-                result: "error",
-                message: errorMap.map((n) => n).join(", "),
+                message: "error",
+                errors: errorMap,
+                fieldValues: place,
             };
         }
         const session = await getServerSession(authOptions);
+        console.log("🚀 ~ file: _actions.ts:271 ~ session:", session);
         if (
             !session ||
             (session.user.role !== "ADMIN" && session.user.role !== "OWNER")
         ) {
             return {
-                result: "error",
-                message: "not allowed",
+                message: "error",
+                errors: {
+                    name: ["Not authorized to update"],
+                },
+                fieldValues: place,
             };
         }
 
@@ -264,40 +297,53 @@ export const updateMosqueLocation = async (place: unknown) => {
         });
         if (!getPlaceDb) {
             return {
-                result: "error",
-                message: "not exist",
+                message: "error",
+                errors: {
+                    name: ["Not Exist"],
+                },
+                fieldValues: place,
             };
         }
         if (getPlaceDb.verified && session.user.role !== "OWNER") {
             return {
-                result: "error",
-                message: "not allowed",
+                message: "error",
+                errors: {
+                    name: ["Not authorized to update"],
+                },
+                fieldValues: place,
             };
         }
-        await db.place.update({
-            where: {
-                id: placeData.data.id,
-            },
-            data: {
-                ...placeData.data,
-            },
-        });
+        // await db.place.update({
+        //     where: {
+        //         id: placeData.data.id,
+        //     },
+        //     data: {
+        //         ...placeData.data,
+        //     },
+        // });
 
         revalidatePath("/leafletMap");
         return {
-            result: "success",
-            message: "updated successfully",
+            message: "success",
+            errors: undefined,
+            fieldValues: place,
         };
     } catch (error) {
         if (error instanceof Error) {
             return {
-                result: "error",
-                message: error.message,
+                message: "error",
+                errors: {
+                    name: [error.message],
+                },
+                fieldValues: place,
             };
         }
         return {
-            result: "error",
-            message: "internal server error",
+            message: "error",
+            errors: {
+                name: ["internal server error"],
+            },
+            fieldValues: place,
         };
     }
 };
