@@ -72,22 +72,28 @@ model User {
   reputation    REPUTATION @default(UNDEFINED)
   accounts      Account[]
   sessions      Session[]
-  places        Place[]
+  PlaceCreated  Place[]    @relation("created")
+  PlaceModified Place[]    @relation("modified")
 }
 
 model Place {
-  id        String   @id @default(cuid())
-  latitude  Float
-  longitude Float
-  name      String
-  arName    String?
-  enName    String?
-  verified  Boolean  @default(false)
-  image     String?
-  createdBy User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  latitude     Float
+  longitude    Float
+  name         String
+  arName       String?
+  enName       String?
+  verified     Boolean  @default(false)
+  image        String?
+  hidden       Boolean  @default(false)
+  deleted      Boolean  @default(false)
+  fileDeleted  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  createdById  String?
+  modifiedAt   DateTime @default(now()) @updatedAt
+  modifiedById String?
+  createdBy    User?    @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "created")
+  modifiedBy   User?    @relation(fields: [modifiedById], references: [id], onDelete: SetNull, name: "modified")
 
   @@unique([latitude, longitude, verified], name: "location")
 }
@@ -99,3 +105,5 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+//CREATE UNIQUE INDEX "Place_latitude_longitude_verified_key" ON "Place"("latitude", "longitude", "verified") WHERE "verified" IS TRUE;
