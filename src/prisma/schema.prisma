@@ -87,7 +87,6 @@ model Place {
   image        String?
   hidden       Boolean  @default(false)
   deleted      Boolean  @default(false)
-  fileDeleted  Boolean  @default(false)
   createdAt    DateTime @default(now())
   createdById  String?
   modifiedAt   DateTime @default(now()) @updatedAt

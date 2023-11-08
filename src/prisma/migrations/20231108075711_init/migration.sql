@@ -59,7 +59,6 @@ CREATE TABLE "Place" (
     "image" TEXT,
     "hidden" BOOLEAN NOT NULL DEFAULT false,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
-    "fileDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdById" TEXT,
     "modifiedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -85,7 +84,7 @@ CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Place_latitude_longitude_verified_key" ON "Place"("latitude", "longitude", "verified") WHERE "verified" IS TRUE;
+CREATE UNIQUE INDEX "Place_latitude_longitude_verified_key" ON "Place"("latitude", "longitude", "verified");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");

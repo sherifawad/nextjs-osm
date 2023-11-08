@@ -19,5 +19,8 @@ export type EditPlaceFormState = {
     errors:
         | Partial<Record<keyof Partial<EditPlaceForm>, string[] | undefined>>
         | undefined;
-    fieldValues: Omit<Place, "userId" | "createdAt" | "updatedAt">;
+    fieldValues: Omit<
+        Place,
+        "createdById" | "modifiedById" | "createdAt" | "modifiedAt"
+    >;
 };
