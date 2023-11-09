@@ -4,6 +4,9 @@ import Container from "@/components/ui/Container";
 import dynamic from "next/dynamic";
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { db } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { RoleType } from "@/lib/validations/generated-zod-schemas/inputTypeSchemas/RoleSchema";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
     ssr: false,
@@ -12,11 +15,31 @@ const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 // export const dynamic = "force-dynamic";
 // export const revalidate = 0;
 
+const getPlaces = async (role: RoleType | undefined) => {
+    if (role === "OWNER") {
+        return await db.place.findMany();
+    }
+    if (role === "ADMIN") {
+        return await db.place.findMany({
+            where: {
+                deleted: false,
+            },
+        });
+    }
+    return await db.place.findMany({
+        where: {
+            deleted: false,
+            hidden: false,
+        },
+    });
+};
+
 type leafletMapPageProps = {
     searchParams: { [key: string]: string[] | string | undefined };
 };
 async function leafletMapPage({ searchParams }: leafletMapPageProps) {
-    const dataBasePlaces = await db.place.findMany();
+    const session = await getServerSession(authOptions);
+    const dataBasePlaces = await getPlaces(session?.user.role);
     let initialLat: number | undefined = undefined;
     let initialLon: number | undefined = undefined;
     let initialSearch: string | undefined = undefined;

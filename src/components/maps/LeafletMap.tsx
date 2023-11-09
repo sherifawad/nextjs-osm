@@ -86,7 +86,9 @@ function LeafletMap({
             status === "authenticated" && Session.user.reputation !== "FAKE" ? (
                 <AlertDialog>
                     <AlertDialogTrigger>
-                        <Button>Add new Mosque Location</Button>
+                        <Button onClick={() => popUpRef.current?.closePopup()}>
+                            Add new Mosque Location
+                        </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AddPlaceForm />
@@ -95,7 +97,7 @@ function LeafletMap({
             ) : (
                 <Button onClick={() => signIn()}>Login to Add Mosque</Button>
             ),
-        [Session?.user.reputation, status]
+        [Session?.user?.reputation, status]
     );
 
     return (

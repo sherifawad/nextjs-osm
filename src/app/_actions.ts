@@ -4,10 +4,13 @@ import { authOptions } from "@/lib/authOptions";
 import { db } from "@/lib/prisma";
 import {
     AddPlaceFormState,
+    EditPlaceFieldValues,
     EditPlaceForm,
     EditPlaceFormState,
 } from "@/lib/types/forms-types";
 import {
+    EditPlaceFormDataErrors,
+    EditPlaceSchema,
     addPlaceSchema,
     leafletMapPageSearchParameterSchema,
 } from "@/lib/validations";
@@ -21,6 +24,19 @@ import { revalidatePath } from "next/cache";
 
 import { headers } from "next/headers";
 import { ZodError, z } from "zod";
+
+const placeDefaults: EditPlaceFieldValues = {
+    id: "",
+    name: "",
+    arName: "",
+    enName: "",
+    latitude: 0,
+    longitude: 0,
+    image: "",
+    deleted: false,
+    verified: false,
+    hidden: false,
+};
 
 export const getSuggestions = async (searchInput: string) => {
     if (searchInput == null) return null;
@@ -141,7 +157,11 @@ export const addMosqueLocation = async (
                 name: validatePlaceName.data.name,
                 latitude: validatedSearchParams.data.lat,
                 longitude: validatedSearchParams.data.lon,
-                userId: session.user.id,
+                createdBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
             },
         });
         revalidatePath("/leafletMap");
@@ -240,54 +260,154 @@ export const removeMosqueLocation = async (id: unknown) => {
     }
 };
 
-export const updateMosqueLocation = async (
-    prevState: EditPlaceFormState,
-    formData: FormData
-): Promise<EditPlaceFormState> => {
-    const schema = PlaceUpdateInputSchema.and(
-        z.object({
-            id: z.string().cuid(),
-            name: z.string().min(1),
-            Latitude: z.coerce.number(),
-            Longitude: z.coerce.number(),
-        })
-    );
-    const place = {
-        id: formData.get("id") as string,
-        name: formData.get("name") as string,
-        Latitude: formData.get("latitude") as unknown as number,
-        Longitude: formData.get("longitude") as unknown as number,
-        arName: formData.get("arName") as string | null,
-        enName: formData.get("enName") as string | null,
-        verified: formData.get("verified") as unknown as boolean,
-        image: formData.get("image") as string | null,
-    };
+// export const updateMosqueLocation = async (
+//     prevState: EditPlaceFormState,
+//     formData: FormData
+// ): Promise<EditPlaceFormState> => {
+//     const schema = PlaceUpdateInputSchema.and(
+//         z.object({
+//             id: z.string().cuid(),
+//             name: z.string().min(1),
+//             latitude: z.coerce.number(),
+//             longitude: z.coerce.number(),
+//         })
+//     );
+//     console.log("🚀 ~ file: _actions.ts:275 ~ formData:", formData);
+//     const place: EditPlaceFieldValues = {
+//         id: formData.get("id") as string,
+//         name: formData.get("name") as string,
+//         latitude: parseFloat((formData.get("latitude") ?? "") as string),
+//         longitude: parseFloat((formData.get("longitude") ?? "") as string),
+//         arName: formData.get("arName") as string | null,
+//         enName: formData.get("enName") as string | null,
+//         verified: formData.get("verified") === "null" ? false : true,
+//         deleted: formData.get("deleted") === "null" ? false : true,
+//         hidden: formData.get("hidden") === "null" ? false : true,
+//         image: formData.get("image") as string | null,
+//     };
+//     console.log("🚀 ~ file: _actions.ts:286 ~ place:", place);
+
+//     try {
+//         const placeData = schema.safeParse(place);
+//         if (!placeData.success) {
+//             const errorMap = placeData.error.flatten().fieldErrors;
+
+//             return {
+//                 message: "error",
+//                 errors: errorMap,
+//                 fieldValues: place,
+//             };
+//         }
+//         const session = await getServerSession(authOptions);
+//         if (
+//             !session ||
+//             (session.user.role !== "ADMIN" && session.user.role !== "OWNER")
+//         ) {
+//             return {
+//                 message: "error",
+//                 errors: {
+//                     name: ["Not authorized to update"],
+//                 },
+//                 fieldValues: place,
+//             };
+//         }
+
+//         const getPlaceDb = await db.place.findUnique({
+//             where: {
+//                 id: placeData.data.id,
+//             },
+//         });
+//         if (!getPlaceDb) {
+//             return {
+//                 message: "error",
+//                 errors: {
+//                     name: ["Not Exist"],
+//                 },
+//                 fieldValues: place,
+//             };
+//         }
+//         const {
+//             id,
+//             modifiedAt,
+//             modifiedById,
+//             createdAt,
+//             createdById,
+//             ...otherPlaceDb
+//         } = getPlaceDb;
+//         if (getPlaceDb.verified && session.user.role !== "OWNER") {
+//             return {
+//                 message: "error",
+//                 errors: {
+//                     name: ["Not authorized to update"],
+//                 },
+//                 fieldValues: place,
+//             };
+//         }
+//         await db.place.update({
+//             where: {
+//                 id: placeData.data.id,
+//             },
+//             data: {
+//                 ...otherPlaceDb,
+//                 ...placeData.data,
+//                 modifiedBy: {
+//                     connect: {
+//                         id: session.user.id,
+//                     },
+//                 },
+//             },
+//         });
+
+//         revalidatePath("/leafletMap");
+//         return {
+//             message: "success",
+//             errors: undefined,
+//             fieldValues: place,
+//         };
+//     } catch (error) {
+//         if (error instanceof Error) {
+//             return {
+//                 message: "error",
+//                 errors: {
+//                     name: [error.message],
+//                 },
+//                 fieldValues: place,
+//             };
+//         }
+//         return {
+//             message: "error",
+//             errors: {
+//                 name: ["internal server error"],
+//             },
+//             fieldValues: place,
+//         };
+//     }
+// };
+
+export const updateMosqueLocation = async (place: unknown) => {
+    console.log("🚀 ~ file: _actions.ts:286 ~ place:", place);
+    // let zodErrors: Partial<CustomFormDataErrors> = {};
+    let zodErrors: EditPlaceFormDataErrors = {};
 
     try {
-        const placeData = schema.safeParse(place);
-        console.log("🚀 ~ file: _actions.ts:261 ~ placeData:", placeData);
+        const placeData = EditPlaceSchema.safeParse(place);
         if (!placeData.success) {
-            const errorMap = placeData.error.flatten().fieldErrors;
-
-            return {
-                message: "error",
-                errors: errorMap,
-                fieldValues: place,
-            };
+            placeData.error.issues.forEach((issue) => {
+                zodErrors = { ...zodErrors, [issue.path[0]]: issue.message };
+            });
+            throw new Error("zodError");
         }
         const session = await getServerSession(authOptions);
-        console.log("🚀 ~ file: _actions.ts:271 ~ session:", session);
         if (
             !session ||
             (session.user.role !== "ADMIN" && session.user.role !== "OWNER")
         ) {
-            return {
-                message: "error",
-                errors: {
-                    name: ["Not authorized to update"],
-                },
-                fieldValues: place,
+            zodErrors = {
+                ...zodErrors,
+                serverError: "Not authorized to update",
             };
+
+            throw new Error("zodError");
         }
 
         const getPlaceDb = await db.place.findUnique({
@@ -296,54 +416,68 @@ export const updateMosqueLocation = async (
             },
         });
         if (!getPlaceDb) {
-            return {
-                message: "error",
-                errors: {
-                    name: ["Not Exist"],
-                },
-                fieldValues: place,
+            zodErrors = {
+                ...zodErrors,
+                serverError: "Not Exist",
             };
+
+            throw new Error("zodError");
         }
+        const {
+            id,
+            modifiedAt,
+            modifiedById,
+            createdAt,
+            createdById,
+            ...otherPlaceDb
+        } = getPlaceDb;
         if (getPlaceDb.verified && session.user.role !== "OWNER") {
-            return {
-                message: "error",
-                errors: {
-                    name: ["Not authorized to update"],
-                },
-                fieldValues: place,
+            zodErrors = {
+                ...zodErrors,
+                serverError: "Not authorized to update",
             };
+
+            throw new Error("zodError");
         }
-        // await db.place.update({
-        //     where: {
-        //         id: placeData.data.id,
-        //     },
-        //     data: {
-        //         ...placeData.data,
-        //     },
-        // });
+        const result = await db.place.update({
+            where: {
+                id: placeData.data.id,
+            },
+            data: {
+                ...otherPlaceDb,
+                ...placeData.data,
+                modifiedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
 
         revalidatePath("/leafletMap");
         return {
-            message: "success",
-            errors: undefined,
-            fieldValues: place,
+            success: false,
+            data: result,
+            errors: null,
         };
     } catch (error) {
         if (error instanceof Error) {
             return {
-                message: "error",
-                errors: {
-                    name: [error.message],
-                },
-                fieldValues: place,
+                success: false,
+                data: null,
+                errors:
+                    Object.keys(zodErrors).length > 0
+                        ? zodErrors
+                        : { serverError: error.message },
             };
         }
         return {
-            message: "error",
-            errors: {
-                name: ["internal server error"],
-            },
-            fieldValues: place,
+            success: false,
+            data: null,
+            errors:
+                Object.keys(zodErrors).length > 0
+                    ? zodErrors
+                    : { serverError: error },
         };
     }
 };

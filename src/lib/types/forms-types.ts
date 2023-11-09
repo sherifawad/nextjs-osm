@@ -14,13 +14,15 @@ export type AddPlaceFormState = {
     fieldValues: AddPlaceForm;
 };
 
+export type EditPlaceFieldValues = Omit<
+    Place,
+    "createdById" | "modifiedById" | "createdAt" | "modifiedAt"
+>;
+
 export type EditPlaceFormState = {
     message: string;
     errors:
         | Partial<Record<keyof Partial<EditPlaceForm>, string[] | undefined>>
         | undefined;
-    fieldValues: Omit<
-        Place,
-        "createdById" | "modifiedById" | "createdAt" | "modifiedAt"
-    >;
+    fieldValues: EditPlaceFieldValues;
 };
