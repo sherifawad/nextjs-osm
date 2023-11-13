@@ -26,8 +26,24 @@ import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
 import { Place } from "@/schema/modelSchema";
 
-const iconMarker = L.icon({
-	iconUrl: "./mosque.svg",
+const mosqueVerifiedMarker = L.icon({
+	iconUrl: "./mosque-verified.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+
+const mosqueUnVerifiedMarker = L.icon({
+	iconUrl: "./mosque-unVerified.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+const mosqueHiddenMarker = L.icon({
+	iconUrl: "./mosque-hidden.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+const mosqueDeletedMarker = L.icon({
+	iconUrl: "./mosque-deleted.svg",
 	iconSize: [38, 38],
 	iconAnchor: [23, 29],
 });
@@ -123,7 +139,15 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 							lat: data.latitude,
 							lng: data.longitude,
 						}}
-						icon={iconMarker}
+						icon={
+							data.deleted
+								? mosqueDeletedMarker
+								: data.hidden
+								? mosqueHiddenMarker
+								: data.verified
+								? mosqueVerifiedMarker
+								: mosqueUnVerifiedMarker
+						}
 					>
 						<Popup>
 							<PlaceMarkPopUp place={data} />
