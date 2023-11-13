@@ -376,8 +376,15 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 	try {
 		const placeData = EditPlaceSchema.safeParse(place);
 		if (!placeData.success) {
-			placeData.error.issues.forEach((issue) => {
-				zodErrors = { ...zodErrors, [issue.path[0]]: issue.message };
+			placeData.error.issues.forEach((issue: { path: (string | number)[]; message: string }) => {
+				zodErrors = {
+					...zodErrors,
+					[issue.path[0]]: issue.message
+						.toLowerCase()
+						.replace("boolean", "true or false")
+						.replace("invalid enum value. expected", "must be")
+						.replace("|", "or"),
+				};
 			});
 			throw new Error("zodError");
 		}
