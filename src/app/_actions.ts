@@ -436,7 +436,7 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 			},
 		});
 
-		revalidatePath("/leafletMap");
+		revalidatePath("/leafletMap,", "page");
 		return {
 			status: "Success",
 			data: result,

@@ -8,6 +8,7 @@ import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import React, { useMemo, useRef, useState } from "react";
 import { TPosition } from "@/lib/types";
 import { Button } from "../ui/button";
+import { setCookie } from "cookies-next";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -26,8 +27,24 @@ import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
 import { Place } from "@/schema/modelSchema";
 
-const iconMarker = L.icon({
-	iconUrl: "./mosque.svg",
+const mosqueVerifiedMarker = L.icon({
+	iconUrl: "./mosque-verified.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+
+const mosqueUnVerifiedMarker = L.icon({
+	iconUrl: "./mosque-unVerified.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+const mosqueHiddenMarker = L.icon({
+	iconUrl: "./mosque-hidden.svg",
+	iconSize: [38, 38],
+	iconAnchor: [23, 29],
+});
+const mosqueDeletedMarker = L.icon({
+	iconUrl: "./mosque-deleted.svg",
 	iconSize: [38, 38],
 	iconAnchor: [23, 29],
 });
@@ -60,10 +77,12 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 		event.originalEvent.preventDefault();
 		const { lat, lng } = event.latlng;
 		if (!lat || !lng) return;
-		router.replace(`?lat=${lat}&lon=${lng}`);
 		setClickedPosition({ lat, lon: lng });
 		setShowPopUp(true);
 		popUpRef.current?.openPopup();
+		setCookie("lat", lat);
+		setCookie("lon", lng);
+		router.replace(`?lat=${lat}&lon=${lng}`);
 	};
 
 	const addMosqueDialog = useMemo(
@@ -123,7 +142,15 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 							lat: data.latitude,
 							lng: data.longitude,
 						}}
-						icon={iconMarker}
+						icon={
+							data.deleted
+								? mosqueDeletedMarker
+								: data.hidden
+								? mosqueHiddenMarker
+								: data.verified
+								? mosqueVerifiedMarker
+								: mosqueUnVerifiedMarker
+						}
 					>
 						<Popup>
 							<PlaceMarkPopUp place={data} />

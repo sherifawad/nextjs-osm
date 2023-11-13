@@ -1,6 +1,5 @@
 import z from "zod";
 import { config } from "dotenv";
-import path from "path";
 
 if (process.env.NODE_ENV === "development") {
 	config({ path: ".env.dev.local", override: true });
