@@ -1,12 +1,15 @@
-"use client";
-
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LocateFixed, Menu, Moon, ShoppingCart, Sun } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
-import Container from "../ui/Container";
+import Container from "@/components/ui/Container";
+import UserButton from "@/components/user-button";
+import DarkModeToggle from "../darkMode-toggle";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { headers } from "next/headers";
 
 const routes = [
     {
@@ -19,10 +22,10 @@ const routes = [
     // },
 ];
 
-const Header = () => {
-    const { theme, setTheme } = useTheme();
-    const activeLink = usePathname();
-    const router = useRouter();
+const Header = async () => {
+    // const activeLink = usePathname();
+
+    const session = await getServerSession(authOptions);
 
     return (
         <header className="flex sm:justify-between h-20 items-center px-4 border-b ">
@@ -43,11 +46,7 @@ const Header = () => {
                                             key={i}
                                             prefetch={false}
                                             href={route.href}
-                                            className={`block px-2 py-1 text-lg ${
-                                                activeLink === route.href
-                                                    ? "text-primary"
-                                                    : ""
-                                            }`}
+                                            className={`block px-2 py-1 text-lg `}
                                         >
                                             {route.label}
                                         </Link>
@@ -70,11 +69,7 @@ const Header = () => {
                                     key={i}
                                     prefetch={false}
                                     href={route.href}
-                                    className={`text-sm font-medium transition-colors ${
-                                        activeLink === route.href
-                                            ? "text-primary"
-                                            : ""
-                                    }`}
+                                    className={`text-sm font-medium transition-colors`}
                                 >
                                     {route.label}
                                 </Link>
@@ -82,28 +77,8 @@ const Header = () => {
                         ))}
                     </nav>
                     <div className="flex items-center">
-                        {/* <Button
-                            variant="ghost"
-                            size="icon"
-                            className="mr-2"
-                            aria-label="Shopping Cart"
-                        >
-                            <ShoppingCart className="h-6 w-6" />
-                            <span className="sr-only">Shopping Cart</span>
-                        </Button> */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Toggle Theme"
-                            className="mr-6"
-                            onClick={() =>
-                                setTheme(theme === "dark" ? "light" : "dark")
-                            }
-                        >
-                            <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle Theme</span>
-                        </Button>
+                        <DarkModeToggle />
+                        <UserButton session={session} />
 
                         {/* <ProfileButton />  */}
                     </div>

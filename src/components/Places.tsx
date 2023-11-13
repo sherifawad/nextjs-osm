@@ -22,7 +22,6 @@ type TPlaceData = {
 };
 
 function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
-    console.log("🚀 ~ file: Places.tsx:30 ~ Places ~ Places:Render");
     const [PlaceData, setPlaceData] = useState<TPlaceData>({
         lat: initialLat,
         long: initialLon,
@@ -71,11 +70,6 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
     };
 
     const searchPlace = async (input: unknown) => {
-        console.log(
-            "🚀 ~ file: Places.tsx:119 ~ searchPlace ~ searchPlace:",
-            searchPlace
-        );
-
         setErrorMessage("");
         setSearchStatus("pending");
         setSuggestionsListOpen(true);

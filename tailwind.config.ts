@@ -17,6 +17,9 @@ module.exports = {
             },
         },
         extend: {
+            screens: {
+                xs: "475px",
+            },
             fontFamily: {
                 sans: ["var(--font-sans)", ...fontFamily.sans],
             },
