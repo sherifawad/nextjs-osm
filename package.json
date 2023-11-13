@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "dotenv -e .env.dev.local next dev",
+		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
 		"migrate:dev": "dotenv -e .env.dev.local -- pnpm dlx prisma migrate dev --create-only",
@@ -12,7 +12,7 @@
 		"lint": "next lint",
 		"studio:dev": "dotenv -e .env.dev.local -- pnpm dlx prisma studio",
 		"studio:prod": "dotenv -e .env.prod.local -- pnpm dlx prisma studio",
-		"prepare": "prisma generate"
+		"prepare": "pnpm dlx prisma generate"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^1.0.5",
@@ -30,6 +30,7 @@
 		"@radix-ui/react-switch": "^1.0.3",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
+		"dotenv": "^16.3.1",
 		"leaflet": "^1.9.4",
 		"lucide-react": "^0.290.0",
 		"maplibre-gl": "^3.5.2",
