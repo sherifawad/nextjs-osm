@@ -8,6 +8,7 @@ import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import React, { useMemo, useRef, useState } from "react";
 import { TPosition } from "@/lib/types";
 import { Button } from "../ui/button";
+import { setCookie } from "cookies-next";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -76,10 +77,12 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 		event.originalEvent.preventDefault();
 		const { lat, lng } = event.latlng;
 		if (!lat || !lng) return;
-		router.replace(`?lat=${lat}&lon=${lng}`);
 		setClickedPosition({ lat, lon: lng });
 		setShowPopUp(true);
 		popUpRef.current?.openPopup();
+		setCookie("lat", lat);
+		setCookie("lon", lng);
+		router.replace(`?lat=${lat}&lon=${lng}`);
 	};
 
 	const addMosqueDialog = useMemo(

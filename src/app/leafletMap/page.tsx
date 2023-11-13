@@ -7,6 +7,7 @@ import { db } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
+import { cookies } from "next/headers";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,
@@ -72,6 +73,14 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 		initialLat = parsedSearchParams.data.lat;
 		initialLon = parsedSearchParams.data.lon;
 		initialSearch = parsedSearchParams.data.search;
+	} else {
+		const cookieStore = cookies();
+		const latCookies = parseFloat(cookieStore.get("lat")?.value ?? "");
+		const lonCookies = parseFloat(cookieStore.get("lon")?.value ?? "");
+		if (latCookies && lonCookies) {
+			initialLat = latCookies;
+			initialLon = lonCookies;
+		}
 	}
 	return (
 		<Container>
