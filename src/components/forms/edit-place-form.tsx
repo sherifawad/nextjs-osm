@@ -1,256 +1,33 @@
 "use client";
 
-import { addMosqueLocation, updateMosqueLocation } from "@/app/_actions";
+import { updateMosqueLocation } from "@/app/_actions";
 import {
-	AlertDialogAction,
 	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 
-import { Input } from "../ui/input";
-import { useFormStatus } from "react-dom";
-import { useFormState } from "react-dom";
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { CheckCircle, LoaderIcon } from "lucide-react";
-import { Switch } from "../ui/switch";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditPlaceSchema } from "@/lib/validations";
 import { z } from "zod";
-
-const SubmitButton = () => {
-	const { pending } = useFormStatus();
-
-	return (
-		<Button disabled={pending} type="submit">
-			{pending ? <LoaderIcon className="w-6 h-6 shrink-0 animate-spin" /> : "Submit"}
-		</Button>
-	);
-};
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Place } from "@/lib/validations/generated/prisma";
+import { EditPlaceSchema } from "@/lib/validations/place-schema";
+import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 
 type EditPlaceFormProps = {
 	place: Place;
 };
 
-function EditPlaceForm({ place }: EditPlaceFormProps) {
-	const { data: Session, status } = useSession();
-
-	const [formState, formAction] = useFormState(updateMosqueLocation, {
-		message: "",
-		errors: undefined,
-		fieldValues: place,
-	});
-	const formRef = useRef<HTMLFormElement>(null);
-	const [hidden, setHidden] = useState(formState.fieldValues.hidden);
-	const [deleted, setDeleted] = useState(formState.fieldValues.deleted);
-	const [verified, setVerified] = useState(formState.fieldValues.verified);
-	const handleSubmitAction = async (e: SyntheticEvent) => {
-		// setErrorMessage("");
-		// setSearchStatus("pending");
-		// setSuggestionsListOpen(true);
-		// setSuggestions([]);
-
-		e.preventDefault();
-
-		const target = e.target as typeof e.target & {
-			latitude: { value: number };
-		};
-	};
-
-	// useEffect(() => {
-	//     if (formState.message === "success") {
-	//         formRef.current?.reset();
-	//     }
-	// }, [formState]);
-
-	return (
-		<form
-			ref={formRef}
-			action={formAction}
-			// onSubmit={handleSubmitAction}
-			// onSubmit={async (e) => {
-			//     e.preventDefault();
-			//     formAction.;
-			// }}
-			className="space-y-4"
-		>
-			<AlertDialogHeader>
-				<AlertDialogTitle>Edit Mosque Location</AlertDialogTitle>
-			</AlertDialogHeader>
-			<input className="hidden h-0 w-0" name="id" type="text" defaultValue={formState.fieldValues.id} required />
-			<div className="flex-1 flex flex-col items-center py-2 w-full xs:w-auto">
-				<Input
-					type="text"
-					placeholder="Mosque Name"
-					name="name"
-					disabled={
-						formState.message === "success" ||
-						(!place.verified &&
-							Session?.user.role === "USER" &&
-							(Session?.user.reputation === "FAKE" || Session?.user.id !== place.createdById))
-					}
-					defaultValue={formState.fieldValues.name}
-					required
-					className=" min-w-[10rem]  border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md bg-slate-100 dark:bg-slate-600 p-2"
-				/>
-				<span className="text-left text-sm text-red-400 min-h-4 inline-block">{formState?.errors?.name}</span>
-			</div>
-			{Session?.user.role !== "USER" && (
-				<div className="flex  justify-around gap-x-2 gap-y-8 pb-4 flex-wrap">
-					<div className={`flex items-center space-x-2 ${verified ? "text-green-600" : ""}`}>
-						<Checkbox
-							checked={verified}
-							onCheckedChange={() => setVerified(!verified)}
-							id="verified"
-							name="verified"
-							disabled={formState.message === "success" || (place.verified && Session?.user.role !== "OWNER")}
-							defaultChecked={formState.fieldValues.verified}
-							className={`${
-								verified ? "data-[state=checked]:bg-secondary data-[state=checked]:text-text-green-600" : ""
-							}`}
-						/>
-						<Label className="" htmlFor="verified">
-							Verified
-						</Label>
-					</div>
-					<div className={`flex items-center space-x-2 ${hidden ? "opacity-50" : "opacity-100"}`}>
-						<Checkbox
-							checked={hidden}
-							onCheckedChange={() => setHidden(!hidden)}
-							id="hidden"
-							name="hidden"
-							disabled={formState.message === "success"}
-							defaultChecked={formState.fieldValues.hidden}
-						/>
-						<Label className="" htmlFor="hidden">
-							Hidden
-						</Label>
-					</div>
-					{Session?.user.role === "OWNER" && (
-						<div className="flex items-center space-x-2">
-							<Switch
-								checked={deleted}
-								onCheckedChange={() => setDeleted(!deleted)}
-								id="deleted"
-								name="deleted"
-								disabled={formState.message === "success"}
-								defaultChecked={formState.fieldValues.deleted}
-							/>
-							<Label
-								htmlFor="deleted"
-								className={` ${deleted ? "text-destructive font-medium" : "text-destructive/50 font-light"}`}
-							>
-								Deleted
-							</Label>
-						</div>
-					)}
-				</div>
-			)}
-			<div className="flex justify-between xs:items-center gap-x-2 flex-col  xs:flex-row ">
-				<div className="flex-1">
-					<Input
-						type="number"
-						placeholder="Mosque Latitude"
-						name={
-							formState.message === "success" ||
-							(place.verified && Session?.user.role !== "OWNER") ||
-							(!place.verified && Session?.user.role === "USER" && Session?.user.id !== place.createdById)
-								? "aa"
-								: "latitude"
-						}
-						disabled={
-							formState.message === "success" ||
-							(place.verified && Session?.user.role !== "OWNER") ||
-							(!place.verified && Session?.user.role === "USER" && Session?.user.id !== place.createdById)
-						}
-						defaultValue={formState.fieldValues.latitude}
-						className=" border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md bg-slate-100 dark:bg-slate-600 p-2"
-						required
-					/>
-					{formState.message === "success" ||
-						(place.verified && Session?.user.role !== "OWNER") ||
-						(!place.verified && Session?.user.role === "USER" && Session?.user.id !== place.createdById ? (
-							<Input
-								type="number"
-								placeholder="Mosque Latitude"
-								name="latitude"
-								defaultValue={formState.fieldValues.latitude}
-								className="hidden w-0 h-0"
-								required
-							/>
-						) : null)}
-					<span className="text-left text-sm text-red-400 min-h-4 inline-block">{formState?.errors?.latitude}</span>
-				</div>
-				<div className="flex-1">
-					<Input
-						type="number"
-						placeholder="Mosque Longitude"
-						name="longitude"
-						disabled={
-							formState.message === "success" ||
-							(place.verified && Session?.user.role !== "OWNER") ||
-							(!place.verified && Session?.user.role === "USER" && Session?.user.id !== place.createdById)
-						}
-						defaultValue={formState.fieldValues.longitude}
-						className="  border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md bg-slate-100 dark:bg-slate-600 p-2"
-					/>
-					<span className="text-left text-sm text-red-400 min-h-4 inline-block">{formState?.errors?.longitude}</span>
-				</div>
-			</div>
-			<div className="flex justify-between xs:items-center gap-x-2 flex-col  xs:flex-row">
-				<div className="flex-1">
-					<Input
-						type="text"
-						placeholder=" اسم المسجد بالعربي"
-						name="arName"
-						disabled={
-							formState.message === "success" ||
-							(!place.verified &&
-								Session?.user.role === "USER" &&
-								(Session?.user.reputation === "FAKE" || Session?.user.id !== place.createdById))
-						}
-						defaultValue={formState.fieldValues.arName || ""}
-						className="text-right border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md bg-slate-100 dark:bg-slate-600 p-2"
-					/>
-					<span className="text-left text-sm text-red-400 min-h-4 inline-block">{formState?.errors?.arName}</span>
-				</div>
-				<div className="flex-1">
-					<Input
-						type="text"
-						placeholder="Mosque Name in English"
-						name="enName"
-						disabled={
-							formState.message === "success" ||
-							(!place.verified &&
-								Session?.user.role === "USER" &&
-								(Session?.user.reputation === "FAKE" || Session?.user.id !== place.createdById))
-						}
-						defaultValue={formState.fieldValues.enName || ""}
-						className="border-none focus-visible:ring-0 focus-visible:ring-offset-0 outline-none rounded-none rounded-l-md bg-slate-100 dark:bg-slate-600 p-2"
-					/>
-					<span className="text-left text-sm text-red-400 min-h-4 inline-block">{formState?.errors?.enName}</span>
-				</div>
-			</div>
-			<AlertDialogFooter className="">
-				<AlertDialogCancel>
-					{formState.message !== "success" ? "Cancel" : <CheckCircle className="w-6 h-6 shrink-0 text-green-400" />}
-				</AlertDialogCancel>
-
-				{formState.message !== "success" && <SubmitButton />}
-			</AlertDialogFooter>
-		</form>
-	);
-}
-
-const EditForm = ({ place }: EditPlaceFormProps) => {
+const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 	const form = useForm<z.infer<typeof EditPlaceSchema>>({
 		resolver: zodResolver(EditPlaceSchema),
 		defaultValues: place,
@@ -258,92 +35,288 @@ const EditForm = ({ place }: EditPlaceFormProps) => {
 
 	const {
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitSuccessful, defaultValues, isDirty, isSubmitting },
 		control,
 	} = form;
-
-	const [successfulSubmit, setSuccessfulSubmit] = useState(false);
+	const { data: Session, status } = useSession();
+	const [serverError, setServerError] = useState("");
 
 	const onSubmit = async (values: unknown) => {
+		console.log("🚀 ~ file: edit-place-form.tsx:45 ~ onSubmit ~ values:", values);
+		setServerError("");
 		const validateFrom = EditPlaceSchema.safeParse(values);
 
 		if (!validateFrom.success) return;
 
 		const actionResult = await updateMosqueLocation(validateFrom.data);
 
-		if (responseData.errors) {
-			const errors = responseData.errors;
+		if (actionResult.status === "Error") {
+			const errors = actionResult.errors;
 
 			if (errors.name) {
 				form.setError("name", {
 					type: "server",
 					message: errors.name,
 				});
-			} else if (errors.email) {
-				form.setError("email", {
+			} else if (errors.arName) {
+				form.setError("arName", {
 					type: "server",
-					message: errors.email,
+					message: errors.arName,
 				});
-			} else if (errors.phone) {
-				form.setError("phone", {
+			} else if (errors.enName) {
+				form.setError("enName", {
 					type: "server",
-					message: errors.phone,
+					message: errors.enName,
 				});
-			} else if (errors.subject) {
-				form.setError("subject", {
+			} else if (errors.image) {
+				form.setError("image", {
 					type: "server",
-					message: errors.subject,
+					message: errors.image,
 				});
-			} else if (errors.message) {
-				form.setError("message", {
+			} else if (errors.latitude) {
+				form.setError("latitude", {
 					type: "server",
-					message: errors.message,
+					message: errors.latitude,
+				});
+			} else if (errors.longitude) {
+				form.setError("longitude", {
+					type: "server",
+					message: errors.longitude,
+				});
+			} else if (errors.deleted) {
+				form.setError("deleted", {
+					type: "server",
+					message: errors.deleted,
+				});
+			} else if (errors.hidden) {
+				form.setError("hidden", {
+					type: "server",
+					message: errors.hidden,
+				});
+			} else if (errors.verified) {
+				form.setError("verified", {
+					type: "server",
+					message: errors.verified,
 				});
 			} else {
-				alert("Something went wrong!");
+				setServerError(errors.serverError ?? "Server Error");
 			}
-		} else {
-			setSuccessfulSubmit(true);
-			reset();
-			// timer;
 		}
 	};
 
 	return (
 		<Form {...form}>
-			<form onSubmit={handleSubmit(onSubmit)} className="w-full">
-				<input className="hidden h-0 w-0" name="id" type="text" defaultValue={defaultValues.id} required />
+			<form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 bg-background">
+				<AlertDialogHeader>
+					<AlertDialogTitle>Edit Mosque Location</AlertDialogTitle>
+					<p className="font-medium min-h-4 text-destructive">{serverError}</p>
+				</AlertDialogHeader>
+				<input className="hidden w-0 h-0" name="id" type="text" defaultValue={defaultValues?.id} required />
 				<div className="space-y-2">
 					<FormField
 						control={control}
-						name=""
+						name="name"
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Mosque Name</FormLabel>
 								<FormControl>
-									<Input placeholder="Mosque Name" {...field} />
+									<Input
+										placeholder="Mosque Name"
+										{...field}
+										disabled={
+											isSubmitSuccessful ||
+											(!defaultValues?.verified &&
+												Session?.user.role === "USER" &&
+												(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+										}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={control}
-						name="password"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Password</FormLabel>
-								<FormControl>
-									<Input type="password" placeholder="Enter your password" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					<div
+						className={` ${
+							Session?.user.role === "USER" ? "hidden" : "flex"
+						} items-center  justify-around gap-x-4 gap-y-8 flex-wrap`}
+					>
+						<FormField
+							control={control}
+							name="verified"
+							render={({ field: { value, onChange, ...fields } }) => (
+								<FormItem className="flex items-center gap-x-3 ">
+									<FormLabel className={`mt-2 ${value ? "text-green-600" : ""}`}>Verified</FormLabel>
+									<FormControl>
+										<Checkbox
+											{...fields}
+											checked={value}
+											onCheckedChange={onChange}
+											className={`${
+												value ? "data-[state=checked]:bg-secondary data-[state=checked]:text-green-600" : ""
+											}`}
+											disabled={isSubmitSuccessful || (place.verified && Session?.user.role !== "OWNER")}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={control}
+							name="hidden"
+							render={({ field: { value, onChange, ...fields } }) => (
+								<FormItem
+									className={`items-center  gap-x-3  ${Session?.user.role !== "USER" ? "flex " : "hidden"} ${
+										value ? "opacity-50" : "opacity-100"
+									}`}
+								>
+									<FormLabel className="mt-2">Hidden</FormLabel>
+									<FormControl>
+										<Checkbox
+											{...fields}
+											checked={value}
+											onCheckedChange={onChange}
+											disabled={isSubmitSuccessful || Session?.user.role === "USER"}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={control}
+							name="deleted"
+							render={({ field: { value, onChange, ...fields } }) => (
+								<FormItem
+									className={` ${value ? "text-destructive font-medium" : "text-destructive/50 font-light"} ${
+										Session?.user.role !== "OWNER" ? "hidden" : "block"
+									}`}
+								>
+									<FormControl className="mx-2 mt-2 ">
+										<Switch {...fields} checked={value} onCheckedChange={onChange} disabled={isSubmitSuccessful} />
+									</FormControl>
+									<FormLabel className="mb-5">deleted</FormLabel>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					<div className="grid grid-cols-1 grid-rows-2 gap-4 xs:grid-cols-2 xs:grid-rows-1">
+						<FormField
+							control={control}
+							name="latitude"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>latitude</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											type="number"
+											className="p-2 border-none rounded-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-l-md bg-slate-100 dark:bg-slate-600"
+											disabled={
+												isSubmitSuccessful ||
+												(defaultValues?.verified && Session?.user.role !== "OWNER") ||
+												(!defaultValues?.verified && Session?.user.role === "USER")
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={control}
+							name="longitude"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>longitude</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											type="number"
+											className="p-2 border-none rounded-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-l-md bg-slate-100 dark:bg-slate-600"
+											disabled={
+												isSubmitSuccessful ||
+												(defaultValues?.verified && Session?.user.role !== "OWNER") ||
+												(!defaultValues?.verified && Session?.user.role === "USER")
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					<div className="grid grid-cols-1 grid-rows-2 gap-4 xs:grid-cols-2 xs:grid-rows-1">
+						<FormField
+							control={control}
+							name="arName"
+							render={({ field: { value, ...fields } }) => (
+								<FormItem className="flex-1">
+									<FormLabel>اسم المسجد بالعربي</FormLabel>
+									<FormControl>
+										<Input
+											{...fields}
+											value={value ?? ""}
+											type="text"
+											className="p-2 text-right border-none rounded-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-l-md bg-slate-100 dark:bg-slate-600"
+											disabled={
+												isSubmitSuccessful ||
+												(!defaultValues?.verified &&
+													Session?.user.role === "USER" &&
+													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={control}
+							name="enName"
+							render={({ field: { value, ...fields } }) => (
+								<FormItem className="flex-1">
+									<FormLabel>Mosque Name in English</FormLabel>
+									<FormControl>
+										<Input
+											{...fields}
+											value={value ?? ""}
+											type="text"
+											className="p-2 border-none rounded-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-l-md bg-slate-100 dark:bg-slate-600"
+											disabled={
+												isSubmitSuccessful ||
+												(!defaultValues?.verified &&
+													Session?.user.role === "USER" &&
+													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
 				</div>
-				<Button className="w-full mt-6" type="submit">
-					Sign in
-				</Button>
+				<AlertDialogFooter className="">
+					{!isSubmitSuccessful || Object.keys(errors).length > 0 || serverError.length > 0 ? (
+						<>
+							<AlertDialogCancel>Cancel</AlertDialogCancel>
+							<Button disabled={!isDirty} type="submit">
+								{isSubmitting ? <LoaderIcon className="w-6 h-6 shrink-0 animate-spin" /> : "Submit"}
+							</Button>
+						</>
+					) : (
+						<AlertDialogAction>
+							<Button variant={"outline"}>
+								<CheckCircle className="w-6 h-6 text-green-400 shrink-0" />
+							</Button>
+						</AlertDialogAction>
+					)}
+				</AlertDialogFooter>
 			</form>
 		</Form>
 	);

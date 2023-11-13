@@ -7,7 +7,7 @@ const prismaClientSingleton = () => {
             db: {
                 url:
                     env.NODE_ENV !== "production"
-                        ? `${env.DATABASE_DEV_URL}`
+                        ? `${env.DATABASE_URL}`
                         : `${env.DATABASE_URL}?pgbouncer=true&connect_timeout=10&pool_timeout=10`,
             },
         },
