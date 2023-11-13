@@ -64,18 +64,11 @@ export const getSuggestions = async (searchInput: string) => {
 	}
 };
 
-<<<<<<< HEAD
-export const addMosqueLocation = async () => {
-    //TODO: check if the user has permission to suggest a location
-    try {
-        const headersData = headers();
-=======
 export const addMosqueLocation = async (
 	prevState: AddPlaceFormState,
 	formData: FormData
 ): Promise<AddPlaceFormState> => {
 	const name = formData.get("name") as string | null;
->>>>>>> dev
 
 	try {
 		const validatePlaceName = addPlaceSchema.safeParse({
@@ -105,21 +98,6 @@ export const addMosqueLocation = async (
 				},
 			};
 
-<<<<<<< HEAD
-        const queriesObjects = new URLSearchParams(queriesString);
-        const searchParams = {
-            lat: queriesObjects.get("lat"),
-            lon: queriesObjects.get("lon"),
-        };
-        const validatedSearchParams =
-            leafletMapPageSearchParameterSchema.safeParse(searchParams);
-        //TODO: add the suggestion the database to be added later
-
-        if (!validatedSearchParams.success) return null;
-    } catch (error) {
-        return null;
-    }
-=======
 		if (session.user.reputation === "FAKE") {
 			return {
 				message: "error",
@@ -468,5 +446,4 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 			errors: Object.keys(zodErrors).length > 0 ? zodErrors : { ...zodErrors, serverError: `${error}` },
 		};
 	}
->>>>>>> dev
 };
