@@ -5,7 +5,7 @@ import path from "path";
 if (process.env.NODE_ENV === "development") {
 	config({ path: ".env.dev.local", override: true });
 } else {
-	config({ override: true });
+	config({ path: ".env", override: true });
 }
 
 const envSchema = z.object({
