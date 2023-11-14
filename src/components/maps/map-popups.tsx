@@ -20,7 +20,7 @@ export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 					{(Session.user.role === "ADMIN" ||
 						Session.user.role === "OWNER" ||
 						(Session.user.role === "USER" &&
-							Session.user.reputation !== "FAKE" &&
+							Session.user.userReputation > 0 &&
 							place.verified === false &&
 							place.createdById === Session.user.id)) && (
 						<AlertDialogTrigger>

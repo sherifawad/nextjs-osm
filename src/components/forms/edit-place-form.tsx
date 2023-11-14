@@ -127,7 +127,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 											isSubmitSuccessful ||
 											(!defaultValues?.verified &&
 												Session?.user.role === "USER" &&
-												(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+												(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 										}
 									/>
 								</FormControl>
@@ -267,7 +267,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 												isSubmitSuccessful ||
 												(!defaultValues?.verified &&
 													Session?.user.role === "USER" &&
-													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+													(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 											}
 										/>
 									</FormControl>
@@ -291,7 +291,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 												isSubmitSuccessful ||
 												(!defaultValues?.verified &&
 													Session?.user.role === "USER" &&
-													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+													(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 											}
 										/>
 									</FormControl>

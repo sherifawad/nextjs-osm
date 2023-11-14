@@ -87,7 +87,7 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 
 	const addMosqueDialog = useMemo(
 		() =>
-			status === "authenticated" && Session.user.reputation !== "FAKE" ? (
+			status === "authenticated" && Session.user.userReputation > 0 ? (
 				<AlertDialog>
 					<AlertDialogTrigger>
 						<Button onClick={() => popUpRef.current?.closePopup()}>Add new Mosque Location</Button>
@@ -99,7 +99,7 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 			) : (
 				<Button onClick={() => signIn()}>Login to Add Mosque</Button>
 			),
-		[Session?.user?.reputation, status]
+		[Session?.user?.userReputation, status]
 	);
 
 	return (

@@ -98,7 +98,7 @@ export const addMosqueLocation = async (
 				},
 			};
 
-		if (session.user.reputation === "FAKE") {
+		if (session.user.userReputation < 1) {
 			return {
 				message: "error",
 				errors: {
