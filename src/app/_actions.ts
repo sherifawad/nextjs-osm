@@ -471,7 +471,7 @@ export const ratePlace = async ({
 	  }
 	| {
 			status: "Success";
-			data: REPUTATIONType;
+			rateCount: number;
 	  }
 > => {
 	try {
@@ -482,35 +482,66 @@ export const ratePlace = async ({
 				error: "UnAuthenticated",
 			};
 		}
-		const result = await db.placeRating.upsert({
+		const {
+			ratedPlace: {
+				_count: { rating: verifiedRating },
+			},
+		} = await db.placeRating.upsert({
 			where: {
 				placeId_userId: {
 					placeId,
 					userId: session.user.id,
 				},
 			},
+			update: {
+				placeReputation: placeRate,
+			},
 			create: {
 				placeReputation: placeRate,
 				ratedPlace: {
 					connect: {
-						id: session.user.id,
+						id: placeId,
 					},
 				},
 				ratedBy: {
 					connect: {
-						id: placeId,
+						id: session.user.id,
 					},
 				},
 			},
-			update: {
-				placeReputation: placeRate,
+			include: {
+				ratedPlace: {
+					select: {
+						_count: {
+							select: {
+								rating: {
+									where: {
+										AND: [
+											{ placeId },
+											{
+												placeReputation: "VERIFIED",
+											},
+										],
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const { _all } = await db.placeRating.count({
+			where: { placeId },
+			select: {
+				_all: true,
 			},
 		});
 
 		// revalidatePath("/leafletMap", "page");
 		return {
 			status: "Success",
-			data: placeRate,
+			rateCount: 2 * verifiedRating - _all,
 		};
 	} catch (error) {
 		if (error instanceof Error) {

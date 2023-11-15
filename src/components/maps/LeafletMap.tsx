@@ -66,12 +66,14 @@ type LeafletMapProps = {
 };
 
 function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon, places }: LeafletMapProps) {
+	const popUpRef = useRef<TMarker<any>>(null);
+	const MosqueMarkerRef = useRef<TMarker<any>>(null);
 	const { data: Session, status } = useSession();
+	const router = useRouter();
 
 	const [showPopUp, setShowPopUp] = useState(false);
 	const [clickedPosition, setClickedPosition] = useState<TPosition>(kabaPostion);
-	const router = useRouter();
-	const popUpRef = useRef<TMarker<any>>(null);
+	router.replace(`?lat=${initialLat}&lon=${initialLon}`);
 
 	const onContextMenuClick = (event: LeafletMouseEvent) => {
 		event.originalEvent.preventDefault();
@@ -80,8 +82,22 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 		setClickedPosition({ lat, lon: lng });
 		setShowPopUp(true);
 		popUpRef.current?.openPopup();
-		setCookie("lat", lat);
-		setCookie("lon", lng);
+		MosqueMarkerRef.current?.closePopup();
+
+		setCookie("lat", lat, { secure: true, sameSite: "none" });
+		setCookie("lon", lng, { secure: true, sameSite: "none" });
+		router.replace(`?lat=${lat}&lon=${lng}`);
+	};
+	const onMosqueClick = (event: LeafletMouseEvent) => {
+		event.originalEvent.preventDefault();
+		const { lat, lng } = event.latlng;
+		if (!lat || !lng) return;
+		setClickedPosition({ lat, lon: lng });
+		popUpRef.current?.closePopup();
+		MosqueMarkerRef.current?.openPopup();
+
+		setCookie("lat", lat, { secure: true, sameSite: "none" });
+		setCookie("lon", lng, { secure: true, sameSite: "none" });
 		router.replace(`?lat=${lat}&lon=${lng}`);
 	};
 
@@ -137,6 +153,7 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 			>
 				{places?.map((data) => (
 					<Marker
+						ref={MosqueMarkerRef}
 						key={data.id}
 						position={{
 							lat: data.latitude,
@@ -151,6 +168,9 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 								? mosqueVerifiedMarker
 								: mosqueUnVerifiedMarker
 						}
+						eventHandlers={{
+							click: onMosqueClick,
+						}}
 					>
 						<Popup>
 							<PlaceMarkPopUp place={data} />
@@ -165,28 +185,26 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 					contextmenu: onContextMenuClick,
 				}}
 			/>
-			{showPopUp ? (
-				<Marker
-					ref={popUpRef}
-					position={{
-						lat: clickedPosition.lat,
-						lng: clickedPosition.lon,
-					}}
-					icon={icon}
-				>
-					<Popup>
-						<div className="text-center">
-							<p>
-								Latitude: <span>{clickedPosition.lat}</span>
-							</p>
-							<p>
-								Longitude: <span>{clickedPosition.lon}</span>
-							</p>
-							{addMosqueDialog}
-						</div>
-					</Popup>
-				</Marker>
-			) : null}
+			<Marker
+				ref={popUpRef}
+				position={{
+					lat: clickedPosition.lat,
+					lng: clickedPosition.lon,
+				}}
+				icon={icon}
+			>
+				<Popup>
+					<div className="text-center">
+						<p>
+							Latitude: <span>{clickedPosition.lat}</span>
+						</p>
+						<p>
+							Longitude: <span>{clickedPosition.lon}</span>
+						</p>
+						{addMosqueDialog}
+					</div>
+				</Popup>
+			</Marker>
 		</MapContainer>
 	);
 }

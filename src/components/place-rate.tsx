@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DataBaseRating } from "@/lib/types";
 import { ratePlace } from "@/app/_actions";
 import { REPUTATIONType } from "@/schema/inputTypeSchemas/REPUTATIONSchema";
+import { useSearchParams } from "next/navigation";
 
 type PlaceRateProps = {
 	placeId: string;
@@ -14,15 +15,13 @@ type PlaceRateProps = {
 };
 
 function PlaceRate({ placeId, placeRating, userId = "" }: PlaceRateProps) {
-	const count = useMemo(() => {
-		if (placeRating.rating.length === 1) {
-			return placeRating._count.rating === 1 ? 1 : -1;
-		}
-		return placeRating._count.rating - placeRating.rating.length;
-	}, []);
+	const count = useMemo(
+		() => 2 * placeRating._count.rating - placeRating.rating.length,
+		[placeRating._count.rating, placeRating.rating.length]
+	);
 	const userRating: { placeReputation: REPUTATIONType; userId: string } | undefined = useMemo(
 		() => placeRating.rating.find((r) => r.userId === userId),
-		[]
+		[placeRating.rating, userId]
 	);
 	const [rateStatus, setRateStatus] = useState<REPUTATIONType | undefined>(userRating?.placeReputation);
 	const [rateCount, setRateCount] = useState<number>(count);
@@ -31,13 +30,9 @@ function PlaceRate({ placeId, placeRating, userId = "" }: PlaceRateProps) {
 		if (result.status === "Error") {
 			alert(result.error);
 		} else {
-			setRateStatus(result.data);
-			setRateCount((prev) => {
-				if (placeRating.rating.length === 1) {
-					return result.data === "VERIFIED" ? 1 : -1;
-				}
-				return result.data === "VERIFIED" ? prev + 1 : prev - 1;
-			});
+			console.log("🚀 ~ file: place-rate.tsx:40 ~ setRateCount ~ result.rateCount:", result.rateCount);
+			setRateStatus(type);
+			setRateCount(result.rateCount);
 		}
 	};
 

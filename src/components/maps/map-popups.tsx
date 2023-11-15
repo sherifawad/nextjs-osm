@@ -15,7 +15,7 @@ export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 
 	return (
 		<>
-			{status === "authenticated" && (
+			{status === "authenticated" ? (
 				<AlertDialog>
 					{Session.user.role === "ADMIN" ||
 					Session.user.role === "OWNER" ||
@@ -28,12 +28,16 @@ export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 							<Edit className="w-4 h-4 shrink-0" />
 						</AlertDialogTrigger>
 					) : (
-						<span className="font-bold text-lg">{place.arName || place.enName || place.name}</span>
+						<span className="font-bold text-lg text-center w-full block">
+							{place.arName || place.enName || place.name}
+						</span>
 					)}
 					<AlertDialogContent>
 						<EditPlaceForm place={place} />
 					</AlertDialogContent>
 				</AlertDialog>
+			) : (
+				<span className="font-bold text-lg text-center w-full block">{place.arName || place.enName || place.name}</span>
 			)}
 			<PlaceRate
 				placeId={place.id}
