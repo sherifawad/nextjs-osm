@@ -6,7 +6,7 @@ import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import React, { useMemo, useRef, useState } from "react";
-import { TPosition } from "@/lib/types";
+import { DataBasePlace, TPosition } from "@/lib/types";
 import { Button } from "../ui/button";
 import { setCookie } from "cookies-next";
 import {
@@ -62,7 +62,7 @@ const kabaPostion = {
 type LeafletMapProps = {
 	initialLat?: number;
 	initialLon?: number;
-	places: Place[];
+	places: DataBasePlace[];
 };
 
 function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon, places }: LeafletMapProps) {

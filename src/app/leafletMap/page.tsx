@@ -16,45 +16,74 @@ const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 // export const dynamic = "force-dynamic";
 // export const revalidate = 0;
 
-const getPlaces = async ({ role, userId }: { role: RoleType | undefined; userId: string | undefined }) => {
+const getPlaces = async ({ role }: { role: RoleType | undefined }) => {
 	if (role === "OWNER") {
-		return await db.place.findMany();
+		return await db.place.findMany({
+			include: {
+				rating: {
+					select: {
+						userId: true,
+						placeReputation: true,
+					},
+				},
+				_count: {
+					select: {
+						rating: {
+							where: {
+								placeReputation: "VERIFIED",
+							},
+						},
+					},
+				},
+			},
+		});
 	}
 	if (role === "ADMIN") {
 		return await db.place.findMany({
 			where: {
 				deleted: false,
 			},
-		});
-	}
-	if (userId) {
-		return await db.place.findMany({
-			where: {
-				OR: [
-					{
-						AND: {
-							deleted: false,
-							hidden: false,
-							verified: true,
+			include: {
+				rating: {
+					select: {
+						userId: true,
+						placeReputation: true,
+					},
+				},
+				_count: {
+					select: {
+						rating: {
+							where: {
+								placeReputation: "VERIFIED",
+							},
 						},
 					},
-					{
-						AND: {
-							deleted: false,
-							hidden: false,
-							verified: false,
-							createdById: userId,
-						},
-					},
-				],
+				},
 			},
 		});
 	}
+
 	return await db.place.findMany({
 		where: {
 			deleted: false,
 			hidden: false,
-			verified: true,
+		},
+		include: {
+			rating: {
+				select: {
+					userId: true,
+					placeReputation: true,
+				},
+			},
+			_count: {
+				select: {
+					rating: {
+						where: {
+							placeReputation: "VERIFIED",
+						},
+					},
+				},
+			},
 		},
 	});
 };
@@ -64,7 +93,7 @@ type leafletMapPageProps = {
 };
 async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 	const session = await getServerSession(authOptions);
-	const dataBasePlaces = await getPlaces({ role: session?.user.role, userId: session?.user?.id });
+	const dataBasePlaces = await getPlaces({ role: session?.user.role });
 	let initialLat: number | undefined = undefined;
 	let initialLon: number | undefined = undefined;
 	let initialSearch: string | undefined = undefined;

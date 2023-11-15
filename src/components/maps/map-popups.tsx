@@ -4,34 +4,42 @@ import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "../ui/alert
 import EditPlaceForm from "../forms/edit-place-form";
 import { useSession } from "next-auth/react";
 import { Place } from "@/schema/modelSchema";
+import PlaceRate from "../place-rate";
+import { DataBasePlace } from "@/lib/types";
 
 type PlaceMarkPopUpProps = {
-	place: Place;
+	place: DataBasePlace;
 };
 export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 	const { data: Session, status } = useSession();
 
 	return (
-		<div className="flex justify-between items-center gap-x-2">
-			<span className="font-medium text-lg">{place.arName || place.enName || place.name}</span>
-
+		<>
 			{status === "authenticated" && (
 				<AlertDialog>
-					{(Session.user.role === "ADMIN" ||
-						Session.user.role === "OWNER" ||
-						(Session.user.role === "USER" &&
-							Session.user.userReputation > 0 &&
-							place.verified === false &&
-							place.createdById === Session.user.id)) && (
-						<AlertDialogTrigger>
-							<Edit className="w-6 h-6 shrink-0" />
+					{Session.user.role === "ADMIN" ||
+					Session.user.role === "OWNER" ||
+					(Session.user.role === "USER" &&
+						Session.user.userReputation > 0 &&
+						place.verified === false &&
+						place.createdById === Session.user.id) ? (
+						<AlertDialogTrigger className="flex  items-center justify-center gap-x-2 w-full">
+							<span className="font-bold text-lg mt-1">{place.arName || place.enName || place.name}</span>
+							<Edit className="w-4 h-4 shrink-0" />
 						</AlertDialogTrigger>
+					) : (
+						<span className="font-bold text-lg">{place.arName || place.enName || place.name}</span>
 					)}
 					<AlertDialogContent>
 						<EditPlaceForm place={place} />
 					</AlertDialogContent>
 				</AlertDialog>
 			)}
-		</div>
+			<PlaceRate
+				placeId={place.id}
+				placeRating={{ _count: place._count, rating: place.rating }}
+				userId={Session?.user.id}
+			/>
+		</>
 	);
 }

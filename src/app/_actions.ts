@@ -13,6 +13,7 @@ import {
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
 import { EditPlaceSchema, addPlaceSchema } from "@/lib/validations/place-schema";
+import { REPUTATIONType } from "@/schema/inputTypeSchemas/REPUTATIONSchema";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 
@@ -436,7 +437,7 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 			},
 		});
 
-		revalidatePath("/leafletMap,", "page");
+		revalidatePath("/leafletMap");
 		return {
 			status: "Success",
 			data: result,
@@ -451,6 +452,76 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 		return {
 			status: "Error",
 			errors: Object.keys(zodErrors).length > 0 ? zodErrors : { ...zodErrors, serverError: `${error}` },
+		};
+	}
+};
+
+type ratePlaceProps = {
+	placeRate: REPUTATIONType;
+	placeId: string;
+};
+
+export const ratePlace = async ({
+	placeId,
+	placeRate,
+}: ratePlaceProps): Promise<
+	| {
+			status: "Error";
+			error: string;
+	  }
+	| {
+			status: "Success";
+			data: REPUTATIONType;
+	  }
+> => {
+	try {
+		const session = await getServerSession(authOptions);
+		if (!session) {
+			return {
+				status: "Error",
+				error: "UnAuthenticated",
+			};
+		}
+		const result = await db.placeRating.upsert({
+			where: {
+				placeId_userId: {
+					placeId,
+					userId: session.user.id,
+				},
+			},
+			create: {
+				placeReputation: placeRate,
+				ratedPlace: {
+					connect: {
+						id: session.user.id,
+					},
+				},
+				ratedBy: {
+					connect: {
+						id: placeId,
+					},
+				},
+			},
+			update: {
+				placeReputation: placeRate,
+			},
+		});
+
+		// revalidatePath("/leafletMap", "page");
+		return {
+			status: "Success",
+			data: placeRate,
+		};
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				status: "Error",
+				error: error.message,
+			};
+		}
+		return {
+			status: "Error",
+			error: `${error}`,
 		};
 	}
 };
