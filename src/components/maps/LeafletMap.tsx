@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { DataBasePlace } from "@/lib/types";
 import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
@@ -78,6 +78,10 @@ function LeafletMap({ places }: LeafletMapProps) {
 			place,
 		});
 	};
+
+	useEffect(() => {
+		console.log("🚀 ~ file: LeafletMap.tsx:83 ~ LeafletMap ~ location:", location);
+	}, [location]);
 
 	return (
 		<MapContainer center={[location.latitude, location.longitude]} zoom={17} className="h-full w-full z-0">

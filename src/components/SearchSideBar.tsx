@@ -1,12 +1,10 @@
 import { SearchStatus, Tominatim } from "@/lib/types";
 import { MapPinned, ShieldClose } from "lucide-react";
-import Link from "next/link";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 
 type SearchSideBarProps = {
 	suggestions: Tominatim[];
-	searchKey?: string;
 	searchStatus: SearchStatus;
 	suggestionsListOpen: boolean;
 	closeHandler: () => void;
@@ -18,7 +16,6 @@ function SearchSideBar({
 	searchStatus,
 	errorMessage,
 	suggestions,
-	searchKey,
 	suggestionsListOpen,
 	closeHandler,
 	handleLocationSelection,

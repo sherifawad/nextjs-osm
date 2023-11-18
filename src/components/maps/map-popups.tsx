@@ -1,14 +1,10 @@
 "use client";
 import { Edit } from "lucide-react";
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "../ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-dialog";
 import EditPlaceForm from "../forms/edit-place-form";
 import { useSession } from "next-auth/react";
-import { Place } from "@/schema/modelSchema";
 import PlaceRate from "../place-rate";
 import { DataBasePlace } from "@/lib/types";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import usePlace from "@/hooks/usePlace";
-import { Dispatch, SetStateAction, useMemo } from "react";
 
 type PlaceMarkPopUpProps = {
 	place: DataBasePlace;

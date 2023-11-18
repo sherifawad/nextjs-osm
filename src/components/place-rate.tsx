@@ -20,41 +20,11 @@ function PlaceRate() {
 	const searchParams = useSearchParams();
 	const { data: Session, status } = useSession();
 
-	// const [data, setData] = useState<placeRateSearchParameter>();
-
-	// useEffect(() => {
-	// 	const validateParams = placeRateSearchParameterSchema.safeParse(searchParams);
-	// 	if (validateParams.success) {
-	// 		setData({
-	// 			rate: validateParams.data.rate,
-	// 			count: validateParams.data.count,
-	// 			place: validateParams.data.place,
-	// 			lat: validateParams.data.lat,
-	// 			lon: validateParams.data.lon,
-	// 		});
-	// 		validateParams.data;
-	// 	}
-	// }, [searchParams]);
-
-	// const count = useMemo(
-	// 	() => 2 * placeRating._count.rating - placeRating.rating.length,
-	// 	[placeRating._count.rating, placeRating.rating.length]
-	// );
-	// const userRating: { placeReputation: REPUTATIONType; userId: string } | undefined = useMemo(
-	// 	() => placeRating.rating.find((r) => r.userId === userId),
-	// 	[placeRating.rating, userId]
-	// );
-	// const [rateStatus, setRateStatus] = useState<REPUTATIONType | undefined>(userRating?.placeReputation);
-	// const [rateCount, setRateCount] = useState<number>(count);
 	const ratingHandler = async (type: REPUTATIONType) => {
 		const result = await ratePlace({ placeRate: type });
 		if (result?.status === "Error") {
 			alert(result.error);
 		}
-		// else {
-		// 	setRateStatus(type);
-		// 	setRateCount(result.rateCount);
-		// }
 	};
 
 	return (

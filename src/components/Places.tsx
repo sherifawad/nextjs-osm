@@ -3,7 +3,7 @@
 import { getSuggestions } from "@/app/_actions";
 import { SearchStatus, Tominatim } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import z from "zod";
 import SearchForm from "./SearchForm";
 import SearchSideBar from "./SearchSideBar";
@@ -11,8 +11,6 @@ import usePlace from "@/hooks/usePlace";
 
 type PlacesProps = {
 	initialSearch?: string;
-	initialLat?: number;
-	initialLon?: number;
 };
 
 type TPlaceData = {
@@ -22,16 +20,7 @@ type TPlaceData = {
 	location: Tominatim;
 };
 
-function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
-	const [PlaceData, setPlaceData] = useState<TPlaceData>({
-		lat: initialLat,
-		long: initialLon,
-		search: initialSearch,
-		location: {
-			lat: 0,
-			lon: 0,
-		},
-	});
+function Places({ initialSearch }: PlacesProps) {
 	const { setLocationData } = usePlace();
 
 	const [searchStatus, setSearchStatus] = useState<SearchStatus>(undefined);
@@ -42,27 +31,10 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
 
 	const [searchTerm, setSearchTerm] = useState("");
 
-	useEffect(() => {
-		if (initialSearch) {
-			searchPlace(initialSearch);
-		}
-	}, [initialSearch]);
-
 	const onGeoSuccess = (locationInput: GeolocationPosition) => {
 		const lat = locationInput.coords.latitude;
 		const long = locationInput.coords.longitude;
 		setLocationData({ location: { latitude: lat, longitude: long } });
-		setPlaceData((prev) => ({
-			...prev,
-			lat,
-			long,
-			locations: {
-				lat,
-				lon: long,
-				display_name: "your location",
-			},
-			search: "",
-		}));
 	};
 
 	const handleGetLocation = () => {
@@ -71,7 +43,7 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
 		});
 	};
 
-	const searchPlace = async (input: unknown) => {
+	const searchPlace = useCallback(async (input: unknown) => {
 		setErrorMessage("");
 		setSearchStatus("pending");
 		setSuggestionsListOpen(true);
@@ -84,25 +56,21 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
 			setErrorMessage(validateData.error.issues[0].message);
 			return false;
 		}
-		const suggestions = await getSuggestions(decodeURI(validateData.data));
+		const suggestions = await getSuggestions(validateData.data);
 		if (suggestions === null || suggestions.length < 1) {
 			setSearchStatus("error");
 			setErrorMessage("could not find suggestions");
 			return false;
 		}
 
-		setSearchTerm(decodeURI(validateData.data));
+		setSearchTerm(validateData.data);
 
 		setSuggestions(suggestions);
 		setSearchStatus("success");
 		setErrorMessage("");
 
-		setPlaceData((prev) => ({
-			...prev,
-			search: validateData.data,
-		}));
 		return true;
-	};
+	}, []);
 
 	const handleLocationSelection = (selected: Tominatim) => {
 		setLocationData({ location: { latitude: selected.lat, longitude: selected.lon }, search: searchTerm });
@@ -117,20 +85,29 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
 
 		e.preventDefault();
 
-		const schema = z.string().min(3);
-
 		const target = e.target as typeof e.target & {
 			search: { value: string };
 		};
 
 		const searchResult = await searchPlace(target.search.value);
-		if (searchResult && PlaceData.lat && !isNaN(PlaceData.lat) && PlaceData.long && !isNaN(PlaceData.long)) {
+		if (searchResult) {
 			setLocationData({
-				location: { latitude: PlaceData.lat, longitude: PlaceData.long },
 				search: target.search.value,
 			});
 		}
 	};
+
+	const closeHandler = () => {
+		setSuggestionsListOpen(false);
+		setLocationData({});
+	};
+
+	useEffect(() => {
+		if (initialSearch) {
+			searchPlace(decodeURI(initialSearch));
+		}
+	}, [initialSearch, searchPlace]);
+
 	return (
 		<div
 			className={`md:absolute block ${
@@ -142,8 +119,7 @@ function Places({ initialSearch, initialLat, initialLon }: PlacesProps) {
 			</form>
 			<SearchSideBar
 				suggestions={suggestions}
-				searchKey={PlaceData.search}
-				closeHandler={() => setSuggestionsListOpen(false)}
+				closeHandler={closeHandler}
 				errorMessage={errorMessage}
 				suggestionsListOpen={suggestionsListOpen}
 				searchStatus={searchStatus}

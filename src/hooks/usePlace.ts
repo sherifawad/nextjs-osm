@@ -1,9 +1,12 @@
+"use client";
+
 import { DataBasePlace, PlaceLocation } from "@/lib/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type Marker as TMarker } from "leaflet/index";
+import { decode } from "punycode";
 
 const kaabaPosition = {
 	latitude: 21.42249,
@@ -25,7 +28,6 @@ function usePlace() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	// const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
 
 	const setLocationData = useCallback(
 		({
@@ -39,8 +41,8 @@ function usePlace() {
 		}) => {
 			try {
 				const params = new URLSearchParams(searchParams);
-				let latitude: number | undefined;
-				let longitude: number | undefined;
+				let latitude: number | undefined = parseFloat(searchParams.get("lat") ?? "");
+				let longitude: number | undefined = parseFloat(searchParams.get("lon") ?? "");
 				params.delete("count");
 				params.delete("rate");
 				params.delete("search");
@@ -92,7 +94,7 @@ function usePlace() {
 		const latitude = parseFloat(getCookie("lat") ?? "");
 		const longitude = parseFloat(getCookie("lon") ?? "");
 		if (latitude && longitude) {
-			setLocationData({ location: { latitude, longitude } });
+			setLocationData({ location: { latitude, longitude }, search: decodeURI(searchParams.get("search") ?? "") });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

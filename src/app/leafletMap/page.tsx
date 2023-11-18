@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import { cookies } from "next/headers";
-import { leafletMapPageSearchParameterSchema } from "@/lib/validations/searchParams-schema";
+import { leafletMapPageSearchParameterSchema, locationSchema } from "@/lib/validations/searchParams-schema";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,
@@ -88,6 +88,8 @@ const getPlaces = async ({ role }: { role: RoleType | undefined }) => {
 	});
 };
 
+type keyPair = { [key: string]: string[] };
+
 type leafletMapPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
 };
@@ -96,12 +98,15 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 	const dataBasePlaces = await getPlaces({ role: session?.user.role });
 	let initialLat: number | undefined = undefined;
 	let initialLon: number | undefined = undefined;
-	let initialSearch: string | undefined = undefined;
-	const parsedSearchParams = leafletMapPageSearchParameterSchema.safeParse(searchParams);
+	const initialSearch =
+		searchParams !== undefined && typeof searchParams !== "string"
+			? ((searchParams as keyPair)["search"] ?? "").toString()
+			: undefined;
+
+	const parsedSearchParams = locationSchema.safeParse(searchParams);
 	if (parsedSearchParams.success) {
 		initialLat = parsedSearchParams.data.lat;
 		initialLon = parsedSearchParams.data.lon;
-		initialSearch = parsedSearchParams.data.search;
 	} else {
 		const cookieStore = cookies();
 		const latCookies = parseFloat(cookieStore.get("lat")?.value ?? "");
@@ -115,7 +120,7 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 		<Container>
 			<div className="absolute inset-0 top-[5rem] overflow-hidden">
 				<div className="relative h-full ">
-					<Places initialSearch={initialSearch} initialLat={initialLat} initialLon={initialLon} />
+					<Places initialSearch={initialSearch} />
 					<LeafletMap initialLat={initialLat} initialLon={initialLon} places={dataBasePlaces} />
 				</div>
 			</div>
