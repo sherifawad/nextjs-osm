@@ -6,6 +6,9 @@ import { useSession } from "next-auth/react";
 import { Place } from "@/schema/modelSchema";
 import PlaceRate from "../place-rate";
 import { DataBasePlace } from "@/lib/types";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import usePlace from "@/hooks/usePlace";
+import { Dispatch, SetStateAction, useMemo } from "react";
 
 type PlaceMarkPopUpProps = {
 	place: DataBasePlace;
@@ -39,11 +42,7 @@ export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 			) : (
 				<span className="font-bold text-lg text-center w-full block">{place.arName || place.enName || place.name}</span>
 			)}
-			<PlaceRate
-				placeId={place.id}
-				placeRating={{ _count: place._count, rating: place.rating }}
-				userId={Session?.user.id}
-			/>
+			<PlaceRate />
 		</>
 	);
 }

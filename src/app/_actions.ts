@@ -10,15 +10,20 @@ import {
 	EditPlaceFormState,
 	updateMosqueLocationResult,
 } from "@/lib/types/forms-types";
-import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
 import { EditPlaceSchema, addPlaceSchema } from "@/lib/validations/place-schema";
-import { REPUTATIONType } from "@/schema/inputTypeSchemas/REPUTATIONSchema";
+import {
+	leafletMapPageSearchParameterSchema,
+	placeRateSchema,
+	placeRateSearchParameterSchema,
+} from "@/lib/validations/searchParams-schema";
+import REPUTATIONSchema, { REPUTATIONType } from "@/schema/inputTypeSchemas/REPUTATIONSchema";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 import { headers } from "next/headers";
 import { ZodError, z } from "zod";
+import { RedirectType, redirect } from "next/navigation";
 
 const placeDefaults: EditPlaceFieldValues = {
 	id: "",
@@ -461,20 +466,45 @@ type ratePlaceProps = {
 	placeId: string;
 };
 
-export const ratePlace = async ({
-	placeId,
-	placeRate,
-}: ratePlaceProps): Promise<
-	| {
-			status: "Error";
-			error: string;
-	  }
-	| {
-			status: "Success";
-			rateCount: number;
-	  }
-> => {
+export const ratePlace = async (data: unknown) => {
+	const ratePlaceSchema = z.object({
+		placeRate: REPUTATIONSchema,
+	});
+	let url: string | undefined;
 	try {
+		const validatedData = ratePlaceSchema.safeParse(data);
+		if (!validatedData.success) {
+			return {
+				status: "Error",
+				error: "InValid Input",
+			};
+		}
+		const headersData = headers();
+		const host = headersData.get("host");
+
+		const referer = headersData.get("referer");
+		const queriesString = referer?.split("?")[1];
+		if (!queriesString) {
+			return {
+				status: "Error",
+				error: "InValid URL Data",
+			};
+		}
+
+		const queriesObjects = new URLSearchParams(queriesString);
+		const searchParamsData = {
+			count: queriesObjects.get("count"),
+			lat: queriesObjects.get("lat"),
+			lon: queriesObjects.get("lon"),
+		};
+		const validatedParams = placeRateSearchParameterSchema.safeParse(searchParamsData);
+		if (!validatedParams.success) {
+			return {
+				status: "Error",
+				error: "InValid Params Data",
+			};
+		}
+
 		const session = await getServerSession(authOptions);
 		if (!session) {
 			return {
@@ -482,6 +512,20 @@ export const ratePlace = async ({
 				error: "UnAuthenticated",
 			};
 		}
+
+		const placeDb = await db.place.findFirst({
+			where: {
+				latitude: validatedParams.data.lat,
+				longitude: validatedParams.data.lon,
+			},
+		});
+		if (!placeDb) {
+			return {
+				status: "Error",
+				error: "Wrong Place",
+			};
+		}
+
 		const {
 			ratedPlace: {
 				_count: { rating: verifiedRating },
@@ -489,18 +533,18 @@ export const ratePlace = async ({
 		} = await db.placeRating.upsert({
 			where: {
 				placeId_userId: {
-					placeId,
+					placeId: placeDb.id,
 					userId: session.user.id,
 				},
 			},
 			update: {
-				placeReputation: placeRate,
+				placeReputation: validatedData.data.placeRate,
 			},
 			create: {
-				placeReputation: placeRate,
+				placeReputation: validatedData.data.placeRate,
 				ratedPlace: {
 					connect: {
-						id: placeId,
+						id: placeDb.id,
 					},
 				},
 				ratedBy: {
@@ -517,7 +561,7 @@ export const ratePlace = async ({
 								rating: {
 									where: {
 										AND: [
-											{ placeId },
+											{ placeId: placeDb.id },
 											{
 												placeReputation: "VERIFIED",
 											},
@@ -532,17 +576,17 @@ export const ratePlace = async ({
 		});
 
 		const { _all } = await db.placeRating.count({
-			where: { placeId },
+			where: { placeId: placeDb.id },
 			select: {
 				_all: true,
 			},
 		});
 
+		const newParams = new URLSearchParams(queriesObjects);
+		newParams.set("count", `${2 * verifiedRating - _all}`);
+		newParams.set("rate", `${validatedData.data.placeRate}`);
 		// revalidatePath("/leafletMap", "page");
-		return {
-			status: "Success",
-			rateCount: 2 * verifiedRating - _all,
-		};
+		url = `/leafletMap?${newParams}`;
 	} catch (error) {
 		if (error instanceof Error) {
 			return {
@@ -554,5 +598,9 @@ export const ratePlace = async ({
 			status: "Error",
 			error: `${error}`,
 		};
+	} finally {
+		if (url) {
+			redirect(url, RedirectType.replace);
+		}
 	}
 };

@@ -2,12 +2,12 @@ import Places from "@/components/Places";
 import Container from "@/components/ui/Container";
 
 import dynamic from "next/dynamic";
-import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { db } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import { cookies } from "next/headers";
+import { leafletMapPageSearchParameterSchema } from "@/lib/validations/searchParams-schema";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,

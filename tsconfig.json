@@ -20,6 +20,7 @@
 		],
 		"paths": {
 			"@/schema/*": ["./src/lib/validations/generated/prisma/*"],
+			"@/ui/*": ["./src/components/ui/*"],
 			"@/components/*": ["./src/components/*"],
 			"@/*": ["./src/*"]
 		}
