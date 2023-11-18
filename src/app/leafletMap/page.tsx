@@ -8,6 +8,8 @@ import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import { cookies } from "next/headers";
 import { leafletMapPageSearchParameterSchema, locationSchema } from "@/lib/validations/searchParams-schema";
+import { LoaderIcon } from "lucide-react";
+import { object } from "zod";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,
@@ -88,6 +90,12 @@ const getPlaces = async ({ role }: { role: RoleType | undefined }) => {
 	});
 };
 
+const LoaderIndicator = () => (
+	<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 grid place-items-center bg-foreground h-20 w-20 shadow-xl  rounded-lg ">
+		<LoaderIcon className="shrink-0 animate-spin text-background" />
+	</div>
+);
+
 type keyPair = { [key: string]: string[] };
 
 type leafletMapPageProps = {
@@ -102,6 +110,7 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 		searchParams !== undefined && typeof searchParams !== "string"
 			? ((searchParams as keyPair)["search"] ?? "").toString()
 			: undefined;
+	const loading = typeof searchParams === "object" ? Object.keys(searchParams).includes("loading") : undefined;
 
 	const parsedSearchParams = locationSchema.safeParse(searchParams);
 	if (parsedSearchParams.success) {
@@ -119,6 +128,7 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 	return (
 		<Container>
 			<div className="absolute inset-0 top-[5rem] overflow-hidden">
+				{loading && <LoaderIndicator />}
 				<div className="relative h-full ">
 					<Places initialSearch={initialSearch} />
 					<LeafletMap initialLat={initialLat} initialLon={initialLon} places={dataBasePlaces} />

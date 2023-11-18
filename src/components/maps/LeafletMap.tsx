@@ -10,6 +10,7 @@ import { DataBasePlace } from "@/lib/types";
 import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
 import usePlace from "@/hooks/usePlace";
+import { LoaderIcon } from "lucide-react";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -44,15 +45,16 @@ type LeafletMapProps = {
 	places: DataBasePlace[];
 };
 
+const LoaderIndicator = () => (
+	<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 grid place-items-center bg-foreground h-20 w-20 shadow-xl  rounded-lg ">
+		<LoaderIcon className="shrink-0 animate-spin text-background" />
+	</div>
+);
+
 function LeafletMap({ places }: LeafletMapProps) {
-	const { location, setLocationData, place, kaabaPosition } = usePlace();
+	const { location, setLocationData, place, kaabaPosition, searchParams } = usePlace();
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
-	// useMemo(() => {
-	// 	if (initialLat && initialLon) {
-	// 		setLocation({ latitude: initialLat, longitude: initialLon });
-	// 	}
-	// }, [initialLat, initialLon, setLocation]);
 
 	const addMosqueDialog = useMemo(() => {
 		if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
@@ -78,10 +80,6 @@ function LeafletMap({ places }: LeafletMapProps) {
 			place,
 		});
 	};
-
-	useEffect(() => {
-		console.log("🚀 ~ file: LeafletMap.tsx:83 ~ LeafletMap ~ location:", location);
-	}, [location]);
 
 	return (
 		<MapContainer center={[location.latitude, location.longitude]} zoom={17} className="h-full w-full z-0">
@@ -162,8 +160,8 @@ function LeafletMap({ places }: LeafletMapProps) {
 			</Marker>
 
 			<CampaignMapEventHandler
-				lat={location.latitude}
-				lon={location.longitude}
+				lat={parseFloat(searchParams.get("lat") ?? "")}
+				lon={parseFloat(searchParams.get("lon") ?? "")}
 				eventHandlers={{
 					contextmenu: onContextMenuClick,
 				}}

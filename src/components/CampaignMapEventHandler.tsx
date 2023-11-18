@@ -15,7 +15,7 @@ export function CampaignMapEventHandler({ lat, lon, eventHandlers }: CampaignMap
 	const map = useMap();
 
 	useEffect(() => {
-		if (lat && lon) {
+		if (lat && !isNaN(lat) && lon && !isNaN(lon)) {
 			map.setView({ lat, lng: lon }, map.getZoom(), {
 				animate: true,
 			});

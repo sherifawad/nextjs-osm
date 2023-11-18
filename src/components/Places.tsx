@@ -21,7 +21,7 @@ type TPlaceData = {
 };
 
 function Places({ initialSearch }: PlacesProps) {
-	const { setLocationData } = usePlace();
+	const { setLocationData, SetLoadingState } = usePlace();
 
 	const [searchStatus, setSearchStatus] = useState<SearchStatus>(undefined);
 	const [errorMessage, setErrorMessage] = useState<string>("");
@@ -38,7 +38,11 @@ function Places({ initialSearch }: PlacesProps) {
 	};
 
 	const handleGetLocation = () => {
+		SetLoadingState(true);
+
 		navigator.geolocation.getCurrentPosition(onGeoSuccess, (error) => {
+			SetLoadingState(false);
+
 			alert(error.message);
 		});
 	};

@@ -22,12 +22,30 @@ function usePlace() {
 		latitude: kaabaPosition.latitude,
 		longitude: kaabaPosition.longitude,
 	});
+
+	// const [loading, setLoading] = useState(false);
 	const [place, setPlace] = useState<DataBasePlace | null>();
 
 	const { data: Session, status } = useSession();
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+
+	const SetLoadingState = useCallback(
+		(state: boolean) => {
+			// if (state === loading) return;
+			const params = new URLSearchParams(searchParams);
+			if (state) {
+				// setLoading(true);
+				params.set("loading", "");
+			} else {
+				params.delete("loading");
+				// setLoading(false);
+			}
+			router.replace(`${pathname}?${params}`);
+		},
+		[pathname, router, searchParams]
+	);
 
 	const setLocationData = useCallback(
 		({
@@ -93,6 +111,7 @@ function usePlace() {
 	useEffect(() => {
 		const latitude = parseFloat(getCookie("lat") ?? "");
 		const longitude = parseFloat(getCookie("lon") ?? "");
+		// setLoading(false);
 		if (latitude && longitude) {
 			setLocationData({ location: { latitude, longitude }, search: decodeURI(searchParams.get("search") ?? "") });
 		}
@@ -104,6 +123,8 @@ function usePlace() {
 		kaabaPosition,
 		setLocationData,
 		place,
+		searchParams,
+		SetLoadingState,
 	};
 }
 
