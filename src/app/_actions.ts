@@ -10,14 +10,20 @@ import {
 	EditPlaceFormState,
 	updateMosqueLocationResult,
 } from "@/lib/types/forms-types";
-import { leafletMapPageSearchParameterSchema } from "@/lib/validations";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
 import { EditPlaceSchema, addPlaceSchema } from "@/lib/validations/place-schema";
+import {
+	leafletMapPageSearchParameterSchema,
+	placeRateSchema,
+	placeRateSearchParameterSchema,
+} from "@/lib/validations/searchParams-schema";
+import REPUTATIONSchema, { REPUTATIONType } from "@/schema/inputTypeSchemas/REPUTATIONSchema";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 import { headers } from "next/headers";
 import { ZodError, z } from "zod";
+import { RedirectType, redirect } from "next/navigation";
 
 const placeDefaults: EditPlaceFieldValues = {
 	id: "",
@@ -98,7 +104,7 @@ export const addMosqueLocation = async (
 				},
 			};
 
-		if (session.user.reputation === "FAKE") {
+		if (session.user.userReputation < 1) {
 			return {
 				message: "error",
 				errors: {
@@ -436,7 +442,7 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 			},
 		});
 
-		revalidatePath("/leafletMap,", "page");
+		revalidatePath("/leafletMap");
 		return {
 			status: "Success",
 			data: result,
@@ -452,5 +458,149 @@ export const updateMosqueLocation = async (place: unknown): Promise<updateMosque
 			status: "Error",
 			errors: Object.keys(zodErrors).length > 0 ? zodErrors : { ...zodErrors, serverError: `${error}` },
 		};
+	}
+};
+
+type ratePlaceProps = {
+	placeRate: REPUTATIONType;
+	placeId: string;
+};
+
+export const ratePlace = async (data: unknown) => {
+	const ratePlaceSchema = z.object({
+		placeRate: REPUTATIONSchema,
+	});
+	let url: string | undefined;
+	try {
+		const validatedData = ratePlaceSchema.safeParse(data);
+		if (!validatedData.success) {
+			return {
+				status: "Error",
+				error: "InValid Input",
+			};
+		}
+		const headersData = headers();
+		const host = headersData.get("host");
+
+		const referer = headersData.get("referer");
+		const queriesString = referer?.split("?")[1];
+		if (!queriesString) {
+			return {
+				status: "Error",
+				error: "InValid URL Data",
+			};
+		}
+
+		const queriesObjects = new URLSearchParams(queriesString);
+		const searchParamsData = {
+			count: queriesObjects.get("count"),
+			lat: queriesObjects.get("lat"),
+			lon: queriesObjects.get("lon"),
+		};
+		const validatedParams = placeRateSearchParameterSchema.safeParse(searchParamsData);
+		if (!validatedParams.success) {
+			return {
+				status: "Error",
+				error: "InValid Params Data",
+			};
+		}
+
+		const session = await getServerSession(authOptions);
+		if (!session) {
+			return {
+				status: "Error",
+				error: "UnAuthenticated",
+			};
+		}
+
+		const placeDb = await db.place.findFirst({
+			where: {
+				latitude: validatedParams.data.lat,
+				longitude: validatedParams.data.lon,
+			},
+		});
+		if (!placeDb) {
+			return {
+				status: "Error",
+				error: "Wrong Place",
+			};
+		}
+
+		const {
+			ratedPlace: {
+				_count: { rating: verifiedRating },
+			},
+		} = await db.placeRating.upsert({
+			where: {
+				placeId_userId: {
+					placeId: placeDb.id,
+					userId: session.user.id,
+				},
+			},
+			update: {
+				placeReputation: validatedData.data.placeRate,
+			},
+			create: {
+				placeReputation: validatedData.data.placeRate,
+				ratedPlace: {
+					connect: {
+						id: placeDb.id,
+					},
+				},
+				ratedBy: {
+					connect: {
+						id: session.user.id,
+					},
+				},
+			},
+			include: {
+				ratedPlace: {
+					select: {
+						_count: {
+							select: {
+								rating: {
+									where: {
+										AND: [
+											{ placeId: placeDb.id },
+											{
+												placeReputation: "VERIFIED",
+											},
+										],
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const { _all } = await db.placeRating.count({
+			where: { placeId: placeDb.id },
+			select: {
+				_all: true,
+			},
+		});
+
+		const newParams = new URLSearchParams(queriesObjects);
+		newParams.set("count", `${2 * verifiedRating - _all}`);
+		newParams.set("rate", `${validatedData.data.placeRate}`);
+		// revalidatePath("/leafletMap", "page");
+		url = `/leafletMap?${newParams}`;
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				status: "Error",
+				error: error.message,
+			};
+		}
+		return {
+			status: "Error",
+			error: `${error}`,
+		};
+	} finally {
+		if (url) {
+			redirect(url, RedirectType.replace);
+		}
 	}
 };

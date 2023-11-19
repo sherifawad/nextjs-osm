@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
-		"build": "next build",
+		"build": "dotenv -e .env.prod.local -- next build",
 		"start": "next start",
 		"migrate:dev": "dotenv -e .env.dev.local -- pnpm dlx prisma migrate dev --create-only",
 		"deploy:dev": "dotenv -e .env.dev.local -- pnpm dlx prisma migrate deploy",

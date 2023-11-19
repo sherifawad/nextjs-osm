@@ -27,17 +27,10 @@ generator zod {
   useDefaultValidators             = true // default is true
   coerceDate                       = true // default is true
   writeNullishInModelTypes         = false // default is false
-  
-  
 }
 
 enum REPUTATION {
   FAKE
-  LEAST
-  UNDEFINED
-  LOW
-  MEDIUM
-  HIGH
   VERIFIED
 }
 
@@ -75,40 +68,52 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  role          Role       @default(USER)
-  reputation    REPUTATION @default(UNDEFINED)
-  accounts      Account[]
-  sessions      Session[]
-  PlaceCreated  Place[]    @relation("created")
-  PlaceModified Place[]    @relation("modified")
+  id             String        @id @default(cuid())
+  name           String?
+  email          String?       @unique
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  role           Role          @default(USER)
+  userReputation Int           @default(7)
+  accounts       Account[]
+  sessions       Session[]
+  rating         PlaceRating[]
+  placeCreated   Place[]       @relation("created")
+  placeModified  Place[]       @relation("modified")
 }
 
 model Place {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   latitude     Float
   longitude    Float
   name         String
   arName       String?
   enName       String?
-  verified     Boolean  @default(false)
+  verified     Boolean       @default(false)
   image        String?
-  hidden       Boolean  @default(false)
-  deleted      Boolean  @default(false)
-  createdAt    DateTime @default(now())
+  hidden       Boolean       @default(false)
+  deleted      Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  rating       PlaceRating[]
   createdById  String?
-  modifiedAt   DateTime @default(now()) @updatedAt
+  modifiedAt   DateTime      @default(now()) @updatedAt
   modifiedById String?
-  createdBy    User?    @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "created")
-  modifiedBy   User?    @relation(fields: [modifiedById], references: [id], onDelete: SetNull, name: "modified")
+  createdBy    User?         @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "created")
+  modifiedBy   User?         @relation(fields: [modifiedById], references: [id], onDelete: SetNull, name: "modified")
 
   @@unique([latitude, longitude, verified], name: "location")
+}
+
+model PlaceRating {
+  placeReputation REPUTATION
+  placeId         String
+  userId          String
+  ratedBy         User       @relation(fields: [userId], references: [id])
+  ratedPlace      Place      @relation(fields: [placeId], references: [id])
+
+  @@id([placeId, userId])
 }
 
 model VerificationToken {

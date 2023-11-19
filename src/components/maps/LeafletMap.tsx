@@ -5,27 +5,12 @@ import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import React, { useMemo, useRef, useState } from "react";
-import { TPosition } from "@/lib/types";
-import { Button } from "../ui/button";
-import { setCookie } from "cookies-next";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { useRouter } from "next/navigation";
-import { addMosqueLocation } from "@/app/_actions";
-import { signIn, useSession } from "next-auth/react";
+import { useEffect, useMemo, useRef } from "react";
+import { DataBasePlace } from "@/lib/types";
 import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
-import { Place } from "@/schema/modelSchema";
+import usePlace from "@/hooks/usePlace";
+import { LoaderIcon } from "lucide-react";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -49,94 +34,67 @@ const mosqueDeletedMarker = L.icon({
 	iconAnchor: [23, 29],
 });
 const icon = L.icon({
-	iconUrl: "./pinmap.svg",
+	iconUrl: "./add2.svg",
 	iconSize: [20, 38],
 	iconAnchor: [12, 28],
 });
 
-const kabaPostion = {
-	lat: 21.42249,
-	lon: 39.8262,
-};
-
 type LeafletMapProps = {
 	initialLat?: number;
 	initialLon?: number;
-	places: Place[];
+	places: DataBasePlace[];
 };
 
-function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon, places }: LeafletMapProps) {
-	const { data: Session, status } = useSession();
+const LoaderIndicator = () => (
+	<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 grid place-items-center bg-foreground h-20 w-20 shadow-xl  rounded-lg ">
+		<LoaderIcon className="shrink-0 animate-spin text-background" />
+	</div>
+);
 
-	const [showPopUp, setShowPopUp] = useState(false);
-	const [clickedPosition, setClickedPosition] = useState<TPosition>(kabaPostion);
-	const router = useRouter();
-	const popUpRef = useRef<TMarker<any>>(null);
+function LeafletMap({ places }: LeafletMapProps) {
+	const { location, setLocationData, place, kaabaPosition, searchParams } = usePlace();
+
+	const addLocationMarkerRef = useRef<TMarker<any>>(null);
+
+	const addMosqueDialog = useMemo(() => {
+		if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
+	}, [location]);
 
 	const onContextMenuClick = (event: LeafletMouseEvent) => {
 		event.originalEvent.preventDefault();
 		const { lat, lng } = event.latlng;
 		if (!lat || !lng) return;
-		setClickedPosition({ lat, lon: lng });
-		setShowPopUp(true);
-		popUpRef.current?.openPopup();
-		setCookie("lat", lat);
-		setCookie("lon", lng);
-		router.replace(`?lat=${lat}&lon=${lng}`);
+		setLocationData({
+			location: {
+				latitude: lat,
+				longitude: lng,
+			},
+		});
 	};
 
-	const addMosqueDialog = useMemo(
-		() =>
-			status === "authenticated" && Session.user.reputation !== "FAKE" ? (
-				<AlertDialog>
-					<AlertDialogTrigger>
-						<Button onClick={() => popUpRef.current?.closePopup()}>Add new Mosque Location</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AddPlaceForm />
-					</AlertDialogContent>
-				</AlertDialog>
-			) : (
-				<Button onClick={() => signIn()}>Login to Add Mosque</Button>
-			),
-		[Session?.user?.reputation, status]
-	);
+	const onMosqueClick = (event: LeafletMouseEvent, place: DataBasePlace) => {
+		event.originalEvent.preventDefault();
+		const { lat, lng } = event.latlng;
+		if (!lat || !lng || !place) return;
+		setLocationData({
+			place,
+		});
+	};
 
 	return (
-		<MapContainer center={[initialLat, initialLon]} zoom={17} className="h-full w-full z-0">
+		<MapContainer center={[location.latitude, location.longitude]} zoom={17} className="h-full w-full z-0">
 			<TileLayer
 				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 			/>
-			<CircleMarker
-				center={[kabaPostion.lat, kabaPostion.lon]}
-				radius={50}
-				// fillOpacity={circleOpacity}
-				stroke={false}
-			>
-				<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
-					<span>الكعبة : المسجد الحرام</span>
-				</Tooltip>
-			</CircleMarker>
-			<Polyline
-				positions={[
-					[initialLat, initialLon],
-					[kabaPostion.lat, kabaPostion.lon],
-				]}
-			/>
-			<Marker
-				position={{
-					lat: initialLat,
-					lng: initialLon,
-				}}
-				icon={icon}
-			></Marker>
+
 			<MarkerClusterGroup
 				chunkedLoading
 				// iconCreateFunction={createClusterCustomIcon}
 			>
 				{places?.map((data) => (
 					<Marker
+						// ref={mosqueMarkerRef}
 						key={data.id}
 						position={{
 							lat: data.latitude,
@@ -151,42 +109,63 @@ function LeafletMap({ initialLat = kabaPostion.lat, initialLon = kabaPostion.lon
 								? mosqueVerifiedMarker
 								: mosqueUnVerifiedMarker
 						}
+						eventHandlers={{
+							click: (e) => onMosqueClick(e, data),
+						}}
 					>
-						<Popup>
-							<PlaceMarkPopUp place={data} />
-						</Popup>
+						{place && (
+							<Popup>
+								<PlaceMarkPopUp place={place} />
+							</Popup>
+						)}
 					</Marker>
 				))}
+				<CircleMarker
+					center={[kaabaPosition.latitude, kaabaPosition.longitude]}
+					radius={50}
+					// fillOpacity={circleOpacity}
+					stroke={false}
+				>
+					<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
+						<span>الكعبة : المسجد الحرام</span>
+					</Tooltip>
+				</CircleMarker>
+				<Polyline
+					positions={[
+						[location.latitude, location.longitude],
+						[kaabaPosition.latitude, kaabaPosition.longitude],
+					]}
+				/>
 			</MarkerClusterGroup>
+
+			<Marker
+				position={{
+					lat: location.latitude,
+					lng: location.longitude,
+				}}
+				icon={icon}
+				ref={addLocationMarkerRef}
+			>
+				<Popup>
+					<div className="text-center">
+						<p>
+							Latitude: <span>{location.latitude}</span>
+						</p>
+						<p>
+							Longitude: <span>{location.longitude}</span>
+						</p>
+						{addMosqueDialog}
+					</div>
+				</Popup>
+			</Marker>
+
 			<CampaignMapEventHandler
-				lat={initialLat}
-				lon={initialLon}
+				lat={parseFloat(searchParams.get("lat") ?? "")}
+				lon={parseFloat(searchParams.get("lon") ?? "")}
 				eventHandlers={{
 					contextmenu: onContextMenuClick,
 				}}
 			/>
-			{showPopUp ? (
-				<Marker
-					ref={popUpRef}
-					position={{
-						lat: clickedPosition.lat,
-						lng: clickedPosition.lon,
-					}}
-					icon={icon}
-				>
-					<Popup>
-						<div className="text-center">
-							<p>
-								Latitude: <span>{clickedPosition.lat}</span>
-							</p>
-							<p>
-								Longitude: <span>{clickedPosition.lon}</span>
-							</p>
-							{addMosqueDialog}
-						</div>
-					</Popup>
-				</Marker>
-			) : null}
 		</MapContainer>
 	);
 }

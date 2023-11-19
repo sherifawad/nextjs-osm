@@ -108,7 +108,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 		<Form {...form}>
 			<form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 bg-background">
 				<AlertDialogHeader>
-					<AlertDialogTitle>Edit Mosque Location</AlertDialogTitle>
+					<AlertDialogTitle>Edit Mosque PlaceLocation</AlertDialogTitle>
 					<p className="font-medium min-h-4 text-destructive">{serverError}</p>
 				</AlertDialogHeader>
 				<input className="hidden w-0 h-0" name="id" type="text" defaultValue={defaultValues?.id} required />
@@ -127,7 +127,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 											isSubmitSuccessful ||
 											(!defaultValues?.verified &&
 												Session?.user.role === "USER" &&
-												(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+												(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 										}
 									/>
 								</FormControl>
@@ -267,7 +267,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 												isSubmitSuccessful ||
 												(!defaultValues?.verified &&
 													Session?.user.role === "USER" &&
-													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+													(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 											}
 										/>
 									</FormControl>
@@ -291,7 +291,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 												isSubmitSuccessful ||
 												(!defaultValues?.verified &&
 													Session?.user.role === "USER" &&
-													(Session?.user.reputation === "FAKE" || Session?.user.id !== place?.createdById))
+													(Session?.user.userReputation < 1 || Session?.user.id !== place?.createdById))
 											}
 										/>
 									</FormControl>
@@ -311,9 +311,7 @@ const EditPlaceForm = ({ place }: EditPlaceFormProps) => {
 						</>
 					) : (
 						<AlertDialogAction>
-							<Button variant={"outline"}>
-								<CheckCircle className="w-6 h-6 text-green-400 shrink-0" />
-							</Button>
+							<CheckCircle className="w-6 h-6 text-green-400 shrink-0" />
 						</AlertDialogAction>
 					)}
 				</AlertDialogFooter>
