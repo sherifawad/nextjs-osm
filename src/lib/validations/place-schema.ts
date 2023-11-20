@@ -66,7 +66,7 @@ export type PlaceDataErrors = {
 
 export const AddPlaceSchema = PlaceDbWithOutUserSchema.merge(
 	z.object({
-		createdBy: z.string().cuid(),
+		createdById: z.string().cuid(),
 	})
 );
 export type AddPlace = z.infer<typeof AddPlaceSchema>;
@@ -77,7 +77,7 @@ export type AddPlace = z.infer<typeof AddPlaceSchema>;
 
 export const EditPlaceSchema = PlaceDbWithOutUserSchema.merge(
 	z.object({
-		modifiedBy: z.string().cuid(),
+		modifiedById: z.string().cuid(),
 	})
 );
 export type EditPlace = z.infer<typeof EditPlaceSchema>;

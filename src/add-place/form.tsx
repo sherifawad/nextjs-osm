@@ -32,7 +32,6 @@ const AddPlaceForm = () => {
 
 	const {
 		handleSubmit,
-		reset,
 		formState: { isDirty, isSubmitting },
 		control,
 	} = form;
@@ -68,7 +67,6 @@ const AddPlaceForm = () => {
 				setServerError("Unknown Error");
 			}
 		} else {
-			reset();
 			setSuccessfulSubmit(true);
 		}
 	};

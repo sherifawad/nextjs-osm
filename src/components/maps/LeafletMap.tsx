@@ -5,13 +5,15 @@ import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import { useEffect, useMemo, useRef } from "react";
+import { createRef, useEffect, useMemo, useRef } from "react";
 import { DataBasePlace } from "@/lib/types";
 import { PlaceMarkPopUp } from "./map-popups";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
 import AddPlaceForm from "@/add-place/form";
 import AddNewPlace from "@/add-place";
+import EditSelectedPlace from "@/edit-place";
+import PlaceRate from "../place-rate";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -56,6 +58,18 @@ function LeafletMap({ places }: LeafletMapProps) {
 	const { location, setLocationData, place, kaabaPosition, searchParams } = usePlace();
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
+	// const placeMarkerRef = useRef<TMarker<any>>(null);
+	const placeMarkerRefs = useRef<TMarker<any>[]>([]);
+
+	useMemo(() => {
+		// if (placeMarkerRefs.current.length !== places.length) {
+		// 	// add or remove refs
+		// 	placeMarkerRefs.current = Array(places.length)
+		// 		.fill()
+		// 		.map((_, i) => placeMarkerRefs.current[i] || createRef());
+		// }
+		placeMarkerRefs.current = placeMarkerRefs.current.slice(0, places.length);
+	}, [places]);
 
 	// const addMosqueDialog = useMemo(() => {
 	// 	if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
@@ -93,9 +107,14 @@ function LeafletMap({ places }: LeafletMapProps) {
 				chunkedLoading
 				// iconCreateFunction={createClusterCustomIcon}
 			>
-				{places?.map((data) => (
+				{places?.map((data, i) => (
 					<Marker
-						// ref={mosqueMarkerRef}
+						// ref={placeMarkerRefs.current[i]}
+						ref={(el) => {
+							if (el) {
+								placeMarkerRefs.current[i] = el;
+							}
+						}}
 						key={data.id}
 						position={{
 							lat: data.latitude,
@@ -116,7 +135,16 @@ function LeafletMap({ places }: LeafletMapProps) {
 					>
 						{place && (
 							<Popup>
-								<PlaceMarkPopUp place={place} />
+								{/* <PlaceMarkPopUp place={place} /> */}
+								<EditSelectedPlace
+									place={place}
+									onDialogOpen={() =>
+										new Promise(() => {
+											placeMarkerRefs.current[i]?.closePopup();
+										})
+									}
+								/>
+								<PlaceRate />
 							</Popup>
 						)}
 					</Marker>

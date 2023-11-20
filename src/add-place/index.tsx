@@ -9,10 +9,10 @@ import AddPlaceForm from "./form";
 type AddNewPlaceProps = {
 	latitude: number;
 	longitude: number;
-	onDialogOpen: () => Promise<void>;
+	onDialogOpen?: () => Promise<void>;
 };
 
-function AddNewPlace({ latitude, longitude, onDialogOpen }: AddNewPlaceProps) {
+function AddNewPlace({ latitude, longitude, onDialogOpen = () => new Promise(() => undefined) }: AddNewPlaceProps) {
 	const { data: Session, status: userStatus } = useSession();
 
 	return (

@@ -1,9 +1,9 @@
 import { ErrorResponse, PlaceDataErrors } from "@/lib/validations/place-schema";
-import { ZodTypeAny } from "zod";
+import { ZodType, ZodTypeAny } from "zod";
 
 export * from "./create";
 
-export const validatePlaceInputs = ({ schema, data }: { schema: ZodTypeAny; data: unknown }) => {
+export const validatePlaceInputs = <T>({ schema, data }: { schema: ZodType<T>; data: unknown }) => {
 	let errors: Partial<PlaceDataErrors> = {};
 	const validatingData = schema.safeParse(data);
 	if (!validatingData.success) {
