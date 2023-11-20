@@ -19,6 +19,7 @@
 			}
 		],
 		"paths": {
+			"@/database/*": ["./src/lib/database/*"],
 			"@/schema/*": ["./src/lib/validations/generated/prisma/*"],
 			"@/ui/*": ["./src/components/ui/*"],
 			"@/components/*": ["./src/components/*"],

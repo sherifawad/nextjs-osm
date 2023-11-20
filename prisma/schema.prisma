@@ -15,12 +15,12 @@ generator zod {
   output                           = "../src/lib/validations/generated/prisma"
   useMultipleFiles                 = true // default is false 
   writeBarrelFiles                 = true // default is true
-  createInputTypes                 = false // default is true
+  createInputTypes                 = true // default is true
   createModelTypes                 = true // default is true
-  addInputTypeValidation           = false // default is true
+  addInputTypeValidation           = true // default is true
   addIncludeType                   = false // default is true
   addSelectType                    = false // default is true
-  validateWhereUniqueInput         = false // default is false
+  validateWhereUniqueInput         = true // default is false
   createOptionalDefaultValuesTypes = true // default is false
   createRelationValuesTypes        = false // default is false
   createPartialTypes               = false // default is false

@@ -7,10 +7,11 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import { useEffect, useMemo, useRef } from "react";
 import { DataBasePlace } from "@/lib/types";
-import AddPlaceForm from "../forms/add-place-form";
 import { PlaceMarkPopUp } from "./map-popups";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
+import AddPlaceForm from "@/add-place/form";
+import AddNewPlace from "@/add-place";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -56,9 +57,9 @@ function LeafletMap({ places }: LeafletMapProps) {
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
 
-	const addMosqueDialog = useMemo(() => {
-		if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
-	}, [location]);
+	// const addMosqueDialog = useMemo(() => {
+	// 	if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
+	// }, [location]);
 
 	const onContextMenuClick = (event: LeafletMouseEvent) => {
 		event.originalEvent.preventDefault();
@@ -147,15 +148,15 @@ function LeafletMap({ places }: LeafletMapProps) {
 				ref={addLocationMarkerRef}
 			>
 				<Popup>
-					<div className="text-center">
-						<p>
-							Latitude: <span>{location.latitude}</span>
-						</p>
-						<p>
-							Longitude: <span>{location.longitude}</span>
-						</p>
-						{addMosqueDialog}
-					</div>
+					<AddNewPlace
+						latitude={location.latitude}
+						longitude={location.longitude}
+						onDialogOpen={() =>
+							new Promise(() => {
+								addLocationMarkerRef.current?.closePopup();
+							})
+						}
+					/>
 				</Popup>
 			</Marker>
 

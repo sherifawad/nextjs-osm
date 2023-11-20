@@ -2,7 +2,7 @@ import Places from "@/components/Places";
 import Container from "@/components/ui/Container";
 
 import dynamic from "next/dynamic";
-import { db } from "@/lib/prisma";
+import { prismaDb as db } from "@/lib/database/prisma/index";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";

@@ -1,16 +1,9 @@
 import { z } from "zod";
-import { EditPlaceSchema, PlaceFormDataErrorsSchema, addPlaceSchema } from "../validations/place-schema";
+import { EditPlaceSchema, PlaceDataErrorsSchema } from "../validations/place-schema";
 import { Place } from "@/schema/index";
 
-export type AddPlaceForm = z.infer<typeof addPlaceSchema>;
 export type EditPlaceForm = z.infer<typeof EditPlaceSchema>;
-export type PlaceFormDataErrors = z.infer<typeof PlaceFormDataErrorsSchema>;
-
-export type AddPlaceFormState = {
-	message: string;
-	errors: Record<keyof AddPlaceForm, string> | undefined;
-	fieldValues: AddPlaceForm;
-};
+export type PlaceFormDataErrors = z.infer<typeof PlaceDataErrorsSchema>;
 
 export type EditPlaceFieldValues = Omit<Place, "createdById" | "modifiedById" | "createdAt" | "modifiedAt">;
 

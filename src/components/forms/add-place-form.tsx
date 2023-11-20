@@ -45,11 +45,11 @@ function AddPlaceForm({ triggerBtnHandler }: AddPlaceFormProps) {
 		},
 	});
 
-	// useEffect(() => {
-	// 	if (formState.message === "success") {
-	// 		formRef.current?.reset();
-	// 	}
-	// }, [formState]);
+	useEffect(() => {
+		if (formState.message === "success") {
+			formRef.current?.reset();
+		}
+	}, [formState]);
 
 	return (
 		<>
@@ -91,10 +91,10 @@ function AddPlaceForm({ triggerBtnHandler }: AddPlaceFormProps) {
 							</div>
 							<AlertDialogFooter className="">
 								<AlertDialogCancel>
-									{formState.message !== "success" ? (
-										"Cancel"
-									) : (
+									{formState.message === "success" ? (
 										<CheckCircle className="w-6 h-6 shrink-0 text-green-400" onClick={() => (formState.message = "")} />
+									) : (
+										"Cancel"
 									)}
 								</AlertDialogCancel>
 

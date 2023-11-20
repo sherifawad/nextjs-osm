@@ -1,9 +1,8 @@
 "use server";
 
 import { authOptions } from "@/lib/authOptions";
-import { db } from "@/lib/prisma";
+import { prismaDb as db } from "@/lib/database/prisma/index";
 import {
-	AddPlaceFormState,
 	EditPlaceFieldValues,
 	EditPlaceForm,
 	EditPlaceFormDataErrors,
@@ -11,7 +10,7 @@ import {
 	updateMosqueLocationResult,
 } from "@/lib/types/forms-types";
 import { ominatimArraySchema } from "@/lib/validations/nominatim";
-import { EditPlaceSchema, addPlaceSchema } from "@/lib/validations/place-schema";
+import { EditPlaceSchema } from "@/lib/validations/place-schema";
 import {
 	leafletMapPageSearchParameterSchema,
 	placeRateSchema,
@@ -70,127 +69,127 @@ export const getSuggestions = async (searchInput: string) => {
 	}
 };
 
-export const addMosqueLocation = async (
-	prevState: AddPlaceFormState,
-	formData: FormData
-): Promise<AddPlaceFormState> => {
-	const name = formData.get("name") as string | null;
+// export const addMosqueLocation = async (
+// 	prevState: AddPlaceFormState,
+// 	formData: FormData
+// ): Promise<AddPlaceFormState> => {
+// 	const name = formData.get("name") as string | null;
 
-	try {
-		const validatePlaceName = addPlaceSchema.safeParse({
-			name,
-		});
-		if (!validatePlaceName.success) {
-			const errorMap = validatePlaceName.error.flatten().fieldErrors;
-			return {
-				message: "error",
-				errors: {
-					name: errorMap["name"]?.[0] ?? "",
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
-		}
-		const session = await getServerSession(authOptions);
-		if (!session)
-			return {
-				message: "error",
-				errors: {
-					name: "server error",
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
+// 	try {
+// 		const validatePlaceName = addPlaceSchema.safeParse({
+// 			name,
+// 		});
+// 		if (!validatePlaceName.success) {
+// 			const errorMap = validatePlaceName.error.flatten().fieldErrors;
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: errorMap["name"]?.[0] ?? "",
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
+// 		}
+// 		const session = await getServerSession(authOptions);
+// 		if (!session)
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: "server error",
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
 
-		if (session.user.userReputation < 1) {
-			return {
-				message: "error",
-				errors: {
-					name: "Not allowed",
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
-		}
-		const headersData = headers();
+// 		if (session.user.userReputation < 1) {
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: "Not allowed",
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
+// 		}
+// 		const headersData = headers();
 
-		const referer = headersData.get("referer");
-		const queriesString = referer?.split("?")[1];
-		if (!queriesString)
-			return {
-				message: "error",
-				errors: {
-					name: "server error",
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
+// 		const referer = headersData.get("referer");
+// 		const queriesString = referer?.split("?")[1];
+// 		if (!queriesString)
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: "server error",
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
 
-		const queriesObjects = new URLSearchParams(queriesString);
-		const searchParams = {
-			lat: queriesObjects.get("lat"),
-			lon: queriesObjects.get("lon"),
-		};
-		const validatedSearchParams = leafletMapPageSearchParameterSchema.safeParse(searchParams);
+// 		const queriesObjects = new URLSearchParams(queriesString);
+// 		const searchParams = {
+// 			lat: queriesObjects.get("lat"),
+// 			lon: queriesObjects.get("lon"),
+// 		};
+// 		const validatedSearchParams = leafletMapPageSearchParameterSchema.safeParse(searchParams);
 
-		if (!validatedSearchParams.success)
-			return {
-				message: "error",
-				errors: {
-					name: "Wrong location parameters",
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
+// 		if (!validatedSearchParams.success)
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: "Wrong location parameters",
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
 
-		await db.place.create({
-			data: {
-				name: validatePlaceName.data.name,
-				latitude: validatedSearchParams.data.lat,
-				longitude: validatedSearchParams.data.lon,
-				createdBy: {
-					connect: {
-						id: session.user.id,
-					},
-				},
-			},
-		});
-		revalidatePath("/leafletMap");
-		return {
-			message: "success",
-			errors: undefined,
-			fieldValues: {
-				name: "",
-			},
-		};
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				message: "error",
-				errors: {
-					name: error.message,
-				},
-				fieldValues: {
-					name: name ?? "",
-				},
-			};
-		}
-		return {
-			message: "error",
-			errors: {
-				name: "internal server error",
-			},
-			fieldValues: {
-				name: name ?? "",
-			},
-		};
-	}
-};
+// 		await db.place.create({
+// 			data: {
+// 				name: validatePlaceName.data.name,
+// 				latitude: validatedSearchParams.data.lat,
+// 				longitude: validatedSearchParams.data.lon,
+// 				createdBy: {
+// 					connect: {
+// 						id: session.user.id,
+// 					},
+// 				},
+// 			},
+// 		});
+// 		revalidatePath("/leafletMap");
+// 		return {
+// 			message: "success",
+// 			errors: undefined,
+// 			fieldValues: {
+// 				name: "",
+// 			},
+// 		};
+// 	} catch (error) {
+// 		if (error instanceof Error) {
+// 			return {
+// 				message: "error",
+// 				errors: {
+// 					name: error.message,
+// 				},
+// 				fieldValues: {
+// 					name: name ?? "",
+// 				},
+// 			};
+// 		}
+// 		return {
+// 			message: "error",
+// 			errors: {
+// 				name: "internal server error",
+// 			},
+// 			fieldValues: {
+// 				name: name ?? "",
+// 			},
+// 		};
+// 	}
+// };
 
 export const removeMosqueLocation = async (id: unknown) => {
 	const schema = z.string().cuid();
