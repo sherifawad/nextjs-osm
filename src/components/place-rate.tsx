@@ -18,7 +18,6 @@ type PlaceRateProps = {
 
 function PlaceRate() {
 	const searchParams = useSearchParams();
-	const { data: Session, status } = useSession();
 
 	const ratingHandler = async (type: REPUTATIONType) => {
 		const result = await ratePlace({ placeRate: type });

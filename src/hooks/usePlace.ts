@@ -1,6 +1,6 @@
 "use client";
 
-import { DataBasePlace, PlaceLocation } from "@/lib/types";
+import { FetchedPlace, PlaceLocation } from "@/lib/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -24,7 +24,7 @@ function usePlace() {
 	});
 
 	// const [loading, setLoading] = useState(false);
-	const [place, setPlace] = useState<DataBasePlace | null>();
+	const [place, setPlace] = useState<FetchedPlace | null>();
 
 	const { data: Session, status } = useSession();
 	const router = useRouter();
@@ -55,7 +55,7 @@ function usePlace() {
 		}: {
 			location?: PlaceLocation;
 			search?: string;
-			place?: DataBasePlace;
+			place?: FetchedPlace;
 		}) => {
 			try {
 				const params = new URLSearchParams(searchParams);

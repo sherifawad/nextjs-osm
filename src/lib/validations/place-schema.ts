@@ -1,6 +1,4 @@
-import { PlaceRatingSchema } from "@/schema/index";
 import { z } from "zod";
-import { Prettify } from "../types";
 
 /////////////////////////////////////////
 // PLACE SCHEMA
@@ -49,16 +47,7 @@ export const PlaceDbWithOutUserSchema = PlaceDbMandatorySchema.merge(PlaceDbOpti
 	createdById: true,
 });
 
-export const PlaceDataErrorsSchema = PlaceDbMandatorySchema.merge(PlaceDbOptionalSchema).merge(
-	z.object({
-		serverError: z.string().optional(),
-	})
-);
-
 export type Place = z.infer<typeof PlaceDbSchema>;
-export type PlaceDataErrors = {
-	[key in keyof z.infer<typeof PlaceDataErrorsSchema>]: string;
-};
 
 /////////////////////////////////////////
 // ADD PLACE SCHEMA
@@ -85,6 +74,15 @@ export type EditPlace = z.infer<typeof EditPlaceSchema>;
 /////////////////////////////////////////
 // PLACE RATING SCHEMA
 /////////////////////////////////////////
+const REPUTATIONSchema = z.enum(["FAKE", "VERIFIED"]);
+
+export type REPUTATIONType = `${z.infer<typeof REPUTATIONSchema>}`;
+
+const PlaceRatingSchema = z.object({
+	placeReputation: REPUTATIONSchema,
+	placeId: z.string(),
+	userId: z.string(),
+});
 
 export const DataBaseRatingSchema = z.object({
 	_count: z.object({
@@ -92,7 +90,37 @@ export const DataBaseRatingSchema = z.object({
 	}),
 	rating: PlaceRatingSchema.omit({ placeId: true }).array(),
 });
-export const DataBasePlaceSchema = PlaceDbWithOutUserSchema.and(PlaceDbSchema);
+export type PlaceRating = z.infer<typeof PlaceRatingSchema>;
+
+/////////////////////////////////////////
+// PLACE RATING AND FETCHED SCHEMA
+/////////////////////////////////////////
+
+export const FetchedPlaceSchema = DataBaseRatingSchema.and(PlaceDbSchema);
+export type FetchedPlace = z.infer<typeof FetchedPlaceSchema>;
+
+/////////////////////////////////////////
+// PLACE SCHEMA ERROR
+/////////////////////////////////////////
+export const PlaceDataErrorsSchema = PlaceDbMandatorySchema.merge(PlaceDbOptionalSchema).merge(
+	z.object({
+		serverError: z.string().optional(),
+	})
+);
+
+export type PlaceDataErrors = {
+	[key in keyof z.infer<typeof PlaceDataErrorsSchema>]: string;
+};
+
+export const placeRateErrorsSchema = PlaceRatingSchema.merge(
+	z.object({
+		serverError: z.string(),
+	})
+);
+
+export type PlaceRateErrors = {
+	[key in keyof z.infer<typeof placeRateErrorsSchema>]: string;
+};
 
 /////////////////////////////////////////
 // PLACE CRUD Response
@@ -102,3 +130,24 @@ type SuccessResponse = { status: "success"; data: Place };
 export type ErrorResponse = { status: "error"; errors: Partial<PlaceDataErrors> };
 
 export type placeResponse = SuccessResponse | ErrorResponse;
+
+type placeRateDataResponse = {
+	ratedPlace: {
+		_count: {
+			rating: number;
+		};
+	};
+} & {
+	placeReputation: REPUTATIONType;
+	placeId: string;
+	userId: string;
+};
+type placeRateUpdatedData = {
+	state: REPUTATIONType;
+	count: number;
+};
+
+type RateSuccessResponse = { status: "success"; data: placeRateUpdatedData };
+type RateErrorResponse = { status: "error"; errors: Partial<PlaceRateErrors> };
+
+export type placeRateUpdateResponse = RateSuccessResponse | RateErrorResponse;

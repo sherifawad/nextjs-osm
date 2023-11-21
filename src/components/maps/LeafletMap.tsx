@@ -6,14 +6,14 @@ import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import { createRef, useEffect, useMemo, useRef } from "react";
-import { DataBasePlace } from "@/lib/types";
+import { FetchedPlace } from "@/lib/types";
 import { PlaceMarkPopUp } from "./map-popups";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
 import AddPlaceForm from "@/add-place/form";
 import AddNewPlace from "@/add-place";
 import EditSelectedPlace from "@/edit-place";
-import PlaceRate from "../place-rate";
+import RatePlace from "@/rate-place";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -45,7 +45,7 @@ const icon = L.icon({
 type LeafletMapProps = {
 	initialLat?: number;
 	initialLon?: number;
-	places: DataBasePlace[];
+	places: FetchedPlace[];
 };
 
 const LoaderIndicator = () => (
@@ -87,7 +87,7 @@ function LeafletMap({ places }: LeafletMapProps) {
 		});
 	};
 
-	const onMosqueClick = (event: LeafletMouseEvent, place: DataBasePlace) => {
+	const onMosqueClick = (event: LeafletMouseEvent, place: FetchedPlace) => {
 		event.originalEvent.preventDefault();
 		const { lat, lng } = event.latlng;
 		if (!lat || !lng || !place) return;
@@ -144,7 +144,7 @@ function LeafletMap({ places }: LeafletMapProps) {
 										})
 									}
 								/>
-								<PlaceRate />
+								<RatePlace place={place} />
 							</Popup>
 						)}
 					</Marker>

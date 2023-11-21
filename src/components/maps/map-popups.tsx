@@ -4,10 +4,10 @@ import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-
 import EditPlaceForm from "../forms/edit-place-form";
 import { useSession } from "next-auth/react";
 import PlaceRate from "../place-rate";
-import { DataBasePlace } from "@/lib/types";
+import { FetchedPlace } from "@/lib/types";
 
 type PlaceMarkPopUpProps = {
-	place: DataBasePlace;
+	place: FetchedPlace;
 };
 export function PlaceMarkPopUp({ place }: PlaceMarkPopUpProps) {
 	const { data: Session, status } = useSession();
