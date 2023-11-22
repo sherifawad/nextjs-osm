@@ -1,16 +1,15 @@
 "use server";
 
-import { prismaDb as db } from "@/lib/database/prisma/index";
+import { prismaDb as db } from "@/prisma/index";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { addServerError, errorHandler, validatePlaceInputs } from "@/database/place";
+import { placeResponse, updatePlaceDb } from "@/database/place";
 import { revalidatePath } from "next/cache";
-import { placeResponse } from "@/lib/validations/place-schema";
-import { editPlaceFormSchema } from "./validation";
-import { updatePlaceDb } from "@/database/place/update";
+import { TEditPlaceForm, editPlaceFormSchema } from "./validation";
+import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
 
-export const updatePlaceLocation = async (place: unknown): Promise<placeResponse> => {
-	let { errors, validData } = validatePlaceInputs({ schema: editPlaceFormSchema, data: place });
+export const updatePlaceLocation = async (place: TEditPlaceForm): Promise<placeResponse> => {
+	let { errors, validData } = validateData({ schema: editPlaceFormSchema, data: place });
 	if (!validData) {
 		return {
 			status: "error",
@@ -57,7 +56,6 @@ export const updatePlaceLocation = async (place: unknown): Promise<placeResponse
 
 		if (result.status === "success") {
 			revalidatePath("/leafletMap");
-			console.log("🚀 ~ file: actions.ts:60 ~ updatePlaceLocation ~ leafletMap:");
 			return {
 				status: "success",
 				data: result.data,

@@ -1,9 +1,9 @@
-import { createPlaceDbPrisma } from "../prisma/place/create";
-import { AddPlaceSchema, placeResponse } from "@/lib/validations/place-schema";
-import { errorHandler, validatePlaceInputs } from ".";
+import { createPlaceDbPrisma } from "@/database/prisma";
+import { AddPlace, AddPlaceSchema, placeResponse } from "./validation";
+import { errorHandler, validateData } from "@/lib/schema-utils";
 
-export const createPlaceDb = async (newPlace: unknown): Promise<placeResponse> => {
-	const { errors, validData } = validatePlaceInputs({ schema: AddPlaceSchema, data: newPlace });
+export const createPlaceDb = async (newPlace: AddPlace): Promise<placeResponse> => {
+	const { errors, validData } = validateData({ schema: AddPlaceSchema, data: newPlace });
 
 	if (!validData) {
 		return {

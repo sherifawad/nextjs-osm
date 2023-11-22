@@ -1,9 +1,9 @@
 import { prismaDb } from "..";
-import { AddPlaceSchema, placeResponse } from "@/lib/validations/place-schema";
-import { errorHandler, validatePlaceInputs } from "@/database/place";
+import { AddPlace, AddPlaceSchema, placeResponse } from "@/database/place";
+import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
 
-export const createPlaceDbPrisma = async (data: unknown): Promise<placeResponse> => {
-	const { errors, validData } = validatePlaceInputs({ schema: AddPlaceSchema, data });
+export const createPlaceDbPrisma = async (data: AddPlace): Promise<placeResponse> => {
+	const { errors, validData } = validateData({ schema: AddPlaceSchema, data });
 
 	if (!validData) {
 		return {
@@ -12,7 +12,7 @@ export const createPlaceDbPrisma = async (data: unknown): Promise<placeResponse>
 		};
 	}
 	try {
-		const { id, createdById, ...rest } = validData;
+		const { id, modifiedAt, modifiedById, createdAt, createdById, ...rest } = validData;
 
 		const dbResult = await prismaDb.place.create({
 			data: {

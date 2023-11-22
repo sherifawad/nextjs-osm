@@ -1,31 +1,22 @@
 "use client";
-
-import { getSuggestions } from "@/app/_actions";
-import { SearchStatus, Tominatim } from "@/lib/types";
-import { useRouter } from "next/navigation";
-import { SyntheticEvent, useCallback, useEffect, useState } from "react";
-import z from "zod";
-import SearchForm from "./SearchForm";
-import SearchSideBar from "./SearchSideBar";
+import { z } from "zod";
 import usePlace from "@/hooks/usePlace";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { NominatedPlace, SearchStatus } from "./validations";
+import { getSuggestions } from "./actions";
+import SearchForm from "./form";
+import AddressesList from "./addresses-list";
 
-type PlacesProps = {
+type SearchAddressesProps = {
 	initialSearch?: string;
 };
 
-type TPlaceData = {
-	search?: string;
-	lat?: number;
-	long?: number;
-	location: Tominatim;
-};
-
-function Places({ initialSearch }: PlacesProps) {
+function SearchAddresses({ initialSearch }: SearchAddressesProps) {
 	const { setLocationData, SetLoadingState } = usePlace();
 
 	const [searchStatus, setSearchStatus] = useState<SearchStatus>(undefined);
 	const [errorMessage, setErrorMessage] = useState<string>("");
-	const [suggestions, setSuggestions] = useState<Tominatim[]>([]);
+	const [suggestions, setSuggestions] = useState<NominatedPlace[]>([]);
 
 	const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
 
@@ -60,8 +51,8 @@ function Places({ initialSearch }: PlacesProps) {
 			setErrorMessage(validateData.error.issues[0].message);
 			return false;
 		}
-		const suggestions = await getSuggestions(validateData.data);
-		if (suggestions === null || suggestions.length < 1) {
+		const result = await getSuggestions({ search: validateData.data });
+		if (result.status === "error") {
 			setSearchStatus("error");
 			setErrorMessage("could not find suggestions");
 			return false;
@@ -69,14 +60,14 @@ function Places({ initialSearch }: PlacesProps) {
 
 		setSearchTerm(validateData.data);
 
-		setSuggestions(suggestions);
+		setSuggestions(result.data);
 		setSearchStatus("success");
 		setErrorMessage("");
 
 		return true;
 	}, []);
 
-	const handleLocationSelection = (selected: Tominatim) => {
+	const handleLocationSelection = (selected: NominatedPlace) => {
 		setLocationData({ location: { latitude: selected.lat, longitude: selected.lon }, search: searchTerm });
 	};
 
@@ -121,7 +112,7 @@ function Places({ initialSearch }: PlacesProps) {
 			<form onSubmit={handleSubmitAction} className="bg-slate-100 dark:bg-slate-600 p-2">
 				<SearchForm showLocationButton getLocationHandler={handleGetLocation} />
 			</form>
-			<SearchSideBar
+			<AddressesList
 				suggestions={suggestions}
 				closeHandler={closeHandler}
 				errorMessage={errorMessage}
@@ -133,4 +124,4 @@ function Places({ initialSearch }: PlacesProps) {
 	);
 }
 
-export default Places;
+export default SearchAddresses;

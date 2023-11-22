@@ -1,15 +1,11 @@
 "use client";
 
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-dialog";
 import { Button } from "@/ui/button";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React, { useMemo, useState } from "react";
-import AddPlaceForm from "./form";
-import { FetchedPlace, Place } from "@/lib/validations/place-schema";
 import { ratePlace } from "./actions";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { placeRateUpdatedData } from "@/database/place/update";
-import { REPUTATIONType } from "@/database/place/validation";
+import { FetchedPlace, REPUTATIONType, placeRateUpdatedData } from "@/database/place";
 
 type RatePlaceProps = {
 	place: FetchedPlace;

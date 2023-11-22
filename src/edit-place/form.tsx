@@ -1,29 +1,25 @@
 "use client";
 
 import {
-	AlertDialog,
 	AlertDialogCancel,
-	AlertDialogContent,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, LoaderIcon } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { updatePlaceLocation } from "./actions";
 import { RoleType, TEditPlaceForm, editPlaceFormSchema } from "./validation";
-import { Place } from "@/lib/validations/place-schema";
 import { Checkbox } from "@/ui/checkbox";
 import { Switch } from "@/ui/switch";
+import { Place } from "@/database/place";
 
 type EditPlaceFormProps = {
 	place: Place;

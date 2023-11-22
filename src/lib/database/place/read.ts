@@ -1,9 +1,9 @@
-import { updatePlaceDbPrisma } from "@/database/prisma";
-import { EditPlace, EditPlaceSchema, placeResponse } from "./validation";
+import { FetchedPlacesResponse, GetPlaces, GetPlacesSchema } from ".";
+import { getPlacedDbPrisma } from "../prisma";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
-export const updatePlaceDb = async (updatedPlace: EditPlace): Promise<placeResponse> => {
-	const { errors, validData } = validateData({ schema: EditPlaceSchema, data: updatedPlace });
+export const getPlaces = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {
+	const { errors, validData } = validateData({ schema: GetPlacesSchema, data });
 
 	if (!validData) {
 		return {
@@ -12,7 +12,7 @@ export const updatePlaceDb = async (updatedPlace: EditPlace): Promise<placeRespo
 		};
 	}
 	try {
-		const result = await updatePlaceDbPrisma(validData);
+		const result = await getPlacedDbPrisma(validData);
 		if (result.status === "success") {
 			return {
 				status: "success",

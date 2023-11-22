@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 /////////////////////////////////////////
 // PLACE SCHEMA
 /////////////////////////////////////////
@@ -37,46 +36,4 @@ export const PlaceDbSchemaOptional = z.object({
 	modifiedById: z.string().nullable().optional(),
 });
 
-export const PlaceDataErrorsSchema = PlaceDbSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
-);
-
 export type Place = z.infer<typeof PlaceDbSchema>;
-export type PlaceDataErrors = {
-	[key in keyof z.infer<typeof PlaceDataErrorsSchema>]: string;
-};
-
-/////////////////////////////////////////
-// PLACE RATING SCHEMA
-/////////////////////////////////////////
-export const REPUTATIONSchema = z.enum(["FAKE", "VERIFIED"]);
-
-export type REPUTATIONType = `${z.infer<typeof REPUTATIONSchema>}`;
-
-export const PlaceRatingSchema = z.object({
-	placeReputation: REPUTATIONSchema,
-	placeId: z.string(),
-	userId: z.string(),
-});
-
-/////////////////////////////////////////
-// PLACE SCHEMA VALIDATION OUTPUT
-/////////////////////////////////////////
-type SuccessResponse = { status: "success"; data: Place };
-type ErrorResponse = { status: "error"; errors: Partial<PlaceDataErrors> };
-
-export type placeResponse = SuccessResponse | ErrorResponse;
-
-/////////////////////////////////////////
-// PLACE WITH RATINGS FETCHED SCHEMA
-/////////////////////////////////////////
-
-export const DataBaseRatingSchema = z.object({
-	_count: z.object({
-		rating: z.number().int(),
-	}),
-	rating: PlaceRatingSchema.omit({ placeId: true }).array(),
-});
-export type PlaceRating = z.infer<typeof PlaceRatingSchema>;

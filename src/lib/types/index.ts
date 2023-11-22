@@ -1,6 +1,4 @@
 import z from "zod";
-import { ominatimSchema } from "../validations/nominatim";
-import { FetchedPlaceSchema, DataBaseRatingSchema } from "../validations/place-schema";
 import { placeRateSearchParameterSchema } from "../validations/searchParams-schema";
 
 // combine types into better format
@@ -8,17 +6,7 @@ export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
 
-export type SearchStatus = "pending" | "complete" | "error" | "success" | undefined;
-
-export type Tominatim = z.infer<typeof ominatimSchema>;
-export type DataBaseRating = z.infer<typeof DataBaseRatingSchema>;
-export type FetchedPlace = z.infer<typeof FetchedPlaceSchema>;
 export type placeRateSearchParameter = z.infer<typeof placeRateSearchParameterSchema>;
-
-export type PlaceLocation = {
-	latitude: number;
-	longitude: number;
-};
 
 export type fetchStatus = {
 	idle: "idle";

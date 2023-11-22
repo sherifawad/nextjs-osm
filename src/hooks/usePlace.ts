@@ -1,12 +1,15 @@
 "use client";
 
-import { FetchedPlace, PlaceLocation } from "@/lib/types";
+import { FetchedPlace } from "@/database/place";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type Marker as TMarker } from "leaflet/index";
-import { decode } from "punycode";
+
+type PlaceLocation = {
+	latitude: number;
+	longitude: number;
+};
 
 const kaabaPosition = {
 	latitude: 21.42249,

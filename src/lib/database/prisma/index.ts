@@ -1,6 +1,8 @@
 import { env } from "@/env";
 import { PrismaClient } from "@prisma/client";
 
+export * from "./place/index";
+
 const prismaClientSingleton = () => {
 	return new PrismaClient({
 		datasources: {

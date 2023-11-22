@@ -1,13 +1,11 @@
 "use client";
 
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-dialog";
-import { Button } from "@/ui/button";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React from "react";
-import AddPlaceForm from "./form";
-import { Place } from "@/lib/validations/place-schema";
 import { Edit } from "lucide-react";
 import EditPlaceForm from "./form";
+import { Place } from "@/database/place";
 
 type EditSelectedPlaceProps = {
 	place: Place;

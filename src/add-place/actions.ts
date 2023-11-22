@@ -4,13 +4,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { headers } from "next/headers";
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations/searchParams-schema";
-import { addServerError, createPlaceDb, errorHandler, validatePlaceInputs } from "@/database/place";
+import { createPlaceDb, placeResponse } from "@/database/place";
 import { revalidatePath } from "next/cache";
-import { placeResponse } from "@/lib/validations/place-schema";
 import { addPlaceFormSchema } from "./validation";
+import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
 
-export const addPlaceLocation = async (name: unknown): Promise<placeResponse> => {
-	let { errors, validData } = validatePlaceInputs({ schema: addPlaceFormSchema, data: name });
+export const addPlaceLocation = async (name: { name: string }): Promise<placeResponse> => {
+	let { errors, validData } = validateData({ schema: addPlaceFormSchema, data: name });
 	if (!validData) {
 		return {
 			status: "error",
@@ -50,7 +50,7 @@ export const addPlaceLocation = async (name: unknown): Promise<placeResponse> =>
 			name: validData.name,
 			latitude: validatedSearchParams.data.lat,
 			longitude: validatedSearchParams.data.lon,
-			createdBy: session.user.id,
+			createdById: session.user.id,
 		});
 
 		if (result.status === "success") {

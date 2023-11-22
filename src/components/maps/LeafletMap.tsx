@@ -5,15 +5,13 @@ import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
-import { createRef, useEffect, useMemo, useRef } from "react";
-import { FetchedPlace } from "@/lib/types";
-import { PlaceMarkPopUp } from "./map-popups";
+import { useMemo, useRef } from "react";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
-import AddPlaceForm from "@/add-place/form";
 import AddNewPlace from "@/add-place";
 import EditSelectedPlace from "@/edit-place";
 import RatePlace from "@/rate-place";
+import { FetchedPlace } from "@/database/place";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",

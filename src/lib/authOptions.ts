@@ -2,8 +2,7 @@ import { env } from "@/env";
 import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prismaDb as db } from "@/lib/database/prisma/index";
-import { Session } from "inspector";
+import { prismaDb as db } from "@/prisma/index";
 
 export const authOptions: AuthOptions = {
 	secret: env.NEXTAUTH_SECRET,

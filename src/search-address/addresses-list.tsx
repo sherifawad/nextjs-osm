@@ -1,25 +1,25 @@
-import { SearchStatus, Tominatim } from "@/lib/types";
 import { MapPinned, ShieldClose } from "lucide-react";
-import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
+import { Button } from "@/ui/button";
+import { Skeleton } from "@/ui/skeleton";
+import { NominatedPlace, SearchStatus } from "./validations";
 
-type SearchSideBarProps = {
-	suggestions: Tominatim[];
+type AddressesListProps = {
+	suggestions: NominatedPlace[];
 	searchStatus: SearchStatus;
 	suggestionsListOpen: boolean;
 	closeHandler: () => void;
-	handleLocationSelection: (selected: Tominatim) => void;
+	handleLocationSelection: (selected: NominatedPlace) => void;
 	errorMessage: string;
 };
 
-function SearchSideBar({
+function AddressesList({
 	searchStatus,
 	errorMessage,
 	suggestions,
 	suggestionsListOpen,
 	closeHandler,
 	handleLocationSelection,
-}: SearchSideBarProps) {
+}: AddressesListProps) {
 	return (
 		<aside className={`${suggestionsListOpen ? "block" : "hidden"}    md:max-h-full max-h-60 overflow-y-auto`}>
 			<h2 className="flex gap-2 items-center justify-between py-2 px-4">
@@ -60,4 +60,4 @@ function SearchSideBar({
 	);
 }
 
-export default SearchSideBar;
+export default AddressesList;

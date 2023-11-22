@@ -1,15 +1,14 @@
-import Places from "@/components/Places";
 import Container from "@/components/ui/Container";
 
 import dynamic from "next/dynamic";
-import { prismaDb as db } from "@/lib/database/prisma/index";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import { cookies } from "next/headers";
-import { leafletMapPageSearchParameterSchema, locationSchema } from "@/lib/validations/searchParams-schema";
+import { locationSchema } from "@/lib/validations/searchParams-schema";
 import { LoaderIcon } from "lucide-react";
-import { object } from "zod";
+import SearchAddresses from "@/search-address";
+import { GetPlaces, getPlaces } from "@/database/place";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,
@@ -18,76 +17,21 @@ const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 // export const dynamic = "force-dynamic";
 // export const revalidate = 0;
 
-const getPlaces = async ({ role }: { role: RoleType | undefined }) => {
+const fetchPlaces = async ({ role }: { role: RoleType | undefined }) => {
+	let inputData: GetPlaces = {
+		userRole: role,
+	};
 	if (role === "OWNER") {
-		return await db.place.findMany({
-			include: {
-				rating: {
-					select: {
-						userId: true,
-						placeReputation: true,
-					},
-				},
-				_count: {
-					select: {
-						rating: {
-							where: {
-								placeReputation: "VERIFIED",
-							},
-						},
-					},
-				},
-			},
-		});
+	} else if (role === "ADMIN") {
+		inputData = { ...inputData, deletedPlaces: false };
+	} else {
+		inputData = { ...inputData, deletedPlaces: false, hiddenPlaces: false };
 	}
-	if (role === "ADMIN") {
-		return await db.place.findMany({
-			where: {
-				deleted: false,
-			},
-			include: {
-				rating: {
-					select: {
-						userId: true,
-						placeReputation: true,
-					},
-				},
-				_count: {
-					select: {
-						rating: {
-							where: {
-								placeReputation: "VERIFIED",
-							},
-						},
-					},
-				},
-			},
-		});
+	const result = await getPlaces(inputData);
+	if (result.status === "success") {
+		return result.data;
 	}
-
-	return await db.place.findMany({
-		where: {
-			deleted: false,
-			hidden: false,
-		},
-		include: {
-			rating: {
-				select: {
-					userId: true,
-					placeReputation: true,
-				},
-			},
-			_count: {
-				select: {
-					rating: {
-						where: {
-							placeReputation: "VERIFIED",
-						},
-					},
-				},
-			},
-		},
-	});
+	return [];
 };
 
 const LoaderIndicator = () => (
@@ -103,7 +47,7 @@ type leafletMapPageProps = {
 };
 async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 	const session = await getServerSession(authOptions);
-	const dataBasePlaces = await getPlaces({ role: session?.user.role });
+	const dataBasePlaces = await fetchPlaces({ role: session?.user.role });
 	let initialLat: number | undefined = undefined;
 	let initialLon: number | undefined = undefined;
 	const initialSearch =
@@ -130,7 +74,7 @@ async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 			<div className="absolute inset-0 top-[5rem] overflow-hidden">
 				{loading && <LoaderIndicator />}
 				<div className="relative h-full ">
-					<Places initialSearch={initialSearch} />
+					<SearchAddresses initialSearch={initialSearch} />
 					<LeafletMap initialLat={initialLat} initialLon={initialLon} places={dataBasePlaces} />
 				</div>
 			</div>
