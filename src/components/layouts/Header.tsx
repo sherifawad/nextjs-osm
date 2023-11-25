@@ -51,6 +51,17 @@ const Header = async () => {
 						</Link>
 					</div>
 					<nav className="mx-6  items-center space-x-4 lg:space-x-6 hidden md:flex ">
+						{session && (
+							<Button asChild variant="ghost">
+								<Link
+									prefetch={false}
+									href={`/dashboard/${session?.user.id}`}
+									className={`text-sm font-medium transition-colors`}
+								>
+									Dashboard
+								</Link>
+							</Button>
+						)}
 						{routes.map((route, i) => (
 							<Button key={i} asChild variant="ghost">
 								<Link key={i} prefetch={false} href={route.href} className={`text-sm font-medium transition-colors`}>
