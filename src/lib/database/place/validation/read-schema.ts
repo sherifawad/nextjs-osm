@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { RoleSchema } from "@/database/user";
-import { DataBaseRatingSchema } from "../place-rate";
-import { PlaceDbSchema } from ".";
+import { DataBaseRatingSchema, REPUTATIONSchema } from "../place-rate";
+import { PlaceDbSchema, PlaceDbSchemaOptional } from ".";
 
 /////////////////////////////////////////
 // FETCH PLACE SCHEMA
@@ -36,3 +36,13 @@ type FetchedPlacesSuccessResponse = { status: "success"; data: FetchedPlace[] };
 type FetchedPlacesErrorResponse = { status: "error"; errors: Partial<FetchedPlacesDataErrors> };
 
 export type FetchedPlacesResponse = FetchedPlacesSuccessResponse | FetchedPlacesErrorResponse;
+
+export const userPlacesSchema = z
+	.object({
+		rating: z
+			.object({
+				placeReputation: REPUTATIONSchema,
+			})
+			.array(),
+	})
+	.and(PlaceDbSchemaOptional);

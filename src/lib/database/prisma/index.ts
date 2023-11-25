@@ -2,6 +2,7 @@ import { env } from "@/env";
 import { PrismaClient } from "@prisma/client";
 
 export * from "./place/index";
+export * from "./user/index";
 
 const prismaClientSingleton = () => {
 	return new PrismaClient({
