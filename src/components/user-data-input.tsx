@@ -14,7 +14,7 @@ function UserDataInput({ name, value, ...props }: UserDataInputProps) {
 			</Label>
 			<Input
 				id={name}
-				value={value}
+				defaultValue={value}
 				{...props}
 				className="border-none  outline-none  focus-visible:ring-0 font-medium capitalize p-0 h-auto"
 			/>

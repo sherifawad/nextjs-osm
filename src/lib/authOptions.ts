@@ -1,11 +1,11 @@
-import { env } from "@/env";
 import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prismaDb as db } from "@/prisma/index";
+import { env } from "@/env";
 
 export const authOptions: AuthOptions = {
-	secret: env.NEXTAUTH_SECRET,
+	secret: env.NEXTAUTH_SECRET || "",
 	adapter: PrismaAdapter(db),
 	session: {
 		strategy: "jwt",
@@ -13,8 +13,8 @@ export const authOptions: AuthOptions = {
 
 	providers: [
 		GoogleProvider({
-			clientId: env.GOOGLE_CLIENT_ID,
-			clientSecret: env.GOOGLE_CLIENT_SECRET,
+			clientId: env.GOOGLE_CLIENT_ID || "",
+			clientSecret: env.GOOGLE_CLIENT_SECRET || "",
 		}),
 	],
 	callbacks: {

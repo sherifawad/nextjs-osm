@@ -55,7 +55,7 @@ const Header = async () => {
 							<Button asChild variant="ghost">
 								<Link
 									prefetch={false}
-									href={`/dashboard/${session?.user.id}`}
+									href={`/dashboard/${session?.user.id}/account`}
 									className={`text-sm font-medium transition-colors`}
 								>
 									Dashboard

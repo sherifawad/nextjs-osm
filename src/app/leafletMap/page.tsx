@@ -1,6 +1,5 @@
 import Container from "@/components/ui/Container";
 
-import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
@@ -9,6 +8,7 @@ import { locationSchema } from "@/lib/validations/searchParams-schema";
 import { LoaderIcon } from "lucide-react";
 import SearchAddresses from "@/search-address";
 import { GetPlaces, getPlaces } from "@/database/place";
+import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,

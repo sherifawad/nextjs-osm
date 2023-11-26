@@ -46,3 +46,4 @@ export const userPlacesSchema = z
 			.array(),
 	})
 	.and(PlaceDbSchemaOptional);
+export type UserPlaces = z.infer<typeof userPlacesSchema>;
