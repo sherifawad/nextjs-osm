@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal } from "react";
 
 export const metadata: Metadata = {
 	title: "Dashboard App",
@@ -15,23 +17,25 @@ export default function DashboardLayout({
 		id: string;
 	};
 }) {
+	const pathname = (children as ReactElement)?.props?.childProp?.segment;
+	const value = pathname === "created" ? "createdPlaces" : pathname === "modified" ? "modifiedPlaces" : "account";
 	return (
 		<main>
 			<section>
-				<Tabs defaultValue="account" className="w-full mt-8">
-					<TabsList className="max-w-md mx-auto inline-flex sm:grid w-full grid-cols-3 mb-8">
+				<Tabs defaultValue={value} className="w-full mt-8">
+					<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-3 mb-8">
 						<TabsTrigger value="account">
 							<Link prefetch={false} href={`/dashboard/${params.id}/account`}>
 								Account
 							</Link>
 						</TabsTrigger>
 						<TabsTrigger value="createdPlaces">
-							<Link prefetch={false} href={`/dashboard/${params.id}/created/1`}>
+							<Link prefetch={false} href={`/dashboard/${params.id}/created`}>
 								Created Places
 							</Link>
 						</TabsTrigger>
 						<TabsTrigger value="modifiedPlaces">
-							<Link prefetch={false} href={`/dashboard/${params.id}/modified/1`}>
+							<Link prefetch={false} href={`/dashboard/${params.id}/modified`}>
 								Modified Places
 							</Link>
 						</TabsTrigger>

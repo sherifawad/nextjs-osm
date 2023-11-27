@@ -1,23 +1,37 @@
+"use client";
+
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
 import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>;
 }
 
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
-	const [mounted, setMounted] = useState(false);
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+
+	const addParams = useCallback(
+		({ key, value }: { key: string; value: string }) => {
+			const params = new URLSearchParams(searchParams);
+			params.set(key, value);
+			router.replace(`${pathname}?${params}`);
+		},
+		[pathname, router, searchParams]
+	);
 
 	useEffect(() => {
-		setMounted(true);
+		addParams({ key: "size", value: `${table.getState().pagination.pageSize}` });
+		addParams({ key: "page", value: `${table.getState().pagination.pageIndex + 1}` });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	if (!mounted) {
-		return null;
-	}
+
 	return (
 		<div className="flex items-center justify-between px-2">
 			<div className="flex-1 text-sm text-muted-foreground">
@@ -30,6 +44,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 						value={`${table.getState().pagination.pageSize}`}
 						onValueChange={(value) => {
 							table.setPageSize(Number(value));
+							addParams({ key: "size", value });
 						}}
 					>
 						<SelectTrigger className="h-8 w-[70px]">

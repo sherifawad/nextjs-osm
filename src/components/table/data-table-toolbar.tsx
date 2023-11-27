@@ -1,5 +1,3 @@
-"use client";
-
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/ui/button";
@@ -8,21 +6,12 @@ import { Input } from "@/ui/input";
 import { XIcon } from "lucide-react";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { useEffect, useState } from "react";
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>;
 }
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-	if (!mounted) {
-		return null;
-	}
 	const isFiltered = table.getState().columnFilters.length > 0;
 
 	return (
