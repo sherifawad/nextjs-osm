@@ -1,4 +1,4 @@
-import { UserPlaces } from "@/database/place";
+import { UserPlaces } from "@/database";
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";

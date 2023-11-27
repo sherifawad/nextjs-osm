@@ -1,10 +1,10 @@
 "use client";
 
-import { FetchedPlace } from "@/database/place";
+import { type FetchedPlace } from "@/database";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type PlaceLocation = {
 	latitude: number;

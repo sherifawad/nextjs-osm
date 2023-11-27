@@ -2,12 +2,11 @@ import Container from "@/components/ui/Container";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import { cookies } from "next/headers";
 import { locationSchema } from "@/lib/validations/searchParams-schema";
 import { LoaderIcon } from "lucide-react";
 import SearchAddresses from "@/search-address";
-import { GetPlaces, getPlaces } from "@/database/place";
+import { GetPlaces, RoleType, getPlaces } from "@/database";
 import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {

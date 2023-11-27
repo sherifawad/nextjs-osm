@@ -1,6 +1,7 @@
 import UserDataInput from "@/components/user-data-input";
-import { getUser } from "@/database/user";
+import { getUser } from "@/database";
 import { authOptions } from "@/lib/authOptions";
+import { Skeleton } from "@/ui/skeleton";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import Image from "next/image";

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RoleSchema, UserDbSchema } from "./user-schema";
-import { userPlacesSchema } from "@/database/place";
+import { userPlacesSchema } from "../../place";
 
 /////////////////////////////////////////
 // FETCH USER PLACE SCHEMA

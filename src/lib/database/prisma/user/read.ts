@@ -1,6 +1,6 @@
 import { prismaDb } from "..";
-import { FetchedPlace, FetchedPlacesResponse, GetPlaces, GetPlacesSchema } from "@/database/place";
-import { FetchedUserResponse, GetUser, GetUserSchema, userResponse } from "@/database/user";
+import { FetchedPlaceResponse, GetPlace, GetPlaceSchema } from "../../place";
+import { GetUser, GetUserSchema, userResponse } from "../../user";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 const created = {
@@ -43,6 +43,30 @@ export const getUserDbPrisma = async (data: GetUser): Promise<userResponse> => {
 			},
 		});
 
+		return {
+			status: "success",
+			data: dbResult,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const getPlaceDbPrisma = async (data: GetPlace): Promise<FetchedPlaceResponse> => {
+	const { errors, validData } = validateData({ schema: GetPlaceSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	try {
+		const dbResult = await prismaDb.place.findUniqueOrThrow({
+			where: {
+				id: validData.id,
+			},
+		});
 		return {
 			status: "success",
 			data: dbResult,

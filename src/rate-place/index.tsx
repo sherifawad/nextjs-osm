@@ -2,10 +2,10 @@
 
 import { Button } from "@/ui/button";
 import { useSession } from "next-auth/react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ratePlace } from "./actions";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FetchedPlace, REPUTATIONType, placeRateUpdatedData } from "@/database/place";
+import type { FetchedPlace, REPUTATIONType, placeRateUpdatedData } from "@/database";
 
 type RatePlaceProps = {
 	place: FetchedPlace;

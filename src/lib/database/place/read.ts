@@ -1,14 +1,22 @@
 import {
+	FetchedPlaceResponse,
 	FetchedPlacesResponse,
 	FetchedUserPlacesCountResponse,
 	FetchedUserPlacesResponse,
+	GetPlace,
+	GetPlaceSchema,
 	GetPlaces,
 	GetPlacesSchema,
 	GetUserPlaces,
 	GetUserPlacesSchema,
 } from ".";
 import { validateData, errorHandler } from "@/lib/schema-utils";
-import { getPlacesDbPrisma, getUserPlacesCountDbPrisma, getUserPlacesDbPrisma } from "@/prisma/index";
+import {
+	getPlaceDbPrisma,
+	getPlacesDbPrisma,
+	getUserPlacesCountDbPrisma,
+	getUserPlacesDbPrisma,
+} from "../prisma/index";
 
 export const getPlaces = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {
 	const { errors, validData } = validateData({ schema: GetPlacesSchema, data });
@@ -21,6 +29,31 @@ export const getPlaces = async (data: GetPlaces): Promise<FetchedPlacesResponse>
 	}
 	try {
 		const result = await getPlacesDbPrisma(validData);
+		if (result.status === "success") {
+			return {
+				status: "success",
+				data: result.data,
+			};
+		}
+		return {
+			status: "error",
+			errors: result.errors,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+export const getPlace = async (data: GetPlace): Promise<FetchedPlaceResponse> => {
+	const { errors, validData } = validateData({ schema: GetPlaceSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	try {
+		const result = await getPlaceDbPrisma(validData);
 		if (result.status === "success") {
 			return {
 				status: "success",

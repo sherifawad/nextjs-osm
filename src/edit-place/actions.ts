@@ -1,9 +1,8 @@
 "use server";
 
-import { prismaDb as db } from "@/prisma/index";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { placeResponse, updatePlaceDb } from "@/database/place";
+import { getPlace, placeResponse, updatePlaceDb } from "@/database";
 import { revalidatePath } from "next/cache";
 import { TEditPlaceForm, editPlaceFormSchema } from "./validation";
 import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
@@ -27,15 +26,15 @@ export const updatePlaceLocation = async (place: TEditPlaceForm): Promise<placeR
 			return addServerError("Not authorized, low reputation", errors);
 		}
 
-		const placeDb = await db.place.findUnique({
-			where: {
-				id: validData.id,
-			},
+		const placeDbResult = await getPlace({
+			id: validData.id,
 		});
 
-		if (!placeDb) {
+		if (placeDbResult.status === "error") {
 			return addServerError("Place Not Exist", errors);
 		}
+
+		const placeDb = placeDbResult.data;
 
 		if ((placeDb.verified || placeDb.deleted) && session.user.role !== "OWNER") {
 			return addServerError("Not authorized to update", errors);

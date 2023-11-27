@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { searchParamsSchema } from "../schema";
-import { UserPlaces } from "@/database/place";
+import { UserPlaces } from "@/database";
 import { DataTable } from "@/components/table/table-data";
 import { columns } from "@/components/data-table/places-table/columns";
 import { Suspense } from "react";

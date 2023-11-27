@@ -1,6 +1,8 @@
+import "server-only";
+
 import { errorHandler, validateData } from "@/lib/schema-utils";
 import { prismaDb } from "../..";
-import { EditPlaceRate, EditPlaceRateSchema, placeRateUpdateResponse } from "@/database/place";
+import { EditPlaceRate, EditPlaceRateSchema, placeRateUpdateResponse } from "../../../place";
 
 export const updatePlaceRateDbPrisma = async (data: EditPlaceRate): Promise<placeRateUpdateResponse> => {
 	const { errors, validData } = validateData({ schema: EditPlaceRateSchema, data });

@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { headers } from "next/headers";
 import { leafletMapPageSearchParameterSchema } from "@/lib/validations/searchParams-schema";
-import { createPlaceDb, placeResponse } from "@/database/place";
+import { createPlaceDb, placeResponse } from "@/database";
 import { revalidatePath } from "next/cache";
 import { addPlaceFormSchema } from "./validation";
 import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";

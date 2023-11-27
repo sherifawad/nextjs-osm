@@ -1,7 +1,40 @@
 import { z } from "zod";
-import { RoleSchema } from "@/database/user";
-import { DataBaseRatingSchema, PlaceRatingSchema, REPUTATIONSchema } from "../place-rate";
-import { PlaceDbSchema, PlaceDbSchemaOptional } from ".";
+import { RoleSchema } from "../../user";
+import { DataBaseRatingSchema, PlaceRatingSchema } from "../place-rate";
+import { Place, PlaceDbSchema, PlaceDbSchemaOptional } from ".";
+
+/////////////////////////////////////////
+// GET PLACE SCHEMA
+/////////////////////////////////////////
+
+/**
+ * Input Schema
+ */
+export const GetPlaceSchema = z.object({
+	id: z.string().cuid(),
+});
+
+export type GetPlace = z.infer<typeof GetPlaceSchema>;
+/**
+ * Output Schema
+ */
+const FetchedPlaceErrorsSchema = GetPlaceSchema.merge(
+	z.object({
+		serverError: z.string(),
+	})
+);
+
+/**
+ * Response Schema
+ */
+type FetchedPlaceDataErrors = {
+	[key in keyof z.infer<typeof FetchedPlaceErrorsSchema>]: string;
+};
+
+type FetchedUserSuccessResponse = { status: "success"; data: Place };
+type FetchedPlaceErrorResponse = { status: "error"; errors: Partial<FetchedPlaceDataErrors> };
+
+export type FetchedPlaceResponse = FetchedPlaceErrorResponse | FetchedUserSuccessResponse;
 
 /////////////////////////////////////////
 // USER PLACES TYPE SCHEMA

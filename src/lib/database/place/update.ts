@@ -1,4 +1,4 @@
-import { updatePlaceDbPrisma } from "@/database/prisma";
+import { updatePlaceDbPrisma } from "../prisma";
 import { EditPlace, EditPlaceSchema, placeResponse } from "./validation";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 

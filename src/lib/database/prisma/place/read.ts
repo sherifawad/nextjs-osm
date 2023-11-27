@@ -1,14 +1,15 @@
+import "server-only";
+
 import { prismaDb } from "..";
 import {
-	FetchedPlace,
-	FetchedPlacesResponse,
-	FetchedUserPlacesCountResponse,
-	FetchedUserPlacesResponse,
-	GetPlaces,
+	type FetchedPlacesResponse,
+	type FetchedUserPlacesCountResponse,
+	type FetchedUserPlacesResponse,
+	type GetPlaces,
 	GetPlacesSchema,
 	GetUserPlaces,
 	GetUserPlacesSchema,
-} from "@/database/place";
+} from "../../place";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 export const getPlacesDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {

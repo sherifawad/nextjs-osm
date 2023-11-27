@@ -19,9 +19,7 @@
 			}
 		],
 		"paths": {
-			"@/prisma/*": ["./src/lib/database/prisma/*"],
-			"@/database/*": ["./src/lib/database/*"],
-			"@/schema/*": ["./src/lib/validations/generated/prisma/*"],
+			"@/database": ["./src/lib/database/index.ts"],
 			"@/ui/*": ["./src/components/ui/*"],
 			"@/components/*": ["./src/components/*"],
 			"@/*": ["./src/*"]

@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/table/table-data";
-import { UserPlaces } from "@/database/place";
+import { UserPlaces } from "@/database";
 import { columns } from "./columns";
 
 type PlacesTableProps = {

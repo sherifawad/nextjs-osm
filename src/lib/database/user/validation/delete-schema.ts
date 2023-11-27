@@ -1,5 +1,5 @@
 import { z } from "zod";
 
-export const placeDeleteSchema = z.object({
-	placeId: z.string().cuid(),
+export const pUserDeleteSchema = z.object({
+	id: z.string().cuid(),
 });

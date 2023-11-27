@@ -25,7 +25,7 @@ export default function DashboardLayout({
 				<Tabs defaultValue={value} className="w-full mt-8">
 					<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-3 mb-8">
 						<TabsTrigger value="account">
-							<Link prefetch={false} href={`/dashboard/${params.id}/account`}>
+							<Link prefetch={true} href={`/dashboard/${params.id}/account`}>
 								Account
 							</Link>
 						</TabsTrigger>

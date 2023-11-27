@@ -15,6 +15,6 @@ export type PlaceDataErrors = {
 // PLACE SCHEMA VALIDATION OUTPUT
 /////////////////////////////////////////
 type SuccessResponse = { status: "success"; data: Place };
-export type ErrorResponse = { status: "error"; errors: Partial<PlaceDataErrors> };
+type ErrorResponse = { status: "error"; errors: Partial<PlaceDataErrors> };
 
 export type placeResponse = SuccessResponse | ErrorResponse;

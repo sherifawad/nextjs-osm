@@ -7,7 +7,7 @@ import { Checkbox } from "@/ui/checkbox";
 
 import { DataTableColumnHeader } from "../../table/data-table-column-header";
 import { DataTableRowActions } from "../../table/data-table-row-actions";
-import { type UserPlaces } from "@/database/place/validation";
+import { type UserPlaces } from "@/database";
 import { DELETED, HIDDEN, VERIFIED } from "./labels";
 
 export const columns: ColumnDef<UserPlaces>[] = [
