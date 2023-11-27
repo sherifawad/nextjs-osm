@@ -14,7 +14,7 @@ async function AccountPage() {
 		redirect(`http://${host}/api/auth/signin?callbackUrl=http://${host}`);
 	}
 
-	const user = await getUser({ userId: session?.user.id });
+	const user = await getUser({ id: session?.user.id });
 	if (user.status === "error") {
 		redirect(`http://${host}/api/auth/signin?callbackUrl=http://${host}`);
 	}

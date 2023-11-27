@@ -1,4 +1,4 @@
-import { FetchedUserResponse, GetUser, GetUserSchema } from ".";
+import { FetchedUserResponse, GetUser, GetUserSchema, userResponse } from ".";
 import { errorHandler, validateData } from "@/lib/schema-utils";
 import { getUserDbPrisma } from "../prisma";
 
@@ -22,7 +22,7 @@ import { getUserDbPrisma } from "../prisma";
 // 	}
 // };
 
-export const getUser = async (data: GetUser): Promise<FetchedUserResponse> => {
+export const getUser = async (data: GetUser): Promise<userResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserSchema, data });
 
 	if (!validData) {

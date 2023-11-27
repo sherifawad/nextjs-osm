@@ -3,20 +3,11 @@ import { RoleSchema, UserDbSchema } from "./user-schema";
 import { userPlacesSchema } from "@/database/place";
 
 /////////////////////////////////////////
-// USER PLACES TYPE SCHEMA
-/////////////////////////////////////////
-export const UserPlacesTypeSchema = z.enum(["ALL", "CREATED", "MODIFIED", "NONE"]);
-
-export type UserPlacesType = `${z.infer<typeof UserPlacesTypeSchema>}`;
-
-/////////////////////////////////////////
 // FETCH USER PLACE SCHEMA
 /////////////////////////////////////////
 
 export const GetUserSchema = z.object({
-	userId: z.string().cuid(),
-	userRole: RoleSchema.default("USER").optional(),
-	placesType: UserPlacesTypeSchema.default("NONE").optional(),
+	id: z.string().cuid(),
 });
 
 export type GetUser = z.infer<typeof GetUserSchema>;

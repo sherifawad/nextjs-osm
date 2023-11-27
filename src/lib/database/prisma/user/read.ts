@@ -1,6 +1,6 @@
 import { prismaDb } from "..";
 import { FetchedPlace, FetchedPlacesResponse, GetPlaces, GetPlacesSchema } from "@/database/place";
-import { FetchedUserResponse, GetUser, GetUserSchema } from "@/database/user";
+import { FetchedUserResponse, GetUser, GetUserSchema, userResponse } from "@/database/user";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 const created = {
@@ -26,7 +26,7 @@ const modified = {
 	},
 };
 
-export const getUserDbPrisma = async (data: GetUser): Promise<FetchedUserResponse> => {
+export const getUserDbPrisma = async (data: GetUser): Promise<userResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserSchema, data });
 
 	if (!validData) {
@@ -35,24 +35,12 @@ export const getUserDbPrisma = async (data: GetUser): Promise<FetchedUserRespons
 			errors,
 		};
 	}
-	let includePlaces;
 
 	try {
-		if (validData.placesType === "CREATED") {
-			includePlaces = { ...created };
-		} else if (validData.placesType === "MODIFIED") {
-			includePlaces = { ...modified };
-		} else if (validData.placesType === "ALL") {
-			includePlaces = { ...created, ...modified };
-		} else {
-			includePlaces = undefined;
-		}
-
 		const dbResult = await prismaDb.user.findUniqueOrThrow({
 			where: {
-				id: validData.userId,
+				id: validData.id,
 			},
-			include: { ...includePlaces },
 		});
 
 		return {

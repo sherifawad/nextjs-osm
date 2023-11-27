@@ -1,10 +1,10 @@
 "use client";
 
 import {
-	ColumnDef,
-	ColumnFiltersState,
-	SortingState,
-	VisibilityState,
+	type ColumnDef,
+	type ColumnFiltersState,
+	type SortingState,
+	type VisibilityState,
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -17,9 +17,8 @@ import {
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/ui/table";
 
-import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -53,6 +52,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	});
+
+	console.log("🚀 ~ file: table-data.tsx:58 ~ table.getRowModel().rows?.length:", table.getRowModel().rows?.length);
 
 	return (
 		<div className="space-y-4">
@@ -91,7 +92,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					</TableBody>
 				</Table>
 			</div>
-			<DataTablePagination table={table} />
 		</div>
 	);
 }

@@ -1,5 +1,4 @@
-"use client";
-import { Column } from "@tanstack/react-table";
+import { type Column } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/ui/badge";
@@ -16,7 +15,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
 import { Separator } from "@/ui/separator";
 import { Check, CheckCircle2 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
 	column?: Column<TData, TValue>;
@@ -33,14 +31,6 @@ export function DataTableFacetedFilter<TData, TValue>({
 	title,
 	options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-	if (!mounted) {
-		return null;
-	}
 	const facets = column?.getFacetedUniqueValues();
 	const selectedValues = new Set(column?.getFilterValue() as string[]);
 

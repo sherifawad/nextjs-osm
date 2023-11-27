@@ -1,8 +1,17 @@
 import { prismaDb } from "..";
-import { FetchedPlace, FetchedPlacesResponse, GetPlaces, GetPlacesSchema } from "@/database/place";
+import {
+	FetchedPlace,
+	FetchedPlacesResponse,
+	FetchedUserPlacesCountResponse,
+	FetchedUserPlacesResponse,
+	GetPlaces,
+	GetPlacesSchema,
+	GetUserPlaces,
+	GetUserPlacesSchema,
+} from "@/database/place";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
-export const getPlacedDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {
+export const getPlacesDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {
 	const { errors, validData } = validateData({ schema: GetPlacesSchema, data });
 
 	if (!validData) {
@@ -81,6 +90,80 @@ export const getPlacedDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesR
 				},
 			});
 		}
+
+		return {
+			status: "success",
+			data: dbResult,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<FetchedUserPlacesResponse> => {
+	const { errors, validData } = validateData({ schema: GetUserPlacesSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	let whereData = {};
+
+	try {
+		if (validData.placeType === "CREATED") {
+			whereData = { ...whereData, createdById: validData.id };
+		} else if (validData.placeType === "MODIFIED") {
+			whereData = { ...whereData, modifiedById: validData.id };
+		} else {
+			whereData = { ...whereData, AND: [{ createdById: validData.id }, { modifiedById: validData.id }] };
+		}
+
+		const dbResult = await prismaDb.place.findMany({
+			where: whereData,
+			skip: validData.skip,
+			take: validData.take,
+			include: {
+				rating: {
+					select: {
+						placeReputation: true,
+					},
+				},
+			},
+		});
+
+		return {
+			status: "success",
+			data: dbResult,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+export const getUserPlacesCountDbPrisma = async (data: GetUserPlaces): Promise<FetchedUserPlacesCountResponse> => {
+	const { errors, validData } = validateData({ schema: GetUserPlacesSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	let whereData = {};
+
+	try {
+		if (validData.placeType === "CREATED") {
+			whereData = { ...whereData, createdById: validData.id };
+		} else if (validData.placeType === "MODIFIED") {
+			whereData = { ...whereData, modifiedById: validData.id };
+		} else {
+			whereData = { ...whereData, AND: [{ createdById: validData.id }, { modifiedById: validData.id }] };
+		}
+
+		const dbResult = await prismaDb.place.count({
+			where: whereData,
+		});
 
 		return {
 			status: "success",
