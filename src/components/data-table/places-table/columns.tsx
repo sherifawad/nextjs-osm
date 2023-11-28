@@ -6,9 +6,9 @@ import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 
 import { DataTableColumnHeader } from "../../table/data-table-column-header";
-import { DataTableRowActions } from "../../table/data-table-row-actions";
-import { type UserPlaces } from "@/database";
+import { type UserPlaces } from "@/types";
 import { DELETED, HIDDEN, VERIFIED } from "./labels";
+import { DataTableRowActions } from "./data-table-row-actions";
 
 export const columns: ColumnDef<UserPlaces>[] = [
 	// {

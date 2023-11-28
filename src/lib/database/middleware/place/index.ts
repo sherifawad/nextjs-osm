@@ -2,4 +2,3 @@ export * from "./create";
 export * from "./update";
 export * from "./read";
 export * from "./place-rate/index";
-export * from "./validation/index";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { REPUTATIONSchema } from "./generated/prisma";
+import { REPUTATIONSchema } from "./place";
 
 export const locationSchema = z.object({
 	lat: z.coerce.number(),

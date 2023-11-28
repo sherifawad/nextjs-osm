@@ -1,22 +1,17 @@
 import {
-	FetchedPlaceResponse,
-	FetchedPlacesResponse,
-	FetchedUserPlacesCountResponse,
-	FetchedUserPlacesResponse,
-	GetPlace,
+	type FetchedPlaceResponse,
+	type FetchedPlacesResponse,
+	type FetchedUserPlacesCountResponse,
+	type FetchedUserPlacesResponse,
+	type GetPlace,
+	type GetPlaces,
+	type GetUserPlaces,
 	GetPlaceSchema,
-	GetPlaces,
 	GetPlacesSchema,
-	GetUserPlaces,
 	GetUserPlacesSchema,
-} from ".";
+} from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
-import {
-	getPlaceDbPrisma,
-	getPlacesDbPrisma,
-	getUserPlacesCountDbPrisma,
-	getUserPlacesDbPrisma,
-} from "../prisma/index";
+import { getPlaceDbPrisma, getPlacesDbPrisma, getUserPlacesCountDbPrisma, getUserPlacesDbPrisma } from "@/prisma";
 
 export const getPlaces = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {
 	const { errors, validData } = validateData({ schema: GetPlacesSchema, data });

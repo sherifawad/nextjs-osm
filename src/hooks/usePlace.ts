@@ -1,6 +1,6 @@
 "use client";
 
-import { type FetchedPlace } from "@/database";
+import { type FetchedPlace } from "@/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { Edit } from "lucide-react";
 import EditPlaceForm from "./form";
-import { Place } from "@/database";
+import type { Place } from "@/types";
 
 type EditSelectedPlaceProps = {
 	place: Place;

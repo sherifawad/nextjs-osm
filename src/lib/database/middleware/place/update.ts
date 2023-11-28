@@ -1,5 +1,5 @@
-import { updatePlaceDbPrisma } from "../prisma";
-import { EditPlace, EditPlaceSchema, placeResponse } from "./validation";
+import { updatePlaceDbPrisma } from "@/prisma";
+import { type EditPlace, EditPlaceSchema, placeResponse } from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 export const updatePlaceDb = async (updatedPlace: EditPlace): Promise<placeResponse> => {

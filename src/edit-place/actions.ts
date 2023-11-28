@@ -2,7 +2,8 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { getPlace, placeResponse, updatePlaceDb } from "@/database";
+import { getPlace, updatePlaceDb } from "@/database";
+import type { placeResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 import { TEditPlaceForm, editPlaceFormSchema } from "./validation";
 import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";

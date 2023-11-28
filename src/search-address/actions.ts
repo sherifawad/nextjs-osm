@@ -4,7 +4,6 @@ import { errorHandler, validateData } from "@/lib/schema-utils";
 import {
 	NominatedPlaceResponse,
 	NominatedPlaceSchema,
-	SearchAddressesErrorsSchemaErrors,
 	SearchAddressesInput,
 	searchAddressesInputSchema,
 } from "./validations";

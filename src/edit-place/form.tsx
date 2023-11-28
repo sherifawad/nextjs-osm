@@ -19,7 +19,7 @@ import { updatePlaceLocation } from "./actions";
 import { RoleType, TEditPlaceForm, editPlaceFormSchema } from "./validation";
 import { Checkbox } from "@/ui/checkbox";
 import { Switch } from "@/ui/switch";
-import { type Place } from "@/database";
+import { type Place } from "@/types";
 
 type EditPlaceFormProps = {
 	place: Place;

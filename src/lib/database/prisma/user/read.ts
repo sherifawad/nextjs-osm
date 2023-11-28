@@ -1,6 +1,12 @@
 import { prismaDb } from "..";
-import { FetchedPlaceResponse, GetPlace, GetPlaceSchema } from "../../place";
-import { GetUser, GetUserSchema, userResponse } from "../../user";
+import {
+	type FetchedPlaceResponse,
+	type GetPlace,
+	type GetUser,
+	type userResponse,
+	GetUserSchema,
+	GetPlaceSchema,
+} from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 const created = {

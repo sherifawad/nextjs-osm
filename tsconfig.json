@@ -19,7 +19,9 @@
 			}
 		],
 		"paths": {
-			"@/database": ["./src/lib/database/index.ts"],
+			"@/types": ["./src/lib/types/index.ts"],
+			"@/prisma": ["./src/lib/database/prisma/index.ts"],
+			"@/database": ["./src/lib/database/middleware/index.ts"],
 			"@/ui/*": ["./src/components/ui/*"],
 			"@/components/*": ["./src/components/*"],
 			"@/*": ["./src/*"]

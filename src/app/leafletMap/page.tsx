@@ -3,10 +3,11 @@ import Container from "@/components/ui/Container";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { cookies } from "next/headers";
-import { locationSchema } from "@/lib/validations/searchParams-schema";
+import { locationSchema } from "@/lib/types/searchParams-schema";
 import { LoaderIcon } from "lucide-react";
 import SearchAddresses from "@/search-address";
-import { GetPlaces, RoleType, getPlaces } from "@/database";
+import { getPlaces } from "@/database";
+import type { GetPlaces, RoleType } from "@/types";
 import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {

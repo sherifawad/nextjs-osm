@@ -1,6 +1,7 @@
 import "server-only";
 
-import { UserPlacesType, getUserPlaces, getUserPlacesCount } from "@/database";
+import { getUserPlaces, getUserPlacesCount } from "@/database";
+import type { UserPlacesType } from "@/types";
 
 export const getPlacesResult = async ({
 	userId,

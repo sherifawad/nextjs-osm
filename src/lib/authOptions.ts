@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { env } from "@/env";
 import { getUser } from "@/database";
-import { prismaDb } from "./database/prisma";
+import { prismaDb } from "@/prisma";
 
 export const authOptions: AuthOptions = {
 	secret: env.NEXTAUTH_SECRET || "",

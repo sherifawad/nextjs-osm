@@ -2,7 +2,8 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import { placeRateUpdateResponse, updatePlaceRatingDb } from "@/database";
+import { updatePlaceRatingDb } from "@/database";
+import { type placeRateUpdateResponse } from "@/types";
 import { UpdateRateSchema, updateRateSchema } from "./validation";
 import { addServerError, errorHandler, validateData } from "@/lib/schema-utils";
 

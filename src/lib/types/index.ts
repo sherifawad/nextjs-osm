@@ -1,5 +1,5 @@
 import z from "zod";
-import { placeRateSearchParameterSchema } from "../validations/searchParams-schema";
+import { placeRateSearchParameterSchema } from "./searchParams-schema";
 
 // combine types into better format
 export type Prettify<T> = {
@@ -16,3 +16,6 @@ export type fetchStatus = {
 	success: "success";
 	error: "error";
 };
+
+export * from "./place/index";
+export * from "./user/index";

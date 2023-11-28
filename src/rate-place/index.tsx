@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { ratePlace } from "./actions";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import type { FetchedPlace, REPUTATIONType, placeRateUpdatedData } from "@/database";
+import type { FetchedPlace, REPUTATIONType, placeRateUpdatedData } from "@/types";
 
 type RatePlaceProps = {
 	place: FetchedPlace;

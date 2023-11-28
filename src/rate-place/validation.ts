@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { REPUTATIONSchema } from "@/database";
+import { REPUTATIONSchema } from "@/types";
 
 export const updateRateSchema = z.object({
 	placeId: z.string().cuid(),

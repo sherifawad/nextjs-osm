@@ -1,6 +1,6 @@
-import { FetchedUserResponse, GetUser, GetUserSchema, userResponse } from ".";
+import { type GetUser, GetUserSchema, type userResponse } from "@/types";
 import { errorHandler, validateData } from "@/lib/schema-utils";
-import { getUserDbPrisma } from "../prisma";
+import { getUserDbPrisma } from "@/prisma";
 
 // export const getUsers = async (): Promise<userResponse> => {
 // 	let errors: Partial<UserDataErrors> = {};

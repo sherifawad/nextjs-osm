@@ -1,5 +1,3 @@
-import "server-only";
-
 import { prismaDb } from "..";
 import {
 	type FetchedPlacesResponse,
@@ -9,7 +7,7 @@ import {
 	GetPlacesSchema,
 	GetUserPlaces,
 	GetUserPlacesSchema,
-} from "../../place";
+} from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 export const getPlacesDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesResponse> => {

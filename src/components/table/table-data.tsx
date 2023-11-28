@@ -53,8 +53,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	});
 
-	console.log("🚀 ~ file: table-data.tsx:58 ~ table.getRowModel().rows?.length:", table.getRowModel().rows?.length);
-
 	return (
 		<div className="space-y-4">
 			<DataTableToolbar table={table} />
