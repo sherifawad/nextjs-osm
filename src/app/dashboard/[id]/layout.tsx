@@ -18,7 +18,7 @@ export default function DashboardLayout({
 	};
 }) {
 	const pathname = (children as ReactElement)?.props?.childProp?.segment;
-	const value = pathname === "created" ? "createdPlaces" : pathname === "modified" ? "modifiedPlaces" : "account";
+	const value = pathname === "places" ? "places" : pathname === "users" ? "users" : "account";
 	return (
 		<main>
 			<section>
@@ -29,14 +29,14 @@ export default function DashboardLayout({
 								Account
 							</Link>
 						</TabsTrigger>
-						<TabsTrigger value="createdPlaces">
-							<Link prefetch={false} href={`/dashboard/${params.id}/created`}>
-								Created Places
+						<TabsTrigger value="places">
+							<Link prefetch={false} href={`/dashboard/${params.id}/places`}>
+								Places
 							</Link>
 						</TabsTrigger>
-						<TabsTrigger value="modifiedPlaces">
-							<Link prefetch={false} href={`/dashboard/${params.id}/modified`}>
-								Modified Places
+						<TabsTrigger value="users">
+							<Link prefetch={false} href={`/dashboard/${params.id}/users`}>
+								Users
 							</Link>
 						</TabsTrigger>
 					</TabsList>

@@ -10,11 +10,11 @@ import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { getPlacesResult } from "../utils";
 
-type CreatedPlacesPageProps = {
+type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
 };
 
-async function CreatedPlacesPage({ searchParams }: CreatedPlacesPageProps) {
+async function PlacesPage({ searchParams }: PlacesPageProps) {
 	const session = await getServerSession(authOptions);
 	const header = headers();
 	const host = header.get("host");
@@ -33,7 +33,7 @@ async function CreatedPlacesPage({ searchParams }: CreatedPlacesPageProps) {
 		size = parsedSearchParams.data.size;
 		search = parsedSearchParams.data.search || "";
 
-		const result = await getPlacesResult({ userId: session?.user.id, placeType: "CREATED", page, size });
+		const result = await getPlacesResult({ userId: session?.user.id, placeType: "ALL", page, size });
 		count = result.count;
 		data = result.data;
 	}
@@ -49,5 +49,4 @@ async function CreatedPlacesPage({ searchParams }: CreatedPlacesPageProps) {
 		</section>
 	);
 }
-
-export default CreatedPlacesPage;
+export default PlacesPage;

@@ -116,7 +116,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		} else if (validData.placeType === "MODIFIED") {
 			whereData = { ...whereData, modifiedById: validData.id };
 		} else {
-			whereData = { ...whereData, AND: [{ createdById: validData.id }, { modifiedById: validData.id }] };
+			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
 
 		const dbResult = await prismaDb.place.findMany({
@@ -157,7 +157,7 @@ export const getUserPlacesCountDbPrisma = async (data: GetUserPlaces): Promise<F
 		} else if (validData.placeType === "MODIFIED") {
 			whereData = { ...whereData, modifiedById: validData.id };
 		} else {
-			whereData = { ...whereData, AND: [{ createdById: validData.id }, { modifiedById: validData.id }] };
+			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
 
 		const dbResult = await prismaDb.place.count({
