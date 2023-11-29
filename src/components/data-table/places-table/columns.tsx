@@ -9,6 +9,7 @@ import { DataTableColumnHeader } from "../../table/data-table-column-header";
 import { type UserPlaces } from "@/types";
 import { DELETED, HIDDEN, VERIFIED } from "./labels";
 import { DataTableRowActions } from "./data-table-row-actions";
+import { Timer } from "lucide-react";
 
 export const columns: ColumnDef<UserPlaces>[] = [
 	// {
@@ -40,6 +41,26 @@ export const columns: ColumnDef<UserPlaces>[] = [
 		enableHiding: false,
 	},
 
+	{
+		accessorKey: "modifiedAt",
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Last Modified" />,
+		cell: ({ row }) => {
+			const rowDate = row.getValue("modifiedAt") as Date;
+			if (!rowDate) {
+				return null;
+			}
+			const placeTime = new Intl.DateTimeFormat().format(rowDate);
+			return (
+				<div className="flex w-[100px] items-center">
+					<Timer className="mr-2 h-4 w-4 text-muted-foreground" />
+					<time suppressHydrationWarning>{placeTime}</time>
+				</div>
+			);
+		},
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id));
+		},
+	},
 	{
 		accessorKey: "hidden",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Hidden" />,
