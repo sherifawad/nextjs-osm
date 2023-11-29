@@ -36,14 +36,12 @@ export function DataTablePagination<TData>({ count, page, size }: DataTablePagin
 	);
 
 	useEffect(() => {
+		addParams({ key: "count", value: `${count}` });
 		if (!searchParams.get("size")) {
 			addParams({ key: "size", value: `${size}` });
 		}
 		if (!searchParams.get("page")) {
 			addParams({ key: "page", value: `${page}` });
-		}
-		if (!searchParams.get("count")) {
-			addParams({ key: "count", value: `${count}` });
 		}
 	}, [addParams, count, page, searchParams, size]);
 

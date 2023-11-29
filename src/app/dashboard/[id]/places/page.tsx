@@ -1,14 +1,14 @@
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import { searchParamsSchema } from "../schema";
 import type { UserPlaces } from "@/types";
 import { DataTable } from "@/components/table/table-data";
 import { columns } from "@/components/data-table/places-table/columns";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
-import { getPlacesResult } from "../utils";
+import { getPlacesResult } from "./utils";
 
 type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
@@ -33,7 +33,13 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		size = parsedSearchParams.data.size;
 		search = parsedSearchParams.data.search || "";
 
-		const result = await getPlacesResult({ userId: session?.user.id, placeType: "ALL", page, size });
+		const result = await getPlacesResult({
+			userId: session?.user.id,
+			placeType: "ALL",
+			page,
+			size,
+			role: session.user.role,
+		});
 		count = result.count;
 		data = result.data;
 	}

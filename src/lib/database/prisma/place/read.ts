@@ -24,71 +24,26 @@ export const getPlacesDbPrisma = async (data: GetPlaces): Promise<FetchedPlacesR
 			deleted: validData.deletedPlaces,
 			hidden: validData.hiddenPlaces,
 		};
-		let dbResult;
-		if (validData.userRole === "OWNER") {
-			dbResult = await prismaDb.place.findMany({
-				where: whereData,
-				include: {
-					rating: {
-						select: {
-							userId: true,
-							placeReputation: true,
-						},
+		const dbResult = await prismaDb.place.findMany({
+			where: whereData,
+			include: {
+				rating: {
+					select: {
+						userId: true,
+						placeReputation: true,
 					},
-					_count: {
-						select: {
-							rating: {
-								where: {
-									placeReputation: "VERIFIED",
-								},
+				},
+				_count: {
+					select: {
+						rating: {
+							where: {
+								placeReputation: "VERIFIED",
 							},
 						},
 					},
 				},
-			});
-		} else if (validData.userRole === "ADMIN") {
-			dbResult = await prismaDb.place.findMany({
-				where: whereData,
-				include: {
-					rating: {
-						select: {
-							userId: true,
-							placeReputation: true,
-						},
-					},
-					_count: {
-						select: {
-							rating: {
-								where: {
-									placeReputation: "VERIFIED",
-								},
-							},
-						},
-					},
-				},
-			});
-		} else {
-			dbResult = await prismaDb.place.findMany({
-				where: whereData,
-				include: {
-					rating: {
-						select: {
-							userId: true,
-							placeReputation: true,
-						},
-					},
-					_count: {
-						select: {
-							rating: {
-								where: {
-									placeReputation: "VERIFIED",
-								},
-							},
-						},
-					},
-				},
-			});
-		}
+			},
+		});
 
 		return {
 			status: "success",
@@ -118,6 +73,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		} else {
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
+		whereData = { ...whereData, deleted: validData.deletedPlaces, hidden: validData.hiddenPlaces };
 
 		const dbResult = await prismaDb.place.findMany({
 			where: whereData,
@@ -159,6 +115,7 @@ export const getUserPlacesCountDbPrisma = async (data: GetUserPlaces): Promise<F
 		} else {
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
+		whereData = { ...whereData, deleted: validData.deletedPlaces, hidden: validData.hiddenPlaces };
 
 		const dbResult = await prismaDb.place.count({
 			where: whereData,

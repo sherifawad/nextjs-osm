@@ -67,6 +67,8 @@ export const GetUserPlacesSchema = z.object({
 	take: z.number().optional(),
 	skip: z.number().optional(),
 	placeType: UserPlacesTypeSchema,
+	deletedPlaces: z.boolean().optional(),
+	hiddenPlaces: z.boolean().optional(),
 });
 
 export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
