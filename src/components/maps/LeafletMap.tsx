@@ -41,8 +41,8 @@ const icon = L.icon({
 });
 
 type LeafletMapProps = {
-	initialLat?: number;
-	initialLon?: number;
+	initialLat: number;
+	initialLon: number;
 	places: FetchedPlace[];
 };
 
@@ -52,8 +52,8 @@ const LoaderIndicator = () => (
 	</div>
 );
 
-function LeafletMap({ places }: LeafletMapProps) {
-	const { location, setLocationData, place, kaabaPosition, searchParams } = usePlace();
+function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
+	const { setLocationData, place, kaabaPosition, searchParams } = usePlace();
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
 	// const placeMarkerRef = useRef<TMarker<any>>(null);
@@ -95,7 +95,7 @@ function LeafletMap({ places }: LeafletMapProps) {
 	};
 
 	return (
-		<MapContainer center={[location.latitude, location.longitude]} zoom={17} className="h-full w-full z-0">
+		<MapContainer center={[initialLat, initialLon]} zoom={17} className="h-full w-full z-0">
 			<TileLayer
 				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -159,7 +159,7 @@ function LeafletMap({ places }: LeafletMapProps) {
 				</CircleMarker>
 				<Polyline
 					positions={[
-						[location.latitude, location.longitude],
+						[initialLat, initialLon],
 						[kaabaPosition.latitude, kaabaPosition.longitude],
 					]}
 				/>
@@ -167,16 +167,16 @@ function LeafletMap({ places }: LeafletMapProps) {
 
 			<Marker
 				position={{
-					lat: location.latitude,
-					lng: location.longitude,
+					lat: initialLat,
+					lng: initialLon,
 				}}
 				icon={icon}
 				ref={addLocationMarkerRef}
 			>
 				<Popup>
 					<AddNewPlace
-						latitude={location.latitude}
-						longitude={location.longitude}
+						latitude={initialLat}
+						longitude={initialLon}
 						onDialogOpen={() =>
 							new Promise(() => {
 								addLocationMarkerRef.current?.closePopup();

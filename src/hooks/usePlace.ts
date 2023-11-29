@@ -1,5 +1,6 @@
 "use client";
 
+import { kaabaPosition } from "@/components/data-table/places-table";
 import { type FetchedPlace } from "@/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
@@ -9,11 +10,6 @@ import { useCallback, useEffect, useState } from "react";
 type PlaceLocation = {
 	latitude: number;
 	longitude: number;
-};
-
-const kaabaPosition = {
-	latitude: 21.42249,
-	longitude: 39.8262,
 };
 
 type UsePlaceProps = {
@@ -111,15 +107,15 @@ function usePlace() {
 		[Session?.user.id, pathname, router, searchParams, status]
 	);
 
-	useEffect(() => {
-		const latitude = parseFloat(getCookie("lat") ?? "");
-		const longitude = parseFloat(getCookie("lon") ?? "");
-		// setLoading(false);
-		if (latitude && longitude) {
-			setLocationData({ location: { latitude, longitude }, search: decodeURI(searchParams.get("search") ?? "") });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// useEffect(() => {
+	// 	const latitude = parseFloat(getCookie("lat") ?? "");
+	// 	const longitude = parseFloat(getCookie("lon") ?? "");
+	// 	// setLoading(false);
+	// 	if (latitude && longitude) {
+	// 		setLocationData({ location: { latitude, longitude }, search: decodeURI(searchParams.get("search") ?? "") });
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 
 	return {
 		location,

@@ -9,6 +9,7 @@ import SearchAddresses from "@/search-address";
 import { getPlaces } from "@/database";
 import type { GetPlaces, RoleType } from "@/types";
 import dynamic from "next/dynamic";
+import { kaabaPosition } from "@/components/data-table/places-table";
 
 const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
 	ssr: false,
@@ -48,8 +49,8 @@ type leafletMapPageProps = {
 async function leafletMapPage({ searchParams }: leafletMapPageProps) {
 	const session = await getServerSession(authOptions);
 	const dataBasePlaces = await fetchPlaces({ role: session?.user.role });
-	let initialLat: number | undefined = undefined;
-	let initialLon: number | undefined = undefined;
+	let initialLat: number = kaabaPosition.latitude;
+	let initialLon: number = kaabaPosition.longitude;
 	const initialSearch =
 		searchParams !== undefined && typeof searchParams !== "string"
 			? ((searchParams as keyPair)["search"] ?? "").toString()
