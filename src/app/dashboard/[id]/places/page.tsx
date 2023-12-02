@@ -8,7 +8,7 @@ import { DataTable } from "@/components/table/table-data";
 import { columns } from "@/components/data-table/places-table/columns";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
-import { getPlacesResult } from "./utils";
+import { getSortedPlacesResult } from "@/components/data-table/places-table/actions";
 
 type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
@@ -33,12 +33,14 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		size = parsedSearchParams.data.size;
 		search = parsedSearchParams.data.search || "";
 
-		const result = await getPlacesResult({
+		const result = await getSortedPlacesResult({
 			userId: session?.user.id,
 			placeType: "ALL",
 			page,
 			size,
 			role: session.user.role,
+			sortedColumn: "name",
+			sortingType: "Asc",
 		});
 		count = result.count;
 		data = result.data;

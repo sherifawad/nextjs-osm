@@ -6,6 +6,7 @@ export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
 
+
 export type placeRateSearchParameter = z.infer<typeof placeRateSearchParameterSchema>;
 
 export type fetchStatus = {

@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export const sortingSchema = z.enum(["Asc", "Desc"]);
+
+export type sortingType = z.infer<typeof sortingSchema>;
 /////////////////////////////////////////
 // PLACE RATING SCHEMA
 /////////////////////////////////////////

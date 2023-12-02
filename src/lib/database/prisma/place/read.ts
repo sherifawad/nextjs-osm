@@ -64,6 +64,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		};
 	}
 	let whereData = {};
+	let sortData = {};
 
 	try {
 		if (validData.placeType === "CREATED") {
@@ -74,6 +75,20 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
 		whereData = { ...whereData, deleted: validData.deletedPlaces, hidden: validData.hiddenPlaces };
+
+		if (validData.columnToSort === "rating") {
+			sortData = {
+				...sortData,
+				rating: {
+					_count: validData.sorting,
+				},
+			};
+		} else {
+			sortData = {
+				...sortData,
+				[validData.columnToSort]: validData.sorting.toLocaleLowerCase(),
+			};
+		}
 
 		const dbResult = await prismaDb.place.findMany({
 			where: whereData,
@@ -86,6 +101,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 					},
 				},
 			},
+			orderBy: sortData,
 		});
 
 		return {
@@ -96,6 +112,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		return errorHandler(error, errors);
 	}
 };
+
 export const getUserPlacesCountDbPrisma = async (data: GetUserPlaces): Promise<FetchedUserPlacesCountResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserPlacesSchema, data });
 

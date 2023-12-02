@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RoleSchema } from "../../user";
-import { DataBaseRatingSchema, PlaceRatingSchema } from "../place-rate";
+import { DataBaseRatingSchema, PlaceRatingSchema, sortingSchema } from "../place-rate";
 import { Place, PlaceDbSchema, PlaceDbSchemaOptional } from ".";
 
 /////////////////////////////////////////
@@ -62,11 +62,19 @@ export type FetchedPlace = z.infer<typeof FetchedPlaceSchema>;
 // FETCH USER PLACE INPUT SCHEMA
 /////////////////////////////////////////
 
+export const userPlacesSchema = z
+	.object({
+		rating: PlaceRatingSchema.omit({ placeId: true, userId: true }).array(),
+	})
+	.and(PlaceDbSchemaOptional);
+export type UserPlaces = z.infer<typeof userPlacesSchema>;
 export const GetUserPlacesSchema = z.object({
 	id: z.string().cuid(),
+	placeType: UserPlacesTypeSchema,
+	columnToSort: z.custom<keyof UserPlaces>(),
+	sorting: sortingSchema,
 	take: z.number().optional(),
 	skip: z.number().optional(),
-	placeType: UserPlacesTypeSchema,
 	deletedPlaces: z.boolean().optional(),
 	hiddenPlaces: z.boolean().optional(),
 });
@@ -76,13 +84,6 @@ export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
 /////////////////////////////////////////
 // FETCH USER PLACE OUTPUT SCHEMA
 /////////////////////////////////////////
-
-export const userPlacesSchema = z
-	.object({
-		rating: PlaceRatingSchema.omit({ placeId: true, userId: true }).array(),
-	})
-	.and(PlaceDbSchemaOptional);
-export type UserPlaces = z.infer<typeof userPlacesSchema>;
 
 const FetchedUserPlacesErrorsSchema = GetUserPlacesSchema.merge(
 	z.object({
