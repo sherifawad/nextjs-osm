@@ -1,7 +1,7 @@
 "use server";
 
 import { getUserPlaces, getUserPlacesCount, updatePlaceDb } from "@/database";
-import { GetUserPlaces, RoleType, UserPlaces, UserPlacesType, sortingType } from "@/types";
+import { GetUserPlaces, RoleType, SortingType, UserPlaces, UserPlacesType } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export const hidePlaceAction = async ({
@@ -71,22 +71,22 @@ export const getSortedPlacesResult = async ({
 	page,
 	size,
 	role,
-	sortedColumn,
-	sortingType,
+	column,
+	sort,
 }: {
 	userId: string;
 	placeType: UserPlacesType;
 	page: number;
 	size: number;
 	role: RoleType | undefined;
-	sortedColumn: keyof UserPlaces;
-	sortingType: sortingType;
+	column: keyof UserPlaces;
+	sort: SortingType;
 }) => {
 	let inputData: GetUserPlaces = {
 		id: userId,
-		placeType,
-		columnToSort: sortedColumn,
-		sorting: sortingType,
+		placeType,	
+		columnToSort: column,
+		sorting: sort,
 	};
 
 	if (role === "OWNER") {

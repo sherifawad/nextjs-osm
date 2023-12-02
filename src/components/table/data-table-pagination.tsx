@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { SearchParams } from "@/app/dashboard/[id]/schema";
 
 const pageSizes = [5, 10, 20, 30, 40, 50];
 
@@ -19,7 +20,7 @@ type DataTablePaginationProps = {
 	count: number;
 };
 
-export function DataTablePagination<TData>({ count, page, size }: DataTablePaginationProps) {
+export function DataTablePagination<TData>({ count, page, size, column, search, sort }: SearchParams) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -36,14 +37,14 @@ export function DataTablePagination<TData>({ count, page, size }: DataTablePagin
 	);
 
 	useEffect(() => {
-		addParams({ key: "count", value: `${count}` });
-		if (!searchParams.get("size")) {
-			addParams({ key: "size", value: `${size}` });
-		}
-		if (!searchParams.get("page")) {
-			addParams({ key: "page", value: `${page}` });
-		}
-	}, [addParams, count, page, searchParams, size]);
+		const params = new URLSearchParams(searchParams);
+		params.set("size", `${size}`);
+		params.set("page", `${page}`);
+		params.set("column", `${column}`);
+		params.set("sort", `${sort}`);
+		params.set("search", `${search}`);
+		router.replace(`${pathname}?${params}`);
+	}, [column, page, pathname, router, search, searchParams, size, sort]);
 
 	return (
 		<div className="flex items-center justify-center px-2">
