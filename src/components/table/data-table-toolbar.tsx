@@ -8,10 +8,15 @@ import { Input } from "@/ui/input";
 import { XIcon } from "lucide-react";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import Link from "next/link";
-import { headers } from "next/headers";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { SyntheticEvent, useCallback, useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
+
+const SubmitFilterButton = () => {
+	const { pending } = useFormStatus();
+
+	return <Button type="submit">{pending ? "Filtering..." : "Filter"}</Button>;
+};
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>;
@@ -19,6 +24,7 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
 	const [searchInput, setSearchInput] = useState("");
+	const [columnId, setColumnId] = useState("name");
 
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -26,13 +32,17 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
 	const isFiltered = useMemo(() => searchParams.get("filter") && searchParams.get("search"), [searchParams]);
 
-	const searchBtnHandler = useCallback(
-		(value: string, columnId: string) => {
+	const formSubmitHandler = useCallback(
+		(e: SyntheticEvent) => {
+			e.preventDefault();
+			const target = e.target as typeof e.target & {
+				search: { value: string };
+				column: { value: string };
+			};
 			const params = new URLSearchParams(searchParams);
-			params.set("filter", `${columnId}`);
-			params.set("search", `${value}`);
+			params.set("filter", `${target.column.value}`);
+			params.set("search", `${target.search.value}`);
 			router.replace(`${pathname}?${params}`);
-			setSearchInput(value);
 		},
 		[pathname, router, searchParams]
 	);
@@ -46,14 +56,18 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
 	return (
 		<div className="flex items-center justify-between">
-			<div className="flex flex-1 items-center space-x-2">
+			<form onSubmit={formSubmitHandler} className="flex flex-1 items-center space-x-2">
 				<Input
 					placeholder="Filter Place..."
-					value={searchInput || searchParams.get("search") || ""}
-					onChange={(event) => setSearchInput(event.target.value)}
+					defaultValue={searchParams.get("search") || ""}
+					// value={searchInput}
+					// onChange={(event) => setSearchInput(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
+					type="search"
+					name="search"
 				/>
-				<Button onClick={() => searchBtnHandler(searchInput, "name")}>Filter</Button>
+				<Input defaultValue="name" className="hidden" name="column" />
+				<SubmitFilterButton />
 				{/* {table.getColumn("status") && (
 					<DataTableFacetedFilter column={table.getColumn("status")} title="Status" options={statuses} />
 				)} */}
@@ -61,12 +75,12 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 					<DataTableFacetedFilter column={table.getColumn("priority")} title="Priority" options={priorities} />
 				)}  */}
 				{isFiltered && (
-					<Button variant="ghost" onClick={() => resetBtnHandler()} className="h-8 px-2 lg:px-3">
+					<Button type="button" variant="ghost" onClick={() => resetBtnHandler()} className="h-8 px-2 lg:px-3">
 						Reset
 						<XIcon className="ml-2 h-4 w-4" />
 					</Button>
 				)}
-			</div>
+			</form>
 			<DataTableViewOptions table={table} />
 		</div>
 	);

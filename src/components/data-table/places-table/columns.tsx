@@ -37,7 +37,7 @@ export const columns: ColumnDef<UserPlaces>[] = [
 		accessorKey: "name",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
 		cell: ({ row }) => <div className="w-[80px]">{row.getValue("name")}</div>,
-		enableSorting: false,
+		// enableSorting: false,
 		enableHiding: false,
 	},
 
