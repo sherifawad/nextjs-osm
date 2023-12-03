@@ -9,6 +9,8 @@ import {
 	GetPlaceSchema,
 	GetPlacesSchema,
 	GetUserPlacesSchema,
+	UserPlaces,
+	FetchedUserPlacesDTOResponse,
 } from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 import { getPlaceDbPrisma, getPlacesDbPrisma, getUserPlacesCountDbPrisma, getUserPlacesDbPrisma } from "@/prisma";
@@ -64,7 +66,7 @@ export const getPlace = async (data: GetPlace): Promise<FetchedPlaceResponse> =>
 	}
 };
 
-export const getUserPlaces = async (data: GetUserPlaces): Promise<FetchedUserPlacesResponse> => {
+export const getUserPlaces = async (data: GetUserPlaces): Promise<FetchedUserPlacesDTOResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserPlacesSchema, data });
 
 	if (!validData) {
@@ -78,7 +80,20 @@ export const getUserPlaces = async (data: GetUserPlaces): Promise<FetchedUserPla
 		if (result.status === "success") {
 			return {
 				status: "success",
-				data: result.data,
+				data: result.data.map((d) => {
+					if (d.rating.length > 0) {
+						const verifiedLength = d.rating.filter((r) => r.placeReputation === "VERIFIED").length;
+						const rate = 2 * verifiedLength - d.rating.length;
+						return {
+							...d,
+							rating: rate,
+						};
+					}
+					return {
+						...d,
+						rating: 0,
+					};
+				}),
 			};
 		}
 		return {
@@ -113,4 +128,21 @@ export const getUserPlacesCount = async (data: GetUserPlaces): Promise<FetchedUs
 	} catch (error) {
 		return errorHandler(error, errors);
 	}
+};
+
+const dd = (data: UserPlaces[]) => {
+	return data.map((d) => {
+		if (d.rating.length > 0) {
+			const verifiedLength = d.rating.filter((r) => r.placeReputation === "VERIFIED").length;
+			const rate = 2 * verifiedLength - d.rating.length;
+			return {
+				...d,
+				rating: rate,
+			};
+		}
+		return {
+			...d,
+			rate: 0,
+		};
+	});
 };

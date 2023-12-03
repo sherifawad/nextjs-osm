@@ -14,13 +14,11 @@ const pageSizes = [5, 10, 20, 30, 40, 50];
 // interface DataTablePaginationProps<TData> {
 // 	table: Table<TData>;
 // }
-type DataTablePaginationProps = {
-	page: number;
-	size: number;
+type DataTablePaginationProps = SearchParams & {
 	count: number;
 };
 
-export function DataTablePagination<TData>({ count, page, size, column, search, sort }: SearchParams) {
+export function DataTablePagination<TData>({ count, page, size, column, search, sort }: DataTablePaginationProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -36,15 +34,15 @@ export function DataTablePagination<TData>({ count, page, size, column, search, 
 		[pathname, router, searchParams]
 	);
 
-	useEffect(() => {
-		const params = new URLSearchParams(searchParams);
-		params.set("size", `${size}`);
-		params.set("page", `${page}`);
-		params.set("column", `${column}`);
-		params.set("sort", `${sort}`);
-		params.set("search", `${search}`);
-		router.replace(`${pathname}?${params}`);
-	}, [column, page, pathname, router, search, searchParams, size, sort]);
+	// useEffect(() => {
+	// 	const params = new URLSearchParams(searchParams);
+	// 	params.set("size", `${size}`);
+	// 	params.set("page", `${page}`);
+	// 	params.set("column", `${column}`);
+	// 	params.set("sort", `${sort}`);
+	// 	params.set("search", `${search}`);
+	// 	router.replace(`${pathname}?${params}`);
+	// }, []);
 
 	return (
 		<div className="flex items-center justify-center px-2">

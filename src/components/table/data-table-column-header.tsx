@@ -13,7 +13,9 @@ import {
 } from "@/ui/dropdown-menu";
 import { ArrowDown, ArrowDownUp, ArrowUp, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
+import { SortingType } from "@/types";
 
 interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
 	column: Column<TData, TValue>;
@@ -27,6 +29,17 @@ export function DataTableColumnHeader<TData, TValue>({
 }: DataTableColumnHeaderProps<TData, TValue>) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const router = useRouter();
+
+	const sortBtnHandler = useCallback(
+		(sortType: SortingType, columnId: string) => {
+			const params = new URLSearchParams(searchParams);
+			params.set("sort", sortType);
+			params.set("column", columnId);
+			router.replace(`${pathname}?${params}`);
+		},
+		[pathname, router, searchParams]
+	);
 	if (!column.getCanSort()) {
 		return <div className={cn(className)}>{title}</div>;
 	}
@@ -47,18 +60,20 @@ export function DataTableColumnHeader<TData, TValue>({
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
-					<Link href={{ pathname, query: { sort: "asc", column: column.id } }}>
-						<DropdownMenuItem className="w-full flex items-center gap-2  cursor-pointer">
-							<ArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-							Asc
-						</DropdownMenuItem>
-					</Link>
-					<Link href={{ pathname, query: { sort: "desc", column: column.id } }}>
-						<DropdownMenuItem className="w-full flex items-center gap-2  cursor-pointer">
-							<ArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-							Desc
-						</DropdownMenuItem>
-					</Link>
+					<DropdownMenuItem
+						className="w-full flex items-center gap-2  cursor-pointer"
+						onClick={() => sortBtnHandler("asc", column.id)}
+					>
+						<ArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+						Asc
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						className="w-full flex items-center gap-2  cursor-pointer"
+						onClick={() => sortBtnHandler("desc", column.id)}
+					>
+						<ArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+						Desc
+					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem onClick={() => column.toggleVisibility(false)} className="w-full cursor-pointer">
 						<EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />

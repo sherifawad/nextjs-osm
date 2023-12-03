@@ -67,7 +67,13 @@ export const userPlacesSchema = z
 		rating: PlaceRatingSchema.omit({ placeId: true, userId: true }).array(),
 	})
 	.and(PlaceDbSchemaOptional);
+export const userPlacesDTOSchema = z
+	.object({
+		rating: z.number(),
+	})
+	.and(PlaceDbSchemaOptional);
 export type UserPlaces = z.infer<typeof userPlacesSchema>;
+export type UserPlacesDTO = z.infer<typeof userPlacesDTOSchema>;
 export const GetUserPlacesSchema = z
 	.object({
 		id: z.string().cuid(),
@@ -108,9 +114,11 @@ type FetchedUserPlacesDataErrors = {
 };
 
 type FetchedUserPlacesSuccessResponse = { status: "success"; data: UserPlaces[] };
+type FetchedUserPlacesDTOSuccessResponse = { status: "success"; data: UserPlacesDTO[] };
 type FetchedUserPlacesErrorResponse = { status: "error"; errors: Partial<FetchedUserPlacesDataErrors> };
 
 export type FetchedUserPlacesResponse = FetchedUserPlacesSuccessResponse | FetchedUserPlacesErrorResponse;
+export type FetchedUserPlacesDTOResponse = FetchedUserPlacesDTOSuccessResponse | FetchedUserPlacesErrorResponse;
 /////////////////////////////////////////
 // FETCH USER PLACE COUNT OUTPUT SCHEMA
 /////////////////////////////////////////

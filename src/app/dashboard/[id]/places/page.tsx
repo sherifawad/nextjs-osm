@@ -3,13 +3,12 @@ import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import { permanentRedirect, redirect } from "next/navigation";
 import { SearchParams, searchParamsSchema } from "../schema";
-import type { SortingType, UserPlaces } from "@/types";
+import type { SortingType, UserPlaces, UserPlacesDTO } from "@/types";
 import { DataTable } from "@/components/table/table-data";
 import { columns } from "@/components/data-table/places-table/columns";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { getSortedPlacesResult } from "@/components/data-table/places-table/actions";
-import { count } from "console";
 
 type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
@@ -23,9 +22,9 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		redirect(`http://${host}/api/auth/signin?callbackUrl=http://${host}`);
 	}
 
-	let data: UserPlaces[] | undefined = [];
+	let data: UserPlacesDTO[] | undefined = [];
+	let count = 0;
 	let paramsData: SearchParams = {
-		count: 0,
 		column: "modifiedAt",
 		page: 1,
 		search: "",
@@ -38,7 +37,6 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 	if (parsedSearchParams.success) {
 		const page = parsedSearchParams.data.page;
 		const size = parsedSearchParams.data.size;
-		const count = parsedSearchParams.data.count;
 		const sortedColumn = parsedSearchParams.data.column;
 		const sortingType = parsedSearchParams.data.sort;
 		const search = parsedSearchParams.data.search;
@@ -48,7 +46,6 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 			page,
 			size,
 			column: sortedColumn || paramsData.column,
-			count: count,
 			search,
 			sort: sortingType || paramsData.sort,
 			filter,
@@ -60,18 +57,22 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 			role: session.user.role,
 			...paramsData,
 		});
-		paramsData.count = result.count;
+		count = result.count;
 		data = result.data;
 	} else {
-		console.log("🚀 ~ file: page.tsx:55 ~ PlacesPage ~ parsedSearchParams.error:", parsedSearchParams.error);
+		const params = new URLSearchParams();
+		Object.entries(paramsData).forEach((data) => {
+			params.set(`${data[0]}`, `${data[1]}`);
+		});
+		redirect(`http://${host}/dashboard/${session.user.id}/places?${params}`);
 	}
 
 	return (
 		<section className="max-w-4xl mx-auto mb-8">
-			<Suspense key={paramsData.count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
+			<Suspense key={count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
 				<div className="space-y-4 pb-8">
 					<DataTable data={data} columns={columns} />
-					<DataTablePagination {...paramsData} />
+					<DataTablePagination count={count} {...paramsData} />
 				</div>
 			</Suspense>
 		</section>

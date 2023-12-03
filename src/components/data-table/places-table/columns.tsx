@@ -6,12 +6,12 @@ import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 
 import { DataTableColumnHeader } from "../../table/data-table-column-header";
-import { type UserPlaces } from "@/types";
+import { UserPlacesDTO, type UserPlaces } from "@/types";
 import { DELETED, HIDDEN, VERIFIED } from "./labels";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Timer } from "lucide-react";
 
-export const columns: ColumnDef<UserPlaces>[] = [
+export const columns: ColumnDef<UserPlacesDTO>[] = [
 	// {
 	// 	id: "select",
 	// 	header: ({ table }) => (
@@ -40,6 +40,35 @@ export const columns: ColumnDef<UserPlaces>[] = [
 		// enableSorting: false,
 		enableHiding: false,
 	},
+	{
+		accessorKey: "rating",
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Rating" />,
+		cell: ({ row }) => {
+			const rate = Number(row.getValue("rating") || 0);
+
+			return (
+				<div className="flex w-[100px] items-center">
+					{rate > 0 && (
+						<Badge variant="secondary" className="rounded-sm px-1 font-normal bg-green-300 dark:bg-green-600">
+							+{rate}
+						</Badge>
+					)}
+					{rate < 0 && (
+						<Badge variant="destructive" className="rounded-sm px-1 font-normal">
+							{rate}
+						</Badge>
+					)}
+					{rate === 0 && (
+						<Badge variant="secondary" className="rounded-sm px-1 font-normal">
+							{rate}
+						</Badge>
+					)}
+				</div>
+			);
+		},
+		enableSorting: false,
+		enableHiding: false,
+	},
 
 	{
 		accessorKey: "modifiedAt",
@@ -49,7 +78,7 @@ export const columns: ColumnDef<UserPlaces>[] = [
 			if (!rowDate) {
 				return null;
 			}
-			const placeTime = new Intl.DateTimeFormat().format(rowDate);
+			const placeTime = new Intl.DateTimeFormat("en-GB").format(rowDate);
 			return (
 				<div className="flex w-[100px] items-center">
 					<Timer className="mr-2 h-4 w-4 text-muted-foreground" />
