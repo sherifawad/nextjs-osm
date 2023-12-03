@@ -74,6 +74,16 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		} else {
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
+		if (validData.search && validData.columnToFilter) {
+			whereData = {
+				...whereData,
+				[validData.columnToFilter]: {
+					contains: validData.search,
+					mode: "insensitive",
+				},
+			};
+		}
+
 		whereData = { ...whereData, deleted: validData.deletedPlaces, hidden: validData.hiddenPlaces };
 
 		if (validData.columnToSort === "rating") {
@@ -86,7 +96,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 		} else {
 			sortData = {
 				...sortData,
-				[validData.columnToSort]: validData.sorting.toLocaleLowerCase(),
+				[validData.columnToSort]: validData.sorting,
 			};
 		}
 
@@ -131,6 +141,9 @@ export const getUserPlacesCountDbPrisma = async (data: GetUserPlaces): Promise<F
 			whereData = { ...whereData, modifiedById: validData.id };
 		} else {
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
+		}
+		if (validData.search && validData.columnToFilter) {
+			whereData = { ...whereData, [validData.columnToFilter]: validData.search };
 		}
 		whereData = { ...whereData, deleted: validData.deletedPlaces, hidden: validData.hiddenPlaces };
 

@@ -31,6 +31,7 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		search: "",
 		size: 5,
 		sort: "desc",
+		filter: undefined,
 	};
 
 	const parsedSearchParams = searchParamsSchema.safeParse(searchParams);
@@ -41,14 +42,16 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		const sortedColumn = parsedSearchParams.data.column;
 		const sortingType = parsedSearchParams.data.sort;
 		const search = parsedSearchParams.data.search;
+		const filter = parsedSearchParams.data.filter;
 		paramsData = {
 			...paramsData,
 			page,
 			size,
-			column: sortedColumn,
+			column: sortedColumn || paramsData.column,
 			count: count,
 			search,
-			sort: sortingType,
+			sort: sortingType || paramsData.sort,
+			filter,
 		};
 
 		const result = await getSortedPlacesResult({

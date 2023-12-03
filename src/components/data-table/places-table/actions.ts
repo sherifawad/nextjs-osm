@@ -67,26 +67,32 @@ export const verifyPlaceAction = async ({
 
 export const getSortedPlacesResult = async ({
 	userId,
+	search,
 	placeType,
 	page,
 	size,
 	role,
 	column,
 	sort,
+	filter,
 }: {
 	userId: string;
+	search: string;
 	placeType: UserPlacesType;
 	page: number;
 	size: number;
 	role: RoleType | undefined;
 	column: keyof UserPlaces;
+	filter?: keyof UserPlaces;
 	sort: SortingType;
 }) => {
 	let inputData: GetUserPlaces = {
 		id: userId,
-		placeType,	
+		placeType,
 		columnToSort: column,
 		sorting: sort,
+		columnToFilter: filter,
+		search,
 	};
 
 	if (role === "OWNER") {
