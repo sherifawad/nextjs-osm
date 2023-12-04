@@ -62,13 +62,13 @@ const Header = async () => {
 								</Link>
 							</Button>
 						)}
-						{routes.map((route, i) => (
+						{/* {routes.map((route, i) => (
 							<Button key={i} asChild variant="ghost">
 								<Link key={i} prefetch={false} href={route.href} className={`text-sm font-medium transition-colors`}>
 									{route.label}
 								</Link>
 							</Button>
-						))}
+						))} */}
 					</nav>
 					<div className="flex items-center">
 						<DarkModeToggle />

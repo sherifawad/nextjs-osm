@@ -55,7 +55,7 @@ export const updatePlaceLocation = async (place: TEditPlaceForm): Promise<placeR
 		});
 
 		if (result.status === "success") {
-			revalidatePath("/leafletMap");
+			revalidatePath("/");
 			return {
 				status: "success",
 				data: result.data,

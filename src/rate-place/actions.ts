@@ -33,7 +33,7 @@ export const ratePlace = async (data: UpdateRateSchema): Promise<placeRateUpdate
 		});
 
 		if (result.status === "success") {
-			// revalidatePath("/leafletMap");
+			// revalidatePath("/");
 			return {
 				status: "success",
 				data: result.data,

@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/table/table-data";
-import type { UserPlaces } from "@/types";
+import type { UserPlacesDTO } from "@/types";
 import { columns } from "./columns";
 
 export const kaabaPosition = {
@@ -8,7 +8,7 @@ export const kaabaPosition = {
 };
 
 type PlacesTableProps = {
-	data: UserPlaces[];
+	data: UserPlacesDTO[];
 };
 function PlacesTable({ data }: PlacesTableProps) {
 	return <DataTable data={data} columns={columns} />;
