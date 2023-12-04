@@ -1,10 +1,10 @@
-import UserDataInput from "@/components/user-data-input";
 import { getUser } from "@/database";
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import UserDataInput from "./user-data-input";
 
 async function AccountPage() {
 	const session = await getServerSession(authOptions);

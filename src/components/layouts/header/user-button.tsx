@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "./user-avatar";
 import { type Session } from "next-auth";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import { signIn, signOut } from "next-auth/react";
 
 type UserButtonProps = {

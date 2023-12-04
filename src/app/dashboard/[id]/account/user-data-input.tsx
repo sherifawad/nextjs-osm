@@ -1,6 +1,6 @@
 import { InputHTMLAttributes } from "react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Input } from "../../../../components/ui/input";
 
 type UserDataInputProps = InputHTMLAttributes<HTMLInputElement> & {
 	name: string;

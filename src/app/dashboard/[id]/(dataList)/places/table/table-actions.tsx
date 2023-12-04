@@ -1,7 +1,7 @@
 "use client";
 
 import { type Place } from "@/types";
-import EditPlaceForm from "@/edit-place/form";
+import EditPlaceForm from "@/places-features/edit-place/form";
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-dialog";
 import { DropdownMenuContent, DropdownMenuItem } from "@/ui/dropdown-menu";
 import { useSession } from "next-auth/react";

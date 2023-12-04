@@ -8,9 +8,9 @@ import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
 import { useMemo, useRef } from "react";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
-import AddNewPlace from "@/add-place";
-import EditSelectedPlace from "@/edit-place";
-import RatePlace from "@/rate-place";
+import AddNewPlace from "@/places-features/add-place";
+import EditSelectedPlace from "@/places-features/edit-place";
+import RatePlace from "@/places-features/rate-place";
 import type { FetchedPlace } from "@/types";
 
 const mosqueVerifiedMarker = L.icon({
