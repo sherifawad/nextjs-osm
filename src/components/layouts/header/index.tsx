@@ -23,8 +23,6 @@ const routes = [
 ];
 
 const Header = async () => {
-	// const activeLink = usePathname();
-
 	const session = await getServerSession(authOptions);
 
 	return (
@@ -38,11 +36,31 @@ const Header = async () => {
 							</SheetTrigger>
 							<SheetContent side="left" className="w-[300px] sm:w-[400px]">
 								<nav className="flex flex-col gap-4">
-									{routes.map((route, i) => (
-										<Link key={i} prefetch={false} href={route.href} className={`block px-2 py-1 text-lg `}>
-											{route.label}
-										</Link>
-									))}
+									<ul className="flex flex-col gap-4">
+										<li>
+											<Link href={`/dashboard/${session?.user.id}/account`} className={`block px-2 py-1 text-lg`}>
+												Account
+											</Link>
+										</li>
+										<li>
+											<Link
+												prefetch={false}
+												href={`/dashboard/${session?.user.id}/my/places`}
+												className={`block px-2 py-1 text-lg`}
+											>
+												Places
+											</Link>
+										</li>
+										<li>
+											<Link
+												prefetch={false}
+												href={`/dashboard/${session?.user.id}/users`}
+												className={`block px-2 py-1 text-lg`}
+											>
+												Users
+											</Link>
+										</li>
+									</ul>
 								</nav>
 							</SheetContent>
 						</Sheet>
@@ -52,23 +70,35 @@ const Header = async () => {
 					</div>
 					<nav className="mx-6  items-center space-x-4 lg:space-x-6 hidden md:flex ">
 						{session && (
-							<Button asChild variant="ghost">
-								<Link
-									prefetch={false}
-									href={`/dashboard/${session?.user.id}/account`}
-									className={`text-sm font-medium transition-colors`}
-								>
-									Dashboard
-								</Link>
-							</Button>
+							<ul className="items-center space-x-4 lg:space-x-6 hidden md:flex ">
+								<li>
+									<Link
+										href={`/dashboard/${session?.user.id}/account`}
+										className="text-sm font-medium transition-colors"
+									>
+										Account
+									</Link>
+								</li>
+								<li>
+									<Link
+										prefetch={false}
+										href={`/dashboard/${session?.user.id}/my/places`}
+										className={`text-sm font-medium transition-colors`}
+									>
+										Places
+									</Link>
+								</li>
+								<li>
+									<Link
+										prefetch={false}
+										href={`/dashboard/${session?.user.id}/users`}
+										className={`text-sm font-medium transition-colors`}
+									>
+										Users
+									</Link>
+								</li>
+							</ul>
 						)}
-						{/* {routes.map((route, i) => (
-							<Button key={i} asChild variant="ghost">
-								<Link key={i} prefetch={false} href={route.href} className={`text-sm font-medium transition-colors`}>
-									{route.label}
-								</Link>
-							</Button>
-						))} */}
 					</nav>
 					<div className="flex items-center">
 						<DarkModeToggle />
