@@ -3,15 +3,15 @@ import Container from "@/components/ui/Container";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { cookies } from "next/headers";
-import { locationSchema } from "@/lib/types/searchParams-schema";
+import { locationSchema } from "@/types/searchParams-schema";
 import { LoaderIcon } from "lucide-react";
-import SearchAddresses from "@/search-address";
-import { getPlaces } from "@/database";
+import SearchAddresses from "@/places-features/map/search-address";
+import { getPlaces } from "@/data-access";
 import type { GetPlaces, RoleType } from "@/types";
 import dynamic from "next/dynamic";
 import { kaabaPosition } from "@/app/dashboard/[id]/(dataList)/places/table";
 
-const LeafletMap = dynamic(() => import("@/components/maps/LeafletMap"), {
+const LeafletMap = dynamic(() => import("@/places-features/map/LeafletMap"), {
 	ssr: false,
 });
 

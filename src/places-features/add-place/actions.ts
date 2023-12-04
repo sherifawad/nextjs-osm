@@ -3,12 +3,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { headers } from "next/headers";
-import { leafletMapPageSearchParameterSchema } from "@/lib/types/searchParams-schema";
+import { leafletMapPageSearchParameterSchema } from "@/types/searchParams-schema";
 import { revalidatePath } from "next/cache";
 import { addPlaceFormSchema } from "./validation";
 import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
 import { type placeResponse } from "@/types";
-import { createPlaceDb } from "@/database";
+import { createPlaceDb } from "@/data-access";
 
 export const addPlaceLocation = async (name: { name: string }): Promise<placeResponse> => {
 	let { errors, validData } = validateData({ schema: addPlaceFormSchema, data: name });

@@ -4,7 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer, Polyline, CircleMarker, Tooltip
 import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { CampaignMapEventHandler } from "../CampaignMapEventHandler";
+import { CampaignMapEventHandler } from "./CampaignMapEventHandler";
 import { useMemo, useRef } from "react";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";

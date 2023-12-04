@@ -22,7 +22,7 @@ async function PlacesPage({ searchParams }: PlacesPageProps) {
 		redirect(`http://${host}/api/auth/signin?callbackUrl=http://${host}`);
 	}
 
-	let data: UserPlacesDTO[] | undefined = [];
+	let data: UserPlacesDTO[] = [];
 	let count = 0;
 	let paramsData: SearchParams = {
 		column: "modifiedAt",

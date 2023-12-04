@@ -1,4 +1,4 @@
-import { getUser } from "@/database";
+import { getUser } from "@/data-access";
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";

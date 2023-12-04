@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserPlaces, getUserPlacesCount, updatePlaceDb } from "@/database";
+import { getUserPlaces, getUserPlacesCount, updatePlaceDb } from "@/data-access";
 import { GetUserPlaces, RoleType, SortingType, UserPlaces, UserPlacesType } from "@/types";
 import { revalidatePath } from "next/cache";
 
