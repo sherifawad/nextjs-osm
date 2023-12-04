@@ -46,8 +46,8 @@ const Header = async () => {
 								</nav>
 							</SheetContent>
 						</Sheet>
-						<Link href="/" prefetch={false} className="ml-4 lg:ml-0">
-							<h1 className="text-xl font-bold whitespace-nowrap">STORE NAME</h1>
+						<Link href="/" className="ml-4 lg:ml-0">
+							<h1 className="text-xl font-bold whitespace-nowrap text-primary">My Mosque</h1>
 						</Link>
 					</div>
 					<nav className="mx-6  items-center space-x-4 lg:space-x-6 hidden md:flex ">

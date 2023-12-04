@@ -5,7 +5,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 
-import { DataTableColumnHeader } from "../../table/data-table-column-header";
+import { DataTableColumnHeader } from "../../../../../../components/table/data-table-column-header";
 import { UserPlacesDTO, type UserPlaces } from "@/types";
 import { DELETED, HIDDEN, VERIFIED } from "./labels";
 import { DataTableRowActions } from "./data-table-row-actions";

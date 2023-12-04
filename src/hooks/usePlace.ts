@@ -1,6 +1,6 @@
 "use client";
 
-import { kaabaPosition } from "@/components/data-table/places-table";
+import { kaabaPosition } from "@/app/dashboard/[id]/(dataList)/places/table";
 import { type FetchedPlace } from "@/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";

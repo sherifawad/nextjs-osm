@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { SearchParams } from "@/app/dashboard/[id]/schema";
+import { SearchParams } from "@/app/dashboard/[id]/(dataList)/schema";
 
 const pageSizes = [5, 10, 20, 30, 40, 50];
 

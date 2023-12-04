@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@/ui/alert-
 import { DropdownMenuContent, DropdownMenuItem } from "@/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { deletePlaceAction, hidePlaceAction, verifyPlaceAction } from "./actions";
+import { deletePlaceAction, hidePlaceAction, verifyPlaceAction } from "./_actions";
 
 type PlaceTableActionsProps = {
 	place: Place;

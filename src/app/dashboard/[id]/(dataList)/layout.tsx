@@ -23,12 +23,7 @@ export default function DashboardLayout({
 		<main>
 			<section>
 				<Tabs defaultValue={value} className="w-full mt-8">
-					<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-3 mb-8">
-						<TabsTrigger value="account">
-							<Link prefetch={true} href={`/dashboard/${params.id}/account`}>
-								Account
-							</Link>
-						</TabsTrigger>
+					<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-2 mb-8">
 						<TabsTrigger value="places">
 							<Link prefetch={false} href={`/dashboard/${params.id}/places`}>
 								Places

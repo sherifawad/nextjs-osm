@@ -5,10 +5,10 @@ import { permanentRedirect, redirect } from "next/navigation";
 import { SearchParams, searchParamsSchema } from "../schema";
 import type { SortingType, UserPlaces, UserPlacesDTO } from "@/types";
 import { DataTable } from "@/components/table/table-data";
-import { columns } from "@/components/data-table/places-table/columns";
+import { columns } from "@/app/dashboard/[id]/(dataList)/places/table/columns";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
-import { getSortedPlacesResult } from "@/components/data-table/places-table/actions";
+import { getSortedPlacesResult } from "@/app/dashboard/[id]/(dataList)/places/table/_actions";
 
 type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
