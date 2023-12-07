@@ -38,7 +38,16 @@ const Header = async () => {
 								<nav className="flex flex-col gap-4">
 									<ul className="flex flex-col gap-4">
 										<li>
-											<Link href={`/dashboard/${session?.user.id}/account`} className={`block px-2 py-1 text-lg`}>
+											<Link prefetch={false} href={`/map`} className={`block px-2 py-1 text-lg`}>
+												Map
+											</Link>
+										</li>
+										<li>
+											<Link
+												prefetch={false}
+												href={`/dashboard/${session?.user.id}/account`}
+												className={`block px-2 py-1 text-lg`}
+											>
 												Account
 											</Link>
 										</li>
@@ -69,36 +78,43 @@ const Header = async () => {
 						</Link>
 					</div>
 					<nav className="mx-6  items-center space-x-4 lg:space-x-6 hidden md:flex ">
-						{session && (
-							<ul className="items-center space-x-4 lg:space-x-6 hidden md:flex ">
-								<li>
-									<Link
-										href={`/dashboard/${session?.user.id}/account`}
-										className="text-sm font-medium transition-colors"
-									>
-										Account
-									</Link>
-								</li>
-								<li>
-									<Link
-										prefetch={false}
-										href={`/dashboard/${session?.user.id}/my/places`}
-										className={`text-sm font-medium transition-colors`}
-									>
-										Places
-									</Link>
-								</li>
-								<li>
-									<Link
-										prefetch={false}
-										href={`/dashboard/${session?.user.id}/users`}
-										className={`text-sm font-medium transition-colors`}
-									>
-										Users
-									</Link>
-								</li>
-							</ul>
-						)}
+						<ul className="items-center space-x-4 lg:space-x-6 hidden md:flex ">
+							<li>
+								<Link prefetch={false} href={`/map`} className={`text-sm font-medium transition-colors`}>
+									Map
+								</Link>
+							</li>
+							{session && (
+								<>
+									<li>
+										<Link
+											href={`/dashboard/${session?.user.id}/account`}
+											className="text-sm font-medium transition-colors"
+										>
+											Account
+										</Link>
+									</li>
+									<li>
+										<Link
+											prefetch={false}
+											href={`/dashboard/${session?.user.id}/my/places`}
+											className={`text-sm font-medium transition-colors`}
+										>
+											Places
+										</Link>
+									</li>
+									<li>
+										<Link
+											prefetch={false}
+											href={`/dashboard/${session?.user.id}/users`}
+											className={`text-sm font-medium transition-colors`}
+										>
+											Users
+										</Link>
+									</li>
+								</>
+							)}
+						</ul>
 					</nav>
 					<div className="flex items-center">
 						<DarkModeToggle />

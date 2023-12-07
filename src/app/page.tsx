@@ -1,85 +1,54 @@
-import Container from "@/components/ui/Container";
+import { headers } from "next/headers";
+import Image from "next/image";
+import Link from "next/link";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
-import { cookies } from "next/headers";
-import { locationSchema } from "@/types/searchParams-schema";
-import { LoaderIcon } from "lucide-react";
-import SearchAddresses from "@/places-features/map/search-address";
-import { getPlaces } from "@/data-access";
-import type { GetPlaces, RoleType } from "@/types";
-import dynamic from "next/dynamic";
-import { kaabaPosition } from "@/hooks/usePlace";
-
-const LeafletMap = dynamic(() => import("@/places-features/map/LeafletMap"), {
-	ssr: false,
-});
-
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
-
-const fetchPlaces = async ({ role }: { role: RoleType | undefined }) => {
-	let inputData: GetPlaces = {
-		userRole: role,
-	};
-	if (role === "OWNER") {
-	} else if (role === "ADMIN") {
-		inputData = { ...inputData, deletedPlaces: false };
-	} else {
-		inputData = { ...inputData, deletedPlaces: false, hiddenPlaces: false };
-	}
-	const result = await getPlaces(inputData);
-	if (result.status === "success") {
-		return result.data;
-	}
-	return [];
-};
-
-const LoaderIndicator = () => (
-	<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 grid place-items-center bg-foreground h-20 w-20 shadow-xl  rounded-lg ">
-		<LoaderIcon className="shrink-0 animate-spin text-background" />
-	</div>
-);
-
-type keyPair = { [key: string]: string[] };
-
-type HomePageProps = {
-	searchParams: { [key: string]: string[] | string | undefined };
-};
-async function HomePage({ searchParams }: HomePageProps) {
-	const session = await getServerSession(authOptions);
-	const dataBasePlaces = await fetchPlaces({ role: session?.user.role });
-	let initialLat: number = kaabaPosition.latitude;
-	let initialLon: number = kaabaPosition.longitude;
-	const initialSearch =
-		searchParams !== undefined && typeof searchParams !== "string"
-			? ((searchParams as keyPair)["search"] ?? "").toString()
-			: undefined;
-	const loading = typeof searchParams === "object" ? Object.keys(searchParams).includes("loading") : undefined;
-
-	const parsedSearchParams = locationSchema.safeParse(searchParams);
-	if (parsedSearchParams.success) {
-		initialLat = parsedSearchParams.data.lat;
-		initialLon = parsedSearchParams.data.lon;
-	} else {
-		const cookieStore = cookies();
-		const latCookies = parseFloat(cookieStore.get("lat")?.value ?? "");
-		const lonCookies = parseFloat(cookieStore.get("lon")?.value ?? "");
-		if (latCookies && lonCookies) {
-			initialLat = latCookies;
-			initialLon = lonCookies;
-		}
-	}
+async function HomePage() {
+	const header = headers();
+	const host = header.get("host");
 	return (
-		<Container>
-			<div className="absolute inset-0 top-[5rem] overflow-hidden">
-				{loading && <LoaderIndicator />}
-				<div className="relative h-full ">
-					<SearchAddresses initialSearch={initialSearch} />
-					<LeafletMap initialLat={initialLat} initialLon={initialLon} places={dataBasePlaces} />
+		<section className="bg-neutral-50 px-6 py-12 text-center dark:bg-neutral-900 md:px-12 lg:text-left">
+			<div className="w-100 mx-auto sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
+				<div className="grid items-center gap-12 lg:grid-cols-2">
+					<div className="mt-12 lg:mt-0">
+						<h1 className="mt-2 mb-16 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
+							<span className="text-primary">Find Mosque</span>
+							<br />
+							<span className="text-md font-normal tracking-tight md:text-lg xl:text-xl">
+								Use the map to find a mosque near you
+							</span>
+						</h1>
+						<Link
+							prefetch={false}
+							className="mb-2 inline-block rounded bg-primary px-12 pt-4 pb-3.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] md:mr-2 md:mb-0"
+							data-te-ripple-init
+							data-te-ripple-color="light"
+							href="/map"
+							role="button"
+						>
+							Map
+						</Link>
+						<Link
+							className="inline-block rounded px-12 pt-4 pb-3.5 text-sm font-medium uppercase leading-normal text-primary transition duration-150 ease-in-out hover:bg-neutral-500 hover:bg-opacity-10 hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:hover:bg-neutral-800 dark:hover:bg-opacity-60"
+							data-te-ripple-init
+							data-te-ripple-color="light"
+							href={"#!"}
+							role="button"
+						>
+							Learn more
+						</Link>
+					</div>
+					<div className="mb-12 lg:mb-0">
+						<Image
+							src="/Hassan_2_Mosque.jpeg"
+							className="w-full rounded-lg shadow-lg dark:shadow-black/20"
+							alt=""
+							width={1024}
+							height={660}
+						/>
+					</div>
 				</div>
 			</div>
-		</Container>
+		</section>
 	);
 }
 
