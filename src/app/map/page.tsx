@@ -9,7 +9,7 @@ import SearchAddresses from "@/places-features/map/search-address";
 import { getPlaces } from "@/data-access";
 import type { GetPlaces, RoleType } from "@/types";
 import dynamic from "next/dynamic";
-import { kaabaPosition } from "@/hooks/usePlace";
+import { kaabaPosition } from "@/places-features/map/data";
 
 const LeafletMap = dynamic(() => import("@/places-features/map/LeafletMap"), {
 	ssr: false,

@@ -1,15 +1,12 @@
 "use client";
 
+import { kaabaPosition } from "@/places-features/map/data";
 import { type FetchedPlace } from "@/types";
 import { getCookie, setCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-export const kaabaPosition = {
-	latitude: 21.42249,
-	longitude: 39.8262,
-};
 type PlaceLocation = {
 	latitude: number;
 	longitude: number;
