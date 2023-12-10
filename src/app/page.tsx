@@ -24,6 +24,28 @@ const mosqueStatusData = [
 		icon: "./mosque-hidden.svg",
 	},
 ];
+const mapFeaturesData = [
+	{
+		alt: "Photo of search bar",
+		caption: "Search places or access current location",
+		src: "/search.png",
+	},
+	{
+		alt: "Photo of How to add new place",
+		caption: "right-click select place then left-click to add new place",
+		src: "/add-location.png",
+	},
+	{
+		alt: "Photo of place rating",
+		caption: "Rate Selected Place",
+		src: "/rate-place.png",
+	},
+	{
+		alt: "Photo of User Reputation",
+		caption: "Keep your Reputation to add and rate places",
+		src: "/account.png",
+	},
+];
 
 async function HomePage() {
 	const header = headers();
@@ -55,7 +77,7 @@ async function HomePage() {
 								className="inline-block rounded px-12 pt-4 pb-3.5 text-sm font-medium uppercase leading-normal text-primary transition duration-150 ease-in-out hover:bg-neutral-500 hover:bg-opacity-10 hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:hover:bg-neutral-800 dark:hover:bg-opacity-60"
 								data-te-ripple-init
 								data-te-ripple-color="light"
-								href={"#!"}
+								href={"#mosque-status"}
 								role="button"
 							>
 								Learn more
@@ -80,11 +102,11 @@ async function HomePage() {
 				customHeader={false}
 			>
 				<article className="">
-					<div className="grid grid-rows-2 grid-cols-0 sm:grid-rows-0 sm:grid-cols-2 sm:items-center gap-4">
+					<div className="grid  grid-cols-0  sm:grid-cols-2 sm:items-center gap-4">
 						<ul className="flex flex-col space-y-4  text-secondary-foreground/75">
 							{mosqueStatusData.map((m, idx) => (
-								<>
-									<li key={idx} className="grid grid-cols-[auto_1fr] items-center gap-4">
+								<li key={idx} className="space-y-4">
+									<div className="grid grid-cols-[auto_1fr] items-center gap-4 ">
 										<Avatar>
 											<AvatarImage src={m.icon} alt={m.title} />
 											<AvatarFallback>{m.title}</AvatarFallback>
@@ -93,9 +115,9 @@ async function HomePage() {
 											<h4 className="font-bold text-lg ">{m.title}</h4>
 											<p>{m.details}</p>
 										</div>
-									</li>
+									</div>
 									<Separator />
-								</>
+								</li>
 							))}
 						</ul>
 
@@ -103,13 +125,35 @@ async function HomePage() {
 							<AspectRatio ratio={16 / 9} className="bg-muted">
 								<Image
 									src="/mosque-status-screenshot.png"
-									alt="Photo by Drew Beamer"
+									alt="Mosques status on map"
 									fill
 									className="rounded-md object-cover"
 								/>
 							</AspectRatio>
 						</footer>
 					</div>
+				</article>
+			</SectionsWrapper>
+			<SectionsWrapper id="place-search" title="" sectionName="Places Search" customHeader={false}>
+				<article className="">
+					<ul className="grid gap-8 grid-cols-1 sm:grid-cols-2 py-4">
+						{mapFeaturesData.map((data, idx) => (
+							<li key={idx} className="drop-shadow-lg">
+								<figure className=" text-background ">
+									<Image
+										className="w-full object-cover rounded-tl-lg rounded-tr-lg"
+										src={data.src}
+										alt={data.alt}
+										width={1366}
+										height={607}
+									/>
+									<figcaption className=" bg-foreground px-5 py-1 sm:py-3 text-center text-xs sm:text-lg font-light sm:font-semibold rounded-bl-lg rounded-br-lg">
+										{data.caption}
+									</figcaption>
+								</figure>
+							</li>
+						))}
+					</ul>
 				</article>
 			</SectionsWrapper>
 		</>
