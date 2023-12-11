@@ -6,6 +6,7 @@ import { Badge } from "@/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Separator } from "@/ui/separator";
 import { AspectRatio } from "@/ui/aspect-ratio";
+import Container from "@/ui/Container";
 
 const mosqueStatusData = [
 	{
@@ -156,6 +157,17 @@ async function HomePage() {
 					</ul>
 				</article>
 			</SectionsWrapper>
+			<footer className="flex  h-20 items-center px-4 border-t ">
+				<Container>
+					<span className="block text-sm  sm:text-center ">
+						© 2023{" "}
+						<Link href="/" className="hover:underline">
+							MyMosque™
+						</Link>
+						. All Rights Reserved.
+					</span>
+				</Container>
+			</footer>
 		</>
 	);
 }
