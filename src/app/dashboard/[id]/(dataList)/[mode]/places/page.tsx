@@ -8,7 +8,7 @@ import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import Link from "next/link";
-import { SearchParams, searchParamsSchema } from "../../schema";
+import { type PlacesSearchParams, PlacesSearchParamsSchema } from "../../schema";
 import { getSortedPlacesResult } from "./_actions";
 import { columns } from "./table/columns";
 
@@ -32,7 +32,7 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 
 	let data: UserPlacesDTO[] = [];
 	let count = 0;
-	let paramsData: SearchParams = {
+	let paramsData: PlacesSearchParams = {
 		column: "modifiedAt",
 		page: 1,
 		search: "",
@@ -41,7 +41,7 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 		filter: undefined,
 	};
 
-	const parsedSearchParams = searchParamsSchema.safeParse(searchParams);
+	const parsedSearchParams = PlacesSearchParamsSchema.safeParse(searchParams);
 	if (parsedSearchParams.success) {
 		const page = parsedSearchParams.data.page;
 		const size = parsedSearchParams.data.size;

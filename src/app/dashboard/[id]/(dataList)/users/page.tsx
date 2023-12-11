@@ -6,7 +6,7 @@ import { DataTable } from "@/components/table/table-data";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
-import { SearchParams, searchParamsSchema } from "../schema";
+import { type UserSearchParams, UserSearchParamsSchema } from "../schema";
 import { columns } from "./table/columns";
 import { User } from "@/types";
 import { getUsersResult } from "./_actions";
@@ -30,7 +30,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
 
 	let data: User[] = [];
 	let count = 0;
-	let paramsData: SearchParams = {
+	let paramsData: UserSearchParams = {
 		column: "updatedAt",
 		page: 1,
 		search: "",
@@ -39,7 +39,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
 		filter: undefined,
 	};
 
-	const parsedSearchParams = searchParamsSchema.safeParse(searchParams);
+	const parsedSearchParams = UserSearchParamsSchema.safeParse(searchParams);
 	if (parsedSearchParams.success) {
 		const page = parsedSearchParams.data.page;
 		const size = parsedSearchParams.data.size;

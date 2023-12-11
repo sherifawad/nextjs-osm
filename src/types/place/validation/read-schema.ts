@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { RoleSchema } from "../../user";
-import { DataBaseRatingSchema, PlaceRatingSchema, sortingSchema } from "../place-rate";
+import { DataBaseRatingSchema, PlaceRatingSchema } from "../place-rate";
 import { Place, PlaceDbSchema, PlaceDbSchemaOptional } from ".";
+import { sortingSchema } from "@/types/common";
 
 /////////////////////////////////////////
 // GET PLACE SCHEMA
