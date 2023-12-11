@@ -71,7 +71,7 @@ export const getUserPlacesDbPrisma = async (data: GetUserPlaces): Promise<Fetche
 			whereData = { ...whereData, createdById: validData.id };
 		} else if (validData.placeType === "MODIFIED") {
 			whereData = { ...whereData, modifiedById: validData.id };
-		} else {
+		} else if (validData.placeType === "BOTH") {
 			whereData = { ...whereData, OR: [{ modifiedById: validData.id }, { createdById: validData.id }] };
 		}
 		if (validData.search && validData.columnToFilter) {

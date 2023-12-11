@@ -12,6 +12,8 @@ import { SearchParams, searchParamsSchema } from "../../schema";
 import { getSortedPlacesResult } from "./table/_actions";
 import { columns } from "./table/columns";
 
+export const dynamic = "force-dynamic";
+
 type PlacesPageProps = {
 	searchParams: { [key: string]: string[] | string | undefined };
 	params: {
@@ -59,7 +61,7 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 
 		const result = await getSortedPlacesResult({
 			userId: session?.user.id,
-			placeType: "ALL",
+			placeType: pageParams.mode === "all" ? "ALL" : "CREATED",
 			role: session.user.role,
 			...paramsData,
 		});
@@ -85,12 +87,24 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 							<Link href={`http://${host}/dashboard/${session.user.id}/all/places`}>All-Places</Link>
 						</TabsTrigger>
 					</TabsList>
-					<TabsContent value="my-places">Make changes to your account here.</TabsContent>
-					<TabsContent value="all-places">Change your password here.</TabsContent>
+					<Suspense key={count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
+						<TabsContent value="my-places">
+							<div className="space-y-4 py-8">
+								<DataTable data={data} columns={columns} />
+								<DataTablePagination count={count} {...paramsData} />
+							</div>
+						</TabsContent>
+						<TabsContent value="all-places">
+							<div className="space-y-4 py-8">
+								<DataTable data={data} columns={columns} />
+								<DataTablePagination count={count} {...paramsData} />
+							</div>
+						</TabsContent>
+					</Suspense>
 				</Tabs>
 			) : (
 				<Suspense key={count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
-					<div className="space-y-4 pb-8">
+					<div className="space-y-4 py-8">
 						<DataTable data={data} columns={columns} />
 						<DataTablePagination count={count} {...paramsData} />
 					</div>

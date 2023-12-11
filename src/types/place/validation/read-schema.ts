@@ -39,7 +39,7 @@ export type FetchedPlaceResponse = FetchedPlaceErrorResponse | FetchedUserSucces
 /////////////////////////////////////////
 // USER PLACES TYPE SCHEMA
 /////////////////////////////////////////
-export const UserPlacesTypeSchema = z.enum(["ALL", "CREATED", "MODIFIED"]);
+export const UserPlacesTypeSchema = z.enum(["ALL", "CREATED", "MODIFIED", "BOTH"]);
 
 export type UserPlacesType = `${z.infer<typeof UserPlacesTypeSchema>}`;
 
