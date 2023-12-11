@@ -75,7 +75,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
 	return (
 		<section className="max-w-4xl mx-auto mb-8">
 			<Suspense key={count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
-				<div className="space-y-4 pb-8">
+				<div className="space-y-4 py-8">
 					<DataTable data={data} columns={columns} />
 					<DataTablePagination count={count} {...paramsData} />
 				</div>

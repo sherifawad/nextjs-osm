@@ -80,10 +80,20 @@ export const getUsersDbPrisma = async (data: GetUsers): Promise<UsersResponse> =
 		if (validData.search && validData.columnToFilter) {
 			whereData = {
 				...whereData,
-				[validData.columnToFilter]: {
-					contains: validData.search,
-					mode: "insensitive",
-				},
+				OR: [
+					{
+						[validData.columnToFilter]: {
+							contains: validData.search,
+							mode: "insensitive",
+						},
+					},
+					{
+						email: {
+							contains: validData.search,
+							mode: "insensitive",
+						},
+					},
+				],
 			};
 		}
 
@@ -134,10 +144,20 @@ export const getUsersCountDbPrisma = async (data: GetUsers): Promise<UsersCountR
 		if (validData.search && validData.columnToFilter) {
 			whereData = {
 				...whereData,
-				[validData.columnToFilter]: {
-					contains: validData.search,
-					mode: "insensitive",
-				},
+				OR: [
+					{
+						[validData.columnToFilter]: {
+							contains: validData.search,
+							mode: "insensitive",
+						},
+					},
+					{
+						email: {
+							contains: validData.search,
+							mode: "insensitive",
+						},
+					},
+				],
 			};
 		}
 

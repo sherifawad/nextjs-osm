@@ -111,25 +111,6 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 				</Suspense>
 			)}
 		</section>
-		// <section className="max-w-4xl mx-auto mb-8">
-		// 	<Suspense key={count + paramsData.page + paramsData.size} fallback={<>Loading .... </>}>
-		// 		{session.user.role !== "USER" ? (
-		// 			<Tabs defaultValue="my-places" className="w-full mt-8">
-		// 				<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-2 mb-8">
-		// 					<TabsTrigger value="all-places">All-Places</TabsTrigger>
-		// 					<TabsTrigger value="my-places">My-Places</TabsTrigger>
-		// 				</TabsList>
-		// 				<TabsContent value="my-places">Make changes to your account here.</TabsContent>
-		// 				<TabsContent value="all-places">Change your password here.</TabsContent>
-		// 			</Tabs>
-		// 		) : (
-		// 			<div className="space-y-4 pb-8">
-		// 				<DataTable data={data} columns={columns} />
-		// 				<DataTablePagination count={count} {...paramsData} />
-		// 			</div>
-		// 		)}
-		// 	</Suspense>
-		// </section>
 	);
 }
 export default PlacesPage;
