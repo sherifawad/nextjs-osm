@@ -1,6 +1,5 @@
+import { sortingSchema } from "@/types/common";
 import { z } from "zod";
-
-export const sortingSchema = z.enum(["asc", "desc"]);
 
 export type SortingType = z.infer<typeof sortingSchema>;
 /////////////////////////////////////////

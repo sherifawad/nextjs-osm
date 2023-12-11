@@ -119,6 +119,7 @@ type FetchedUserPlacesErrorResponse = { status: "error"; errors: Partial<Fetched
 
 export type FetchedUserPlacesResponse = FetchedUserPlacesSuccessResponse | FetchedUserPlacesErrorResponse;
 export type FetchedUserPlacesDTOResponse = FetchedUserPlacesDTOSuccessResponse | FetchedUserPlacesErrorResponse;
+
 /////////////////////////////////////////
 // FETCH USER PLACE COUNT OUTPUT SCHEMA
 /////////////////////////////////////////

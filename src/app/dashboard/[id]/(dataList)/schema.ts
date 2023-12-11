@@ -1,13 +1,14 @@
-import { UserPlaces, sortingSchema } from "@/types";
+import { type User } from "@/types";
+import { sortingSchema } from "@/types/common";
 import { z } from "zod";
 
 export const searchParamsSchema = z
 	.object({
 		page: z.coerce.number(),
 		size: z.coerce.number(),
-		column: z.custom<keyof UserPlaces>(),
+		column: z.custom<keyof User>(),
 		sort: sortingSchema,
-		filter: z.custom<keyof UserPlaces>().optional(),
+		filter: z.custom<keyof User>().optional(),
 		search: z.coerce.string(),
 	})
 	.refine(

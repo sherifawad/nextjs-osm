@@ -1,15 +1,15 @@
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
-import { permanentRedirect, redirect } from "next/navigation";
-import type { RoleType, SortingType, UserPlaces, UserPlacesDTO } from "@/types";
+import { redirect } from "next/navigation";
+import type { UserPlacesDTO } from "@/types";
 import { DataTable } from "@/components/table/table-data";
 import { Suspense } from "react";
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import Link from "next/link";
 import { SearchParams, searchParamsSchema } from "../../schema";
-import { getSortedPlacesResult } from "./table/_actions";
+import { getSortedPlacesResult } from "./_actions";
 import { columns } from "./table/columns";
 
 export const dynamic = "force-dynamic";

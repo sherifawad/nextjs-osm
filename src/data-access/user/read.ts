@@ -1,26 +1,67 @@
-import { type GetUser, GetUserSchema, type userResponse } from "@/types";
+import {
+	type GetUser,
+	GetUserSchema,
+	type userResponse,
+	UserDataErrors,
+	GetUsers,
+	UsersResponse,
+	GetUsersSchema,
+	UsersCountResponse,
+} from "@/types";
 import { errorHandler, validateData } from "@/lib/schema-utils";
-import { getUserDbPrisma } from "@/prisma";
+import { getUserDbPrisma, getUsersCountDbPrisma, getUsersDbPrisma } from "@/prisma";
 
-// export const getUsers = async (): Promise<userResponse> => {
-// 	let errors: Partial<UserDataErrors> = {};
+export const getUsers = async (data: GetUsers): Promise<UsersResponse> => {
+	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
 
-// 	try {
-// 		const result = await getUsersDbPrisma();
-// 		if (result.status === "success") {
-// 			return {
-// 				status: "success",
-// 				data: result.data,
-// 			};
-// 		}
-// 		return {
-// 			status: "error",
-// 			errors: result.errors,
-// 		};
-// 	} catch (error) {
-// 		return errorHandler(error, errors);
-// 	}
-// };
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	try {
+		const result = await getUsersDbPrisma(validData);
+		if (result.status === "success") {
+			return {
+				status: "success",
+				data: result.data,
+			};
+		}
+		return {
+			status: "error",
+			errors: result.errors,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const getUsersCount = async (data: GetUsers): Promise<UsersCountResponse> => {
+	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	try {
+		const result = await getUsersCountDbPrisma(validData);
+		if (result.status === "success") {
+			return {
+				status: "success",
+				data: result.data,
+			};
+		}
+		return {
+			status: "error",
+			errors: result.errors,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
 
 export const getUser = async (data: GetUser): Promise<userResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserSchema, data });

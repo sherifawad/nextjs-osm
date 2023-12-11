@@ -6,31 +6,12 @@ import {
 	type userResponse,
 	GetUserSchema,
 	GetPlaceSchema,
+	GetUsers,
+	GetUsersSchema,
+	UsersResponse,
+	UsersCountResponse,
 } from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
-
-const created = {
-	placeCreated: {
-		include: {
-			rating: {
-				select: {
-					placeReputation: true,
-				},
-			},
-		},
-	},
-};
-const modified = {
-	placeModified: {
-		include: {
-			rating: {
-				select: {
-					placeReputation: true,
-				},
-			},
-		},
-	},
-};
 
 export const getUserDbPrisma = async (data: GetUser): Promise<userResponse> => {
 	const { errors, validData } = validateData({ schema: GetUserSchema, data });
@@ -73,6 +54,101 @@ export const getPlaceDbPrisma = async (data: GetPlace): Promise<FetchedPlaceResp
 				id: validData.id,
 			},
 		});
+		return {
+			status: "success",
+			data: dbResult,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const getUsersDbPrisma = async (data: GetUsers): Promise<UsersResponse> => {
+	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+
+	let whereData = {};
+	let sortData = {};
+
+	try {
+		if (validData.search && validData.columnToFilter) {
+			whereData = {
+				...whereData,
+				[validData.columnToFilter]: {
+					contains: validData.search,
+					mode: "insensitive",
+				},
+			};
+		}
+
+		if (validData.role) {
+			whereData = { ...whereData, role: validData.role };
+		}
+
+		sortData = {
+			...sortData,
+			[validData.columnToSort]: validData.sorting,
+		};
+
+		const dbResult = await prismaDb.user.findMany({
+			where: whereData,
+			skip: validData.skip,
+			take: validData.take,
+			include: {
+				rating: {
+					select: {
+						placeReputation: true,
+					},
+				},
+			},
+			orderBy: sortData,
+		});
+
+		return {
+			status: "success",
+			data: dbResult,
+		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const getUsersCountDbPrisma = async (data: GetUsers): Promise<UsersCountResponse> => {
+	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	let whereData = {};
+
+	try {
+		if (validData.search && validData.columnToFilter) {
+			whereData = {
+				...whereData,
+				[validData.columnToFilter]: {
+					contains: validData.search,
+					mode: "insensitive",
+				},
+			};
+		}
+
+		if (validData.role) {
+			whereData = { ...whereData, role: validData.role };
+		}
+
+		const dbResult = await prismaDb.user.count({
+			where: whereData,
+		});
+
 		return {
 			status: "success",
 			data: dbResult,
