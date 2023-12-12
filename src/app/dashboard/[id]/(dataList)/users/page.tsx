@@ -31,7 +31,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
 	let data: User[] = [];
 	let count = 0;
 	let paramsData: UserSearchParams = {
-		column: "updatedAt",
+		column: "name",
 		page: 1,
 		search: "",
 		size: 5,
@@ -59,7 +59,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
 
 		const result = await getUsersResult({
 			userId: session?.user.id,
-			role: session.user.role,
+			// role: session.user.role,
 			...paramsData,
 		});
 		count = result.count;

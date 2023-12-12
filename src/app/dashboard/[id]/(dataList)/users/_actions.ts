@@ -1,6 +1,7 @@
 "use server";
 
-import { getUserPlaces, getUserPlacesCount, getUsers, getUsersCount, updatePlaceDb } from "@/data-access";
+import { getUser, getUserPlaces, getUserPlacesCount, getUsers, getUsersCount, updatePlaceDb } from "@/data-access";
+import { updateUserDb } from "@/data-access/user/update";
 import { GetUserPlaces, GetUsers, RoleType, SortingType, User, UserPlaces, UserPlacesType } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -18,7 +19,7 @@ export const getUsersResult = async ({
 	search: string;
 	page: number;
 	size: number;
-	role: RoleType | undefined;
+	role?: RoleType;
 	column: keyof User;
 	filter?: keyof User;
 	sort: SortingType;
@@ -43,4 +44,62 @@ export const getUsersResult = async ({
 		}
 	}
 	return { data: [], count: 0 };
+};
+
+export const updateUserReputation = async ({
+	loggedUserId,
+	userId,
+	changeType,
+}: {
+	loggedUserId: string;
+	userId: string;
+	changeType: "increment" | "decrement";
+}) => {
+	try {
+		const loggedUser = await getUser({ id: loggedUserId });
+		if (loggedUser.status === "error") return;
+		if (loggedUser.data.role === "USER") return;
+		const userToUpdate = await getUser({ id: userId });
+		if (userToUpdate.status === "error") return;
+		if ((loggedUser.data.role === "ADMIN" || loggedUser.data.role === "OWNER") && userToUpdate.data.role !== "USER") {
+			return;
+		}
+		if (changeType === "increment" && userToUpdate.data.userReputation === 7) return;
+		if (changeType === "decrement" && userToUpdate.data.userReputation === 0) return;
+		const result = await updateUserDb({
+			id: userId,
+			userReputation:
+				changeType === "increment" ? userToUpdate.data.userReputation + 1 : userToUpdate.data.userReputation - 1,
+		});
+		if (result.status === "success") {
+			revalidatePath(`/dashboard/${loggedUserId}/users`);
+		}
+	} catch (error) {}
+};
+export const updateUserRole = async ({
+	loggedUserId,
+	userId,
+	newRole,
+}: {
+	loggedUserId: string;
+	userId: string;
+	newRole: RoleType;
+}) => {
+	try {
+		const loggedUser = await getUser({ id: loggedUserId });
+		if (loggedUser.status === "error") return;
+		if (loggedUser.data.role === "USER") return;
+		const userToUpdate = await getUser({ id: userId });
+		if (userToUpdate.status === "error") return;
+		if (loggedUser.data.role === "ADMIN" && userToUpdate.data.role !== "USER") {
+			return;
+		}
+		const result = await updateUserDb({
+			id: userId,
+			role: newRole,
+		});
+		if (result.status === "success") {
+			revalidatePath(`/dashboard/${loggedUserId}/users`);
+		}
+	} catch (error) {}
 };

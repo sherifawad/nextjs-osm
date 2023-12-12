@@ -1,8 +1,16 @@
 "use client";
 
 import { type User } from "@/types";
-import { DropdownMenuContent, DropdownMenuItem } from "@/ui/dropdown-menu";
+import {
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+} from "@/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
+import { updateUserReputation, updateUserRole } from "../_actions";
 
 type UserTableActionsProps = {
 	user: User;
@@ -12,9 +20,60 @@ function UserTableActions({ user }: UserTableActionsProps) {
 
 	return (
 		<DropdownMenuContent align="end" className="w-[160px]">
-			<DropdownMenuItem>Rep_Increment</DropdownMenuItem>
-			<DropdownMenuItem>Rep_Decrement</DropdownMenuItem>
-			<DropdownMenuItem>ChangeRole</DropdownMenuItem>
+			<DropdownMenuItem
+				disabled={user.userReputation === 7}
+				onClick={() =>
+					updateUserReputation({
+						changeType: "increment",
+						loggedUserId: Session?.user.id || "",
+						userId: user.id,
+					})
+				}
+			>
+				Rep_Increment
+			</DropdownMenuItem>
+			<DropdownMenuItem
+				disabled={user.userReputation === 0}
+				onClick={() =>
+					updateUserReputation({
+						changeType: "decrement",
+						loggedUserId: Session?.user.id || "",
+						userId: user.id,
+					})
+				}
+			>
+				Rep_Decrement
+			</DropdownMenuItem>
+			<DropdownMenuSeparator />
+			<DropdownMenuSub>
+				<DropdownMenuSubTrigger>ChangeRole</DropdownMenuSubTrigger>
+				<DropdownMenuSubContent>
+					<DropdownMenuItem
+						disabled={user.role !== "OWNER"}
+						onClick={() =>
+							updateUserRole({
+								newRole: "ADMIN",
+								loggedUserId: Session?.user.id || "",
+								userId: user.id,
+							})
+						}
+					>
+						Admin
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						disabled={user.role !== "OWNER"}
+						onClick={() =>
+							updateUserRole({
+								newRole: "USER",
+								loggedUserId: Session?.user.id || "",
+								userId: user.id,
+							})
+						}
+					>
+						User
+					</DropdownMenuItem>
+				</DropdownMenuSubContent>
+			</DropdownMenuSub>
 		</DropdownMenuContent>
 	);
 }

@@ -33,7 +33,7 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 	let data: UserPlacesDTO[] = [];
 	let count = 0;
 	let paramsData: PlacesSearchParams = {
-		column: "modifiedAt",
+		column: "name",
 		page: 1,
 		search: "",
 		size: 5,
