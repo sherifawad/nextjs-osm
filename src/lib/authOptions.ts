@@ -19,6 +19,10 @@ export const authOptions: AuthOptions = {
 		}),
 	],
 	callbacks: {
+		async signIn({ user, account, profile, email, credentials }) {
+			console.log("🚀 ~ file: authOptions.ts:23 ~ signIn ~ user:", user);
+			return true;
+		},
 		async jwt({ token, user }) {
 			if (user) {
 				const dbUser = await getUser({ id: user.id });
