@@ -9,7 +9,12 @@ import {
 	UsersCountResponse,
 } from "@/types";
 import { errorHandler, validateData } from "@/lib/schema-utils";
-import { getUserDbPrisma, getUsersCountDbPrisma, getUsersDbPrisma } from "@/prisma";
+import { getUserDbPrisma, getUsersCountDbPrisma, getUsersDbPrisma, isUserAccountBlockedDbPrisma } from "@/prisma";
+import {
+	AccountBlockStatusResponse,
+	GetAccountBlockStatus,
+	GetAccountBlockStatusSchema,
+} from "@/types/account/validation/read-schema";
 
 export const getUsers = async (data: GetUsers): Promise<UsersResponse> => {
 	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
@@ -84,6 +89,26 @@ export const getUser = async (data: GetUser): Promise<userResponse> => {
 			status: "error",
 			errors: result.errors,
 		};
+	} catch (error) {
+		return errorHandler(error, errors);
+	}
+};
+
+export const isUserAccountBlocked = async (data: GetAccountBlockStatus): Promise<AccountBlockStatusResponse> => {
+	const { errors, validData } = validateData({ schema: GetAccountBlockStatusSchema, data });
+
+	if (!validData) {
+		return {
+			status: "error",
+			errors,
+		};
+	}
+	try {
+		const dbResult = await isUserAccountBlockedDbPrisma({
+			provider: validData.provider,
+			providerAccountId: validData.providerAccountId,
+		});
+		return { status: "success", data: dbResult };
 	} catch (error) {
 		return errorHandler(error, errors);
 	}

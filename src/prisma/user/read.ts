@@ -177,3 +177,25 @@ export const getUsersCountDbPrisma = async (data: GetUsers): Promise<UsersCountR
 		return errorHandler(error, errors);
 	}
 };
+
+export const isUserAccountBlockedDbPrisma = async ({
+	provider,
+	providerAccountId,
+}: {
+	provider: string;
+	providerAccountId: string;
+}) => {
+	try {
+		const dbResult = await prismaDb.account.findUniqueOrThrow({
+			where: {
+				provider_providerAccountId: {
+					provider,
+					providerAccountId,
+				},
+			},
+		});
+		return dbResult.blocked;
+	} catch (error) {
+		return false;
+	}
+};
