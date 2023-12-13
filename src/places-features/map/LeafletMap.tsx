@@ -12,6 +12,7 @@ import AddNewPlace from "@/places-features/add-place";
 import EditSelectedPlace from "@/places-features/edit-place";
 import RatePlace from "@/places-features/rate-place";
 import type { FetchedPlace } from "@/types";
+import PlacesLocationsList from "./places-locations-list";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -57,17 +58,6 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
 	// const placeMarkerRef = useRef<TMarker<any>>(null);
-	const placeMarkerRefs = useRef<TMarker<any>[]>([]);
-
-	useMemo(() => {
-		// if (placeMarkerRefs.current.length !== places.length) {
-		// 	// add or remove refs
-		// 	placeMarkerRefs.current = Array(places.length)
-		// 		.fill()
-		// 		.map((_, i) => placeMarkerRefs.current[i] || createRef());
-		// }
-		placeMarkerRefs.current = placeMarkerRefs.current.slice(0, places.length);
-	}, [places]);
 
 	// const addMosqueDialog = useMemo(() => {
 	// 	if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
@@ -101,69 +91,23 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 			/>
 
-			<MarkerClusterGroup
-				chunkedLoading
-				// iconCreateFunction={createClusterCustomIcon}
+			<PlacesLocationsList places={places} />
+			<CircleMarker
+				center={[kaabaPosition.latitude, kaabaPosition.longitude]}
+				radius={50}
+				// fillOpacity={circleOpacity}
+				stroke={false}
 			>
-				{places?.map((data, i) => (
-					<Marker
-						// ref={placeMarkerRefs.current[i]}
-						ref={(el) => {
-							if (el) {
-								placeMarkerRefs.current[i] = el;
-							}
-						}}
-						key={data.id}
-						position={{
-							lat: data.latitude,
-							lng: data.longitude,
-						}}
-						icon={
-							data.deleted
-								? mosqueDeletedMarker
-								: data.hidden
-								? mosqueHiddenMarker
-								: data.verified
-								? mosqueVerifiedMarker
-								: mosqueUnVerifiedMarker
-						}
-						eventHandlers={{
-							click: (e) => onMosqueClick(e, data),
-						}}
-					>
-						{place && (
-							<Popup>
-								{/* <PlaceMarkPopUp place={place} /> */}
-								<EditSelectedPlace
-									place={place}
-									onDialogOpen={() =>
-										new Promise(() => {
-											placeMarkerRefs.current[i]?.closePopup();
-										})
-									}
-								/>
-								<RatePlace place={place} />
-							</Popup>
-						)}
-					</Marker>
-				))}
-				<CircleMarker
-					center={[kaabaPosition.latitude, kaabaPosition.longitude]}
-					radius={50}
-					// fillOpacity={circleOpacity}
-					stroke={false}
-				>
-					<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
-						<span>الكعبة : المسجد الحرام</span>
-					</Tooltip>
-				</CircleMarker>
-				<Polyline
-					positions={[
-						[initialLat, initialLon],
-						[kaabaPosition.latitude, kaabaPosition.longitude],
-					]}
-				/>
-			</MarkerClusterGroup>
+				<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
+					<span>الكعبة : المسجد الحرام</span>
+				</Tooltip>
+			</CircleMarker>
+			<Polyline
+				positions={[
+					[initialLat, initialLon],
+					[kaabaPosition.latitude, kaabaPosition.longitude],
+				]}
+			/>
 
 			<Marker
 				position={{
