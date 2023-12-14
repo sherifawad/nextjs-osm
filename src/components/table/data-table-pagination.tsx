@@ -7,18 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { SearchParams } from "@/app/dashboard/[id]/(dataList)/schema";
+import { BasicSearchParams } from "@/app/dashboard/[id]/(dataList)/schema";
 
 const pageSizes = [5, 10, 20, 30, 40, 50];
 
 // interface DataTablePaginationProps<TData> {
 // 	table: Table<TData>;
 // }
-type DataTablePaginationProps = SearchParams & {
+type DataTablePaginationProps = BasicSearchParams & {
 	count: number;
 };
 
-export function DataTablePagination<TData>({ count, page, size, column, search, sort }: DataTablePaginationProps) {
+export function DataTablePagination<TData>({ count, page, size }: DataTablePaginationProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
