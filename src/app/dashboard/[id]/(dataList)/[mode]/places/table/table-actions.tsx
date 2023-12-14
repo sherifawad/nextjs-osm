@@ -20,7 +20,7 @@ function PlaceTableActions({ place }: PlaceTableActionsProps) {
 				<DropdownMenuItem>
 					<Link
 						prefetch={false}
-						href={`/?lat=${place.latitude}&lon=${place.longitude}`}
+						href={`/map/?lat=${place.latitude}&lon=${place.longitude}`}
 						rel="noopener noreferrer"
 						target="_blank"
 						className="w-full"

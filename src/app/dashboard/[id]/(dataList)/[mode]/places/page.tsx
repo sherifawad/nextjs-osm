@@ -77,7 +77,7 @@ async function PlacesPage({ searchParams, params: pageParams }: PlacesPageProps)
 
 	return (
 		<section className="max-w-4xl mx-auto mb-8">
-			{session.user.role === "USER" ? (
+			{session.user.role !== "USER" ? (
 				<Tabs defaultValue={pageParams.mode === "all" ? "all-places" : "my-places"} className="w-full mt-8">
 					<TabsList className="max-w-md mx-auto inline-flex xs:grid w-full grid-cols-2 mb-8">
 						<TabsTrigger value="my-places">
