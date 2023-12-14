@@ -3,38 +3,14 @@
 import { MapContainer, Marker, Popup, TileLayer, Polyline, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
 import { CampaignMapEventHandler } from "./CampaignMapEventHandler";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import usePlace from "@/hooks/usePlace";
 import { LoaderIcon } from "lucide-react";
 import AddNewPlace from "@/places-features/add-place";
-import EditSelectedPlace from "@/places-features/edit-place";
-import RatePlace from "@/places-features/rate-place";
 import type { FetchedPlace } from "@/types";
 import PlacesLocationsList from "./places-locations-list";
 
-const mosqueVerifiedMarker = L.icon({
-	iconUrl: "./mosque-verified.svg",
-	iconSize: [38, 38],
-	iconAnchor: [23, 29],
-});
-
-const mosqueUnVerifiedMarker = L.icon({
-	iconUrl: "./mosque-unVerified.svg",
-	iconSize: [38, 38],
-	iconAnchor: [23, 29],
-});
-const mosqueHiddenMarker = L.icon({
-	iconUrl: "./mosque-hidden.svg",
-	iconSize: [38, 38],
-	iconAnchor: [23, 29],
-});
-const mosqueDeletedMarker = L.icon({
-	iconUrl: "./mosque-deleted.svg",
-	iconSize: [38, 38],
-	iconAnchor: [23, 29],
-});
 const icon = L.icon({
 	iconUrl: "./add2.svg",
 	iconSize: [20, 33],
@@ -62,11 +38,6 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 	const { setLocationData, place, kaabaPosition, searchParams } = usePlace();
 
 	const addLocationMarkerRef = useRef<TMarker<any>>(null);
-	// const placeMarkerRef = useRef<TMarker<any>>(null);
-
-	// const addMosqueDialog = useMemo(() => {
-	// 	if (location) return <AddPlaceForm triggerBtnHandler={() => addLocationMarkerRef.current?.closePopup()} />;
-	// }, [location]);
 
 	const onContextMenuClick = (event: LeafletMouseEvent) => {
 		event.originalEvent.preventDefault();
@@ -77,15 +48,6 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 				latitude: lat,
 				longitude: lng,
 			},
-		});
-	};
-
-	const onMosqueClick = (event: LeafletMouseEvent, place: FetchedPlace) => {
-		event.originalEvent.preventDefault();
-		const { lat, lng } = event.latlng;
-		if (!lat || !lng || !place) return;
-		setLocationData({
-			place,
 		});
 	};
 
