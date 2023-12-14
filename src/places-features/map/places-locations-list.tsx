@@ -1,11 +1,12 @@
 import { FetchedPlace } from "@/types";
-import React, { useMemo, useRef } from "react";
+import React, { RefObject, useMemo, useRef } from "react";
 import { Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L, { type Marker as TMarker, type LeafletMouseEvent } from "leaflet";
 import EditSelectedPlace from "../edit-place";
 import RatePlace from "../rate-place";
 import usePlace from "@/hooks/usePlace";
+import "leaflet/dist/leaflet.css";
 
 const mosqueVerifiedMarker = L.icon({
 	iconUrl: "./mosque-verified.svg",
@@ -29,11 +30,21 @@ const mosqueDeletedMarker = L.icon({
 	iconAnchor: [23, 29],
 });
 
-type Props = {
-	places: FetchedPlace[];
+const createClusterCustomIcon = function (cluster: any) {
+	return new L.DivIcon({
+		html: `<span>${(cluster as L.MarkerClusterGroup).getChildCount()}</span>`,
+		className: "marker-cluster marker-cluster-small",
+		iconSize: L.point(45, 45, true),
+	});
 };
 
-const PlacesLocationsList = ({ places }: Props) => {
+type Props = {
+	places: FetchedPlace[];
+	markerRef: RefObject<TMarker<any>>;
+};
+
+const PlacesLocationsList = ({ places, markerRef }: Props) => {
+	// console.log("🚀 ~ file: places-locations-list.tsx:38 ~ PlacesLocationsList ~ markerRef:", markerRef.current);
 	const { setLocationData, place } = usePlace();
 
 	const placeMarkerRefs = useRef<TMarker<any>[]>([]);
@@ -53,6 +64,9 @@ const PlacesLocationsList = ({ places }: Props) => {
 	return (
 		<MarkerClusterGroup
 			chunkedLoading
+			onClick={() => {}}
+			onContextMenu={() => {}}
+			maxClusterRadius={15}
 			// iconCreateFunction={createClusterCustomIcon}
 		>
 			{places?.map((data, i) => (

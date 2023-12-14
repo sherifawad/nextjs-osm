@@ -37,8 +37,13 @@ const mosqueDeletedMarker = L.icon({
 });
 const icon = L.icon({
 	iconUrl: "./add2.svg",
-	iconSize: [20, 38],
+	iconSize: [20, 33],
 	iconAnchor: [12, 28],
+	//shadowUrl: 'leaf-shadow.png',
+	//shadowSize: [50, 64], // size of the shadow
+	//shadowAnchor: [4, 62], // the same for the shadow
+	// popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+	className: "",
 });
 
 type LeafletMapProps = {
@@ -90,25 +95,6 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 			/>
-
-			<PlacesLocationsList places={places} />
-			<CircleMarker
-				center={[kaabaPosition.latitude, kaabaPosition.longitude]}
-				radius={50}
-				// fillOpacity={circleOpacity}
-				stroke={false}
-			>
-				<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
-					<span>الكعبة : المسجد الحرام</span>
-				</Tooltip>
-			</CircleMarker>
-			<Polyline
-				positions={[
-					[initialLat, initialLon],
-					[kaabaPosition.latitude, kaabaPosition.longitude],
-				]}
-			/>
-
 			<Marker
 				position={{
 					lat: initialLat,
@@ -129,6 +115,23 @@ function LeafletMap({ places, initialLat, initialLon }: LeafletMapProps) {
 					/>
 				</Popup>
 			</Marker>
+			<CircleMarker
+				center={[kaabaPosition.latitude, kaabaPosition.longitude]}
+				radius={50}
+				// fillOpacity={circleOpacity}
+				stroke={false}
+			>
+				<Tooltip direction="right" offset={[-8, -2]} opacity={1}>
+					<span>الكعبة : المسجد الحرام</span>
+				</Tooltip>
+			</CircleMarker>
+			<Polyline
+				positions={[
+					[initialLat, initialLon],
+					[kaabaPosition.latitude, kaabaPosition.longitude],
+				]}
+			/>
+			<PlacesLocationsList places={places} markerRef={addLocationMarkerRef} />
 
 			<CampaignMapEventHandler
 				lat={parseFloat(searchParams.get("lat") ?? "")}

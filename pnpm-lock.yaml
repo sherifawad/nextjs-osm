@@ -133,6 +133,9 @@ devDependencies:
   '@types/leaflet':
     specifier: ^1.9.7
     version: 1.9.7
+  '@types/leaflet.markercluster':
+    specifier: ^1.5.4
+    version: 1.5.4
   '@types/node':
     specifier: ^20
     version: 20.8.9
@@ -1606,6 +1609,12 @@ packages:
 
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/leaflet.markercluster@1.5.4:
+    resolution: {integrity: sha512-tfMP8J62+wfsVLDLGh5Zh1JZxijCaBmVsMAX78MkLPwvPitmZZtSin5aWOVRhZrCS+pEOZwNzexbfWXlY+7yjg==}
+    dependencies:
+      '@types/leaflet': 1.9.7
     dev: true
 
   /@types/leaflet@1.9.7:
