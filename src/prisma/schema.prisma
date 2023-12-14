@@ -111,8 +111,8 @@ model PlaceRating {
   placeReputation REPUTATION
   placeId         String
   userId          String
-  ratedBy         User       @relation(fields: [userId], references: [id])
-  ratedPlace      Place      @relation(fields: [placeId], references: [id])
+  ratedBy         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ratedPlace      Place      @relation(fields: [placeId], references: [id], onDelete: Cascade)
 
   @@id([placeId, userId])
 }
