@@ -2,11 +2,12 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import SectionsWrapper from "./SectionsWrapper";
-import { Badge } from "@/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Separator } from "@/ui/separator";
 import { AspectRatio } from "@/ui/aspect-ratio";
 import Container from "@/ui/Container";
+
+export const dynamic = "force-static";
 
 const mosqueStatusData = [
 	{
@@ -49,8 +50,6 @@ const mapFeaturesData = [
 ];
 
 async function HomePage() {
-	const header = headers();
-	const host = header.get("host");
 	return (
 		<>
 			<section className="bg-neutral-50 px-6 py-12 text-center dark:bg-neutral-900 md:px-12 lg:text-left">
