@@ -11,14 +11,12 @@ import {
 import UserAvatar from "./user-avatar";
 import { type Session } from "next-auth";
 import { Button } from "../../ui/button";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-type UserButtonProps = {
-	session: Session | null;
-};
+function UserButton() {
+	const { data: Session, status } = useSession();
 
-function UserButton({ session }: UserButtonProps) {
-	if (!session) {
+	if (status !== "authenticated") {
 		return (
 			<Button variant={"outline"} onClick={() => signIn()}>
 				Signin
@@ -28,10 +26,10 @@ function UserButton({ session }: UserButtonProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger>
-				<UserAvatar name={session.user.name} image={session.user.image} />
+				<UserAvatar name={Session.user.name} image={Session.user.image} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				<DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
+				<DropdownMenuLabel>{Session.user.name}</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					className="cursor-pointer justify-center bg-primary text-primary-foreground hover:bg-primary/90"

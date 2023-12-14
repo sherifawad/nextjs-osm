@@ -31,7 +31,6 @@ export const authOptions: AuthOptions = {
 					provider: account?.provider,
 					providerAccountId: account?.providerAccountId,
 				});
-				console.log("🚀 ~ file: authOptions.ts:34 ~ signIn ~ result:", result);
 				if (result.status === "success") return !result.data;
 				return false;
 			}

@@ -118,7 +118,7 @@ const Header = async () => {
 					</nav>
 					<div className="flex items-center">
 						<DarkModeToggle />
-						<UserButton session={session} />
+						<UserButton />
 
 						{/* <ProfileButton />  */}
 					</div>
