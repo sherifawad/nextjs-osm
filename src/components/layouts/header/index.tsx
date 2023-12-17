@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -7,23 +9,20 @@ import { usePathname, useRouter } from "next/navigation";
 import Container from "@/components/ui/Container";
 import UserButton from "@/components/layouts/header/user-button";
 import DarkModeToggle from "./darkMode-toggle";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 import { headers } from "next/headers";
+import { useSession } from "next-auth/react";
 
 const routes = [
 	{
 		href: "/leafletMap",
 		label: "LeafletMap",
 	},
-	// {
-	//     href: "/GeoJsonLayerMap",
-	//     label: "GeoJsonLayerMap",
-	// },
 ];
 
-const Header = async () => {
-	const session = await getServerSession(authOptions);
+const Header = () => {
+	const { data: Session, status } = useSession();
 
 	return (
 		<header className="flex sm:justify-between h-20 items-center px-4 border-b ">
@@ -45,7 +44,7 @@ const Header = async () => {
 										<li>
 											<Link
 												prefetch={false}
-												href={`/dashboard/${session?.user.id}/account`}
+												href={`/dashboard/${Session?.user.id}/account`}
 												className={`block px-2 py-1 text-lg`}
 											>
 												Account
@@ -54,7 +53,7 @@ const Header = async () => {
 										<li>
 											<Link
 												prefetch={false}
-												href={`/dashboard/${session?.user.id}/my/places`}
+												href={`/dashboard/${Session?.user.id}/my/places`}
 												className={`block px-2 py-1 text-lg`}
 											>
 												Places
@@ -63,7 +62,7 @@ const Header = async () => {
 										<li>
 											<Link
 												prefetch={false}
-												href={`/dashboard/${session?.user.id}/users`}
+												href={`/dashboard/${Session?.user.id}/users`}
 												className={`block px-2 py-1 text-lg`}
 											>
 												Users
@@ -84,11 +83,11 @@ const Header = async () => {
 									Map
 								</Link>
 							</li>
-							{session && (
+							{Session && (
 								<>
 									<li>
 										<Link
-											href={`/dashboard/${session?.user.id}/account`}
+											href={`/dashboard/${Session?.user.id}/account`}
 											className="text-sm font-medium transition-colors"
 										>
 											Account
@@ -97,7 +96,7 @@ const Header = async () => {
 									<li>
 										<Link
 											prefetch={false}
-											href={`/dashboard/${session?.user.id}/my/places`}
+											href={`/dashboard/${Session?.user.id}/my/places`}
 											className={`text-sm font-medium transition-colors`}
 										>
 											Places
@@ -106,7 +105,7 @@ const Header = async () => {
 									<li>
 										<Link
 											prefetch={false}
-											href={`/dashboard/${session?.user.id}/users`}
+											href={`/dashboard/${Session?.user.id}/users`}
 											className={`text-sm font-medium transition-colors`}
 										>
 											Users

@@ -9,16 +9,16 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "./user-avatar";
-import { type Session } from "next-auth";
 import { Button } from "../../ui/button";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 function UserButton() {
 	const { data: Session, status } = useSession();
 
 	if (status !== "authenticated") {
 		return (
-			<Button variant={"outline"} onClick={() => signIn()}>
+			<Button variant={"outline"} onClick={() => signIn("google")}>
 				Signin
 			</Button>
 		);
@@ -29,7 +29,9 @@ function UserButton() {
 				<UserAvatar name={Session.user.name} image={Session.user.image} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				<DropdownMenuLabel>{Session.user.name}</DropdownMenuLabel>
+				<DropdownMenuLabel>
+					<Link href={`/dashboard/${Session.user.id}/account`}>{Session.user.name}</Link>
+				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					className="cursor-pointer justify-center bg-primary text-primary-foreground hover:bg-primary/90"

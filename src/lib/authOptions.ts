@@ -1,4 +1,3 @@
-import { AuthOptions, CallbacksOptions, Profile } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { env } from "@/env";
@@ -6,13 +5,14 @@ import { getUser, isUserAccountBlocked } from "@/data-access";
 import { prismaDb } from "@/prisma";
 import { Adapter } from "next-auth/adapters";
 import { Account } from "@prisma/client";
+import { AuthOptions } from "next-auth";
 // type SignInCallback = CallbacksOptions<Profile, Account>["signIn"];
 // const signIn: SignInCallback = ({ account }) => {
 // 	console.log("🚀 ~ file: authOptions.ts:24 ~ signIn ~ account:", account?.blocked);
 // 	return true;
 // };
-export const authOptions: AuthOptions = {
-	secret: env.NEXTAUTH_SECRET || "",
+export const authOptions = {
+	secret: env.NEXTAUTH_SECRET,
 	adapter: PrismaAdapter(prismaDb),
 	session: {
 		strategy: "jwt",
@@ -20,8 +20,8 @@ export const authOptions: AuthOptions = {
 
 	providers: [
 		GoogleProvider({
-			clientId: env.GOOGLE_CLIENT_ID || "",
-			clientSecret: env.GOOGLE_CLIENT_SECRET || "",
+			clientId: env.GOOGLE_CLIENT_ID,
+			clientSecret: env.GOOGLE_CLIENT_SECRET,
 		}),
 	],
 	callbacks: {
@@ -50,7 +50,7 @@ export const authOptions: AuthOptions = {
 			}
 			return token;
 		},
-		async session({ session, token }) {
+		session({ session, token }) {
 			return {
 				...session,
 				user: {
@@ -62,4 +62,4 @@ export const authOptions: AuthOptions = {
 			};
 		},
 	},
-};
+} satisfies AuthOptions;

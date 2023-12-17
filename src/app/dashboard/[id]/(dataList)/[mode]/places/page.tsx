@@ -1,5 +1,4 @@
 import { authOptions } from "@/lib/authOptions";
-import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { UserPlacesDTO } from "@/types";
@@ -11,6 +10,7 @@ import Link from "next/link";
 import { type PlacesSearchParams, PlacesSearchParamsSchema } from "../../schema";
 import { getSortedPlacesResult } from "./_actions";
 import { columns } from "./table/columns";
+import { getServerSession } from "next-auth";
 
 export const dynamic = "force-dynamic";
 
