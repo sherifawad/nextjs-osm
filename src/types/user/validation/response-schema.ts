@@ -2,13 +2,13 @@ import { z } from "zod";
 import { User, UserDbSchema } from "./user-schema";
 
 export const UserDataErrorsSchema = UserDbSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 export type UserDataErrors = {
-	[key in keyof z.infer<typeof UserDataErrorsSchema>]: string;
+  [key in keyof z.infer<typeof UserDataErrorsSchema>]: string;
 };
 
 /////////////////////////////////////////

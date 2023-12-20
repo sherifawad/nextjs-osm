@@ -1,71 +1,79 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
+import { authOptions } from "@/lib/auth/options";
 import { getPlace, updatePlaceDb } from "@/data-access";
 import type { placeResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 import { TEditPlaceForm, editPlaceFormSchema } from "./validation";
-import { validateData, errorHandler, addServerError } from "@/lib/schema-utils";
+import { validateData, errorHandler, addServerError } from "@/lib/utils/schema";
 
-export const updatePlaceLocation = async (place: TEditPlaceForm): Promise<placeResponse> => {
-	let { errors, validData } = validateData({ schema: editPlaceFormSchema, data: place });
-	if (!validData) {
-		return {
-			status: "error",
-			errors,
-		};
-	}
+export const updatePlaceLocation = async (
+  place: TEditPlaceForm
+): Promise<placeResponse> => {
+  let { errors, validData } = validateData({
+    schema: editPlaceFormSchema,
+    data: place,
+  });
+  if (!validData) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
 
-	try {
-		const session = await getServerSession(authOptions);
-		if (!session) {
-			return addServerError("Not Authenticated", errors);
-		}
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return addServerError("Not Authenticated", errors);
+    }
 
-		if (session.user.userReputation < 1) {
-			return addServerError("Not authorized, low reputation", errors);
-		}
+    if (session.user.userReputation < 1) {
+      return addServerError("Not authorized, low reputation", errors);
+    }
 
-		const placeDbResult = await getPlace({
-			id: validData.id,
-		});
+    const placeDbResult = await getPlace({
+      id: validData.id,
+    });
 
-		if (placeDbResult.status === "error") {
-			return addServerError("Place Not Exist", errors);
-		}
+    if (placeDbResult.status === "error") {
+      return addServerError("Place Not Exist", errors);
+    }
 
-		const placeDb = placeDbResult.data;
+    const placeDb = placeDbResult.data;
 
-		if ((placeDb.verified || placeDb.deleted) && session.user.role !== "OWNER") {
-			return addServerError("Not authorized to update", errors);
-		}
-		if (
-			!placeDb.verified &&
-			!placeDb.deleted &&
-			session.user.role === "USER" &&
-			session.user.id !== placeDb.createdById
-		) {
-			return addServerError("Not authorized to update", errors);
-		}
+    if (
+      (placeDb.verified || placeDb.deleted) &&
+      session.user.role !== "OWNER"
+    ) {
+      return addServerError("Not authorized to update", errors);
+    }
+    if (
+      !placeDb.verified &&
+      !placeDb.deleted &&
+      session.user.role === "USER" &&
+      session.user.id !== placeDb.createdById
+    ) {
+      return addServerError("Not authorized to update", errors);
+    }
 
-		const result = await updatePlaceDb({
-			...validData,
-			modifiedById: session.user.id,
-		});
+    const result = await updatePlaceDb({
+      ...validData,
+      modifiedById: session.user.id,
+    });
 
-		if (result.status === "success") {
-			revalidatePath("/");
-			return {
-				status: "success",
-				data: result.data,
-			};
-		}
-		return {
-			status: "error",
-			errors: result.errors,
-		};
-	} catch (error) {
-		return errorHandler(error, errors);
-	}
+    if (result.status === "success") {
+      revalidatePath("/");
+      return {
+        status: "success",
+        data: result.data,
+      };
+    }
+    return {
+      status: "error",
+      errors: result.errors,
+    };
+  } catch (error) {
+    return errorHandler(error, errors);
+  }
 };

@@ -12,7 +12,7 @@ import { sortingSchema } from "@/types/common";
  * Input Schema
  */
 export const GetPlaceSchema = z.object({
-	id: z.string().cuid(),
+  id: z.string().cuid(),
 });
 
 export type GetPlace = z.infer<typeof GetPlaceSchema>;
@@ -20,27 +20,37 @@ export type GetPlace = z.infer<typeof GetPlaceSchema>;
  * Output Schema
  */
 const FetchedPlaceErrorsSchema = GetPlaceSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 /**
  * Response Schema
  */
 type FetchedPlaceDataErrors = {
-	[key in keyof z.infer<typeof FetchedPlaceErrorsSchema>]: string;
+  [key in keyof z.infer<typeof FetchedPlaceErrorsSchema>]: string;
 };
 
 type FetchedUserSuccessResponse = { status: "success"; data: Place };
-type FetchedPlaceErrorResponse = { status: "error"; errors: Partial<FetchedPlaceDataErrors> };
+type FetchedPlaceErrorResponse = {
+  status: "error";
+  errors: Partial<FetchedPlaceDataErrors>;
+};
 
-export type FetchedPlaceResponse = FetchedPlaceErrorResponse | FetchedUserSuccessResponse;
+export type FetchedPlaceResponse =
+  | FetchedPlaceErrorResponse
+  | FetchedUserSuccessResponse;
 
 /////////////////////////////////////////
 // USER PLACES TYPE SCHEMA
 /////////////////////////////////////////
-export const UserPlacesTypeSchema = z.enum(["ALL", "CREATED", "MODIFIED", "BOTH"]);
+export const UserPlacesTypeSchema = z.enum([
+  "ALL",
+  "CREATED",
+  "MODIFIED",
+  "BOTH",
+]);
 
 export type UserPlacesType = `${z.infer<typeof UserPlacesTypeSchema>}`;
 
@@ -49,9 +59,9 @@ export type UserPlacesType = `${z.infer<typeof UserPlacesTypeSchema>}`;
 /////////////////////////////////////////
 
 export const GetPlacesSchema = z.object({
-	userRole: RoleSchema.optional(),
-	deletedPlaces: z.boolean().optional(),
-	hiddenPlaces: z.boolean().optional(),
+  userRole: RoleSchema.optional(),
+  deletedPlaces: z.boolean().optional(),
+  hiddenPlaces: z.boolean().optional(),
 });
 
 export type GetPlaces = z.infer<typeof GetPlacesSchema>;
@@ -64,39 +74,43 @@ export type FetchedPlace = z.infer<typeof FetchedPlaceSchema>;
 /////////////////////////////////////////
 
 export const userPlacesSchema = z
-	.object({
-		rating: PlaceRatingSchema.omit({ placeId: true, userId: true }).array(),
-	})
-	.and(PlaceDbSchemaOptional);
+  .object({
+    rating: PlaceRatingSchema.omit({ placeId: true, userId: true }).array(),
+  })
+  .and(PlaceDbSchemaOptional);
 export const userPlacesDTOSchema = z
-	.object({
-		rating: z.number(),
-	})
-	.and(PlaceDbSchemaOptional);
+  .object({
+    rating: z.number(),
+  })
+  .and(PlaceDbSchemaOptional);
 export type UserPlaces = z.infer<typeof userPlacesSchema>;
 export type UserPlacesDTO = z.infer<typeof userPlacesDTOSchema>;
 export const GetUserPlacesSchema = z
-	.object({
-		id: z.string().cuid(),
-		placeType: UserPlacesTypeSchema,
-		columnToSort: z.custom<keyof UserPlaces>(),
-		columnToFilter: z.custom<keyof UserPlaces>().optional(),
-		sorting: sortingSchema,
-		take: z.number().optional(),
-		skip: z.number().optional(),
-		search: z.string().optional(),
-		deletedPlaces: z.boolean().optional(),
-		hiddenPlaces: z.boolean().optional(),
-	})
-	.refine(
-		(data) => {
-			return !data.search || data.search?.length < 1 ? true : data.columnToFilter ? true : false;
-		},
-		{
-			message: "no column to filter exist",
-			path: ["columnToFilter"],
-		}
-	);
+  .object({
+    id: z.string().cuid(),
+    placeType: UserPlacesTypeSchema,
+    columnToSort: z.custom<keyof UserPlaces>(),
+    columnToFilter: z.custom<keyof UserPlaces>().optional(),
+    sorting: sortingSchema,
+    take: z.number().optional(),
+    skip: z.number().optional(),
+    search: z.string().optional(),
+    deletedPlaces: z.boolean().optional(),
+    hiddenPlaces: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      return !data.search || data.search?.length < 1
+        ? true
+        : data.columnToFilter
+          ? true
+          : false;
+    },
+    {
+      message: "no column to filter exist",
+      path: ["columnToFilter"],
+    }
+  );
 
 export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
 
@@ -105,45 +119,68 @@ export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
 /////////////////////////////////////////
 
 const FetchedUserPlacesErrorsSchema = GetUserPlacesSchema.and(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 type FetchedUserPlacesDataErrors = {
-	[key in keyof z.infer<typeof FetchedUserPlacesErrorsSchema>]: string;
+  [key in keyof z.infer<typeof FetchedUserPlacesErrorsSchema>]: string;
 };
 
-type FetchedUserPlacesSuccessResponse = { status: "success"; data: UserPlaces[] };
-type FetchedUserPlacesDTOSuccessResponse = { status: "success"; data: UserPlacesDTO[] };
-type FetchedUserPlacesErrorResponse = { status: "error"; errors: Partial<FetchedUserPlacesDataErrors> };
+type FetchedUserPlacesSuccessResponse = {
+  status: "success";
+  data: UserPlaces[];
+};
+type FetchedUserPlacesDTOSuccessResponse = {
+  status: "success";
+  data: UserPlacesDTO[];
+};
+type FetchedUserPlacesErrorResponse = {
+  status: "error";
+  errors: Partial<FetchedUserPlacesDataErrors>;
+};
 
-export type FetchedUserPlacesResponse = FetchedUserPlacesSuccessResponse | FetchedUserPlacesErrorResponse;
-export type FetchedUserPlacesDTOResponse = FetchedUserPlacesDTOSuccessResponse | FetchedUserPlacesErrorResponse;
+export type FetchedUserPlacesResponse =
+  | FetchedUserPlacesSuccessResponse
+  | FetchedUserPlacesErrorResponse;
+export type FetchedUserPlacesDTOResponse =
+  | FetchedUserPlacesDTOSuccessResponse
+  | FetchedUserPlacesErrorResponse;
 
 /////////////////////////////////////////
 // FETCH USER PLACE COUNT OUTPUT SCHEMA
 /////////////////////////////////////////
 
-type FetchedUserPlacesCountSuccessResponse = { status: "success"; data: number };
+type FetchedUserPlacesCountSuccessResponse = {
+  status: "success";
+  data: number;
+};
 
-export type FetchedUserPlacesCountResponse = FetchedUserPlacesCountSuccessResponse | FetchedUserPlacesErrorResponse;
+export type FetchedUserPlacesCountResponse =
+  | FetchedUserPlacesCountSuccessResponse
+  | FetchedUserPlacesErrorResponse;
 
 /////////////////////////////////////////
 //FETCH PLACES SCHEMA VALIDATION OUTPUT
 /////////////////////////////////////////
 
 const FetchedPlacesErrorsSchema = GetPlacesSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 type FetchedPlacesDataErrors = {
-	[key in keyof z.infer<typeof FetchedPlacesErrorsSchema>]: string;
+  [key in keyof z.infer<typeof FetchedPlacesErrorsSchema>]: string;
 };
 
 type FetchedPlacesSuccessResponse = { status: "success"; data: FetchedPlace[] };
-type FetchedPlacesErrorResponse = { status: "error"; errors: Partial<FetchedPlacesDataErrors> };
+type FetchedPlacesErrorResponse = {
+  status: "error";
+  errors: Partial<FetchedPlacesDataErrors>;
+};
 
-export type FetchedPlacesResponse = FetchedPlacesSuccessResponse | FetchedPlacesErrorResponse;
+export type FetchedPlacesResponse =
+  | FetchedPlacesSuccessResponse
+  | FetchedPlacesErrorResponse;

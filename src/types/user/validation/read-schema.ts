@@ -8,25 +8,29 @@ import { sortingSchema } from "@/types/common";
 /////////////////////////////////////////
 
 export const GetUsersSchema = z
-	.object({
-		id: z.string().cuid(),
-		role: RoleSchema.optional(),
-		columnToSort: z.custom<keyof User>(),
-		columnToFilter: z.custom<keyof User>().optional(),
-		sorting: sortingSchema,
-		take: z.number().optional(),
-		skip: z.number().optional(),
-		search: z.string().optional(),
-	})
-	.refine(
-		(data) => {
-			return !data.search || data.search?.length < 1 ? true : data.columnToFilter ? true : false;
-		},
-		{
-			message: "no column to filter exist",
-			path: ["columnToFilter"],
-		}
-	);
+  .object({
+    id: z.string().cuid(),
+    role: RoleSchema.optional(),
+    columnToSort: z.custom<keyof User>(),
+    columnToFilter: z.custom<keyof User>().optional(),
+    sorting: sortingSchema,
+    take: z.number().optional(),
+    skip: z.number().optional(),
+    search: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      return !data.search || data.search?.length < 1
+        ? true
+        : data.columnToFilter
+          ? true
+          : false;
+    },
+    {
+      message: "no column to filter exist",
+      path: ["columnToFilter"],
+    }
+  );
 
 export type GetUsers = z.infer<typeof GetUsersSchema>;
 
@@ -35,14 +39,14 @@ export type GetUsers = z.infer<typeof GetUsersSchema>;
 /////////////////////////////////////////
 
 export const GetUserSchema = z.object({
-	id: z.string().cuid(),
+  id: z.string().cuid(),
 });
 
 export type GetUser = z.infer<typeof GetUserSchema>;
 
 const fetchedUserPlacesSchema = z.object({
-	placeCreated: z.lazy(() => userPlacesSchema.array().optional()),
-	placeModified: z.lazy(() => userPlacesSchema.array().optional()),
+  placeCreated: z.lazy(() => userPlacesSchema.array().optional()),
+  placeModified: z.lazy(() => userPlacesSchema.array().optional()),
 });
 
 export const FetchedUserSchema = fetchedUserPlacesSchema.and(UserDbSchema);
@@ -53,13 +57,13 @@ export type FetchedUser = z.infer<typeof FetchedUserSchema>;
 /////////////////////////////////////////
 
 const UsersErrorsSchema = GetUsersSchema.and(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 type UsersDataErrors = {
-	[key in keyof z.infer<typeof UsersErrorsSchema>]: string;
+  [key in keyof z.infer<typeof UsersErrorsSchema>]: string;
 };
 
 type UsersSuccessResponse = { status: "success"; data: User[] };
@@ -79,16 +83,21 @@ export type UsersCountResponse = UsersCountSuccessResponse | UsersErrorResponse;
 /////////////////////////////////////////
 
 const FetchedUserErrorsSchema = GetUserSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 type FetchedUserDataErrors = {
-	[key in keyof z.infer<typeof FetchedUserErrorsSchema>]: string;
+  [key in keyof z.infer<typeof FetchedUserErrorsSchema>]: string;
 };
 
 type FetchedUserSuccessResponse = { status: "success"; data: FetchedUser };
-type FetchedUserErrorResponse = { status: "error"; errors: Partial<FetchedUserDataErrors> };
+type FetchedUserErrorResponse = {
+  status: "error";
+  errors: Partial<FetchedUserDataErrors>;
+};
 
-export type FetchedUserResponse = FetchedUserErrorResponse | FetchedUserSuccessResponse;
+export type FetchedUserResponse =
+  | FetchedUserErrorResponse
+  | FetchedUserSuccessResponse;

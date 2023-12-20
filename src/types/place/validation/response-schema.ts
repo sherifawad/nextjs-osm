@@ -2,13 +2,13 @@ import { z } from "zod";
 import { Place, PlaceDbSchema } from "./place-schema";
 
 export const PlaceDataErrorsSchema = PlaceDbSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 export type PlaceDataErrors = {
-	[key in keyof z.infer<typeof PlaceDataErrorsSchema>]: string;
+  [key in keyof z.infer<typeof PlaceDataErrorsSchema>]: string;
 };
 
 /////////////////////////////////////////

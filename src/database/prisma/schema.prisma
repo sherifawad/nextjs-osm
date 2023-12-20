@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum REPUTATION {
+  FAKE
+  VERIFIED
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  blocked           Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             String        @id @default(cuid())
+  name           String?
+  email          String?       @unique
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  role           Role          @default(USER)
+  userReputation Int           @default(7)
+  accounts       Account[]
+  sessions       Session[]
+  rating         PlaceRating[]
+  placeCreated   Place[]       @relation("created")
+  placeModified  Place[]       @relation("modified")
+}
+
+model Place {
+  id           String        @id @default(cuid())
+  latitude     Float
+  longitude    Float
+  name         String
+  arName       String?
+  enName       String?
+  verified     Boolean       @default(false)
+  image        String?
+  hidden       Boolean       @default(false)
+  deleted      Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  rating       PlaceRating[]
+  createdById  String?
+  modifiedAt   DateTime      @default(now()) @updatedAt
+  modifiedById String?
+  createdBy    User?         @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "created")
+  modifiedBy   User?         @relation(fields: [modifiedById], references: [id], onDelete: SetNull, name: "modified")
+
+  @@unique([latitude, longitude, verified], name: "location")
+}
+
+model PlaceRating {
+  placeReputation REPUTATION
+  placeId         String
+  userId          String
+  ratedBy         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ratedPlace      Place      @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([placeId, userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+//CREATE UNIQUE INDEX "Place_latitude_longitude_verified_key" ON "Place"("latitude", "longitude", "verified") WHERE "verified" IS TRUE;

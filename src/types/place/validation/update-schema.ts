@@ -5,9 +5,9 @@ import { PlaceDbSchemaOptional } from "./place-schema";
 /////////////////////////////////////////
 
 export const EditPlaceSchema = PlaceDbSchemaOptional.merge(
-	z.object({
-		id: z.string().cuid(),
-		modifiedById: z.string().cuid(),
-	})
+  z.object({
+    id: z.string().cuid(),
+    modifiedById: z.string().cuid(),
+  })
 );
 export type EditPlace = z.infer<typeof EditPlaceSchema>;

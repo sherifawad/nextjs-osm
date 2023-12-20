@@ -5,8 +5,8 @@ import { UserDbOptionalSchema } from "./user-schema";
 /////////////////////////////////////////
 
 export const EditUserSchema = UserDbOptionalSchema.merge(
-	z.object({
-		id: z.string().cuid(),
-	})
+  z.object({
+    id: z.string().cuid(),
+  })
 );
 export type EditUser = z.infer<typeof EditUserSchema>;

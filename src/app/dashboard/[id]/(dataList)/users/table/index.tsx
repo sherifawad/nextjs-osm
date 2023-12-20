@@ -3,10 +3,10 @@ import type { User } from "@/types";
 import { columns } from "./columns";
 
 type PlacesTableProps = {
-	data: User[];
+  data: User[];
 };
 function PlacesTable({ data }: PlacesTableProps) {
-	return <DataTable data={data} columns={columns} />;
+  return <DataTable data={data} columns={columns} />;
 }
 
 export default PlacesTable;

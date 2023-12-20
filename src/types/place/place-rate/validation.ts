@@ -10,9 +10,9 @@ export const REPUTATIONSchema = z.enum(["FAKE", "VERIFIED"]);
 export type REPUTATIONType = `${z.infer<typeof REPUTATIONSchema>}`;
 
 export const PlaceRatingSchema = z.object({
-	placeReputation: REPUTATIONSchema,
-	placeId: z.string(),
-	userId: z.string(),
+  placeReputation: REPUTATIONSchema,
+  placeId: z.string(),
+  userId: z.string(),
 });
 
 /////////////////////////////////////////
@@ -20,10 +20,10 @@ export const PlaceRatingSchema = z.object({
 /////////////////////////////////////////
 
 export const DataBaseRatingSchema = z.object({
-	_count: z.object({
-		rating: z.number().int(),
-	}),
-	rating: PlaceRatingSchema.omit({ placeId: true }).array(),
+  _count: z.object({
+    rating: z.number().int(),
+  }),
+  rating: PlaceRatingSchema.omit({ placeId: true }).array(),
 });
 export type PlaceRating = z.infer<typeof PlaceRatingSchema>;
 
@@ -32,9 +32,9 @@ export type PlaceRating = z.infer<typeof PlaceRatingSchema>;
 /////////////////////////////////////////
 
 export const EditPlaceRateSchema = z.object({
-	userId: z.string().cuid(),
-	placeId: z.string().cuid(),
-	placeRate: REPUTATIONSchema,
+  userId: z.string().cuid(),
+  placeId: z.string().cuid(),
+  placeRate: REPUTATIONSchema,
 });
 export type EditPlaceRate = z.infer<typeof EditPlaceRateSchema>;
 
@@ -43,13 +43,13 @@ export type EditPlaceRate = z.infer<typeof EditPlaceRateSchema>;
 /////////////////////////////////////////
 
 export const placeRateErrorsSchema = PlaceRatingSchema.merge(
-	z.object({
-		serverError: z.string(),
-	})
+  z.object({
+    serverError: z.string(),
+  })
 );
 
 export type PlaceRateErrors = {
-	[key in keyof z.infer<typeof placeRateErrorsSchema>]: string;
+  [key in keyof z.infer<typeof placeRateErrorsSchema>]: string;
 };
 
 /////////////////////////////////////////
@@ -57,11 +57,14 @@ export type PlaceRateErrors = {
 /////////////////////////////////////////
 
 export type placeRateUpdatedData = {
-	state: REPUTATIONType | undefined;
-	count: number;
+  state: REPUTATIONType | undefined;
+  count: number;
 };
 
 type RateSuccessResponse = { status: "success"; data: placeRateUpdatedData };
-export type RateErrorResponse = { status: "error"; errors: Partial<PlaceRateErrors> };
+export type RateErrorResponse = {
+  status: "error";
+  errors: Partial<PlaceRateErrors>;
+};
 
 export type placeRateUpdateResponse = RateSuccessResponse | RateErrorResponse;
