@@ -3,8 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Providers from "@/lib/providers";
+import { fontSans } from "@/components/ui/fonts";
+import { cn } from "@/lib/utils/styles";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Find a Mosque 'Masjid' ابحث عن مسجد",
@@ -26,8 +28,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}> */}
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
         <Providers>
           <Header />
           {children}

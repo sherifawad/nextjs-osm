@@ -25,10 +25,6 @@ type Props = VariantProps<typeof MainMenuItemVariants> & {
 
 function MainMenuItem({ className, link, title, variant }: Props) {
   const currentPath = usePathname();
-  console.log(
-    "🚀 ~ file: menu-item.tsx:28 ~ MainMenuItem ~ currentPath:",
-    currentPath
-  );
 
   return (
     <Link
