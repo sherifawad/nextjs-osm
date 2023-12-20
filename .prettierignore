@@ -1,0 +1,6 @@
+.yarn
+.next
+.swc
+*.prisma
+dist
+node_modules
