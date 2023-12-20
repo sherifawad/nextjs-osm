@@ -2,7 +2,7 @@ import { RoleType } from "@/schema/inputTypeSchemas/RoleSchema";
 import NextAuth, { DefaultSession, Account as DefaultAccount } from "next-auth";
 import "next-auth/jwt";
 import "next-auth/adapters";
-import { User } from ".";
+import { User } from "../../types";
 import type { Account as PrismaAccount } from "prisma/prisma-client";
 
 declare module "next-auth" {

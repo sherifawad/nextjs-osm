@@ -3,6 +3,15 @@
 const setupCheck = require("./src/lib/utils/setupCheck.ts");
 
 setupCheck();
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
+  },
+};
 
 module.exports = nextConfig;
