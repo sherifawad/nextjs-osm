@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
 
-module.exports = nextConfig
+const setupCheck = require("./src/lib/utils/setupCheck.ts");
+
+setupCheck();
+const nextConfig = {};
+
+module.exports = nextConfig;
