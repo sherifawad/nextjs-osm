@@ -20,7 +20,7 @@ async function AccountPage() {
   }
 
   return (
-    <section className=" flex w-full max-w-4xl mx-auto flex-col sm:grid grid-cols-2 gap-4">
+    <section className=" flex w-full max-w-4xl mx-auto flex-col sm:grid grid-cols-2 gap-4 pt-8">
       <Image
         src={user.data.image || ""}
         height={100}

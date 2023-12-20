@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 const MainMenuItemVariants = cva("transition-colors", {
   variants: {
     variant: {
-      desktop: "text-sm font-medium ",
+      desktop: "text-base font-normal ",
       mobile: "block px-2 py-1 text-lg",
     },
   },
@@ -32,7 +32,7 @@ function MainMenuItem({ className, link, title, variant }: Props) {
       href={link}
       className={cn(
         MainMenuItemVariants({ variant, className }),
-        `${currentPath === link ? "text-primary" : ""}`
+        `${currentPath === link ? "text-primary font-bold text-base" : ""}`
       )}
     >
       {title}
