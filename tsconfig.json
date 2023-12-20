@@ -19,8 +19,9 @@
       }
     ],
     "paths": {
-      "@/lib": ["./src/lib/*"],
-      "@/database": ["./src/database/index.ts"],
+      "@/type": ["./src/type/index.ts"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/prisma": ["./src/database/prisma/index.ts"],
       "@/*": ["./src/*"]
     }
   },
