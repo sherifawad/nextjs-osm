@@ -1,24 +1,26 @@
 import { InputHTMLAttributes } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-type UserDataInputProps = InputHTMLAttributes<HTMLInputElement> & {
+type UserDataInputProps = {
   name: string;
+  value: string;
 };
 
-function UserDataInput({ name, value, ...props }: UserDataInputProps) {
+function UserDataInput({ name, value }: UserDataInputProps) {
   return (
-    <div className="grid gap-1 shadow-sm rounded-md border border-input bg-background px-3  py-2 text-sm ring-offset-background  placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-      <Label htmlFor={name} className=" text-foreground/50 capitalize">
-        {name}
-      </Label>
-      <Input
-        id={name}
-        defaultValue={value}
-        {...props}
-        className="border-none  outline-none  focus-visible:ring-0 font-medium capitalize p-0 h-auto"
-      />
-    </div>
+    <Card className="mx-3">
+      <CardHeader className="px-4 py-2">
+        <CardTitle className="text-base capitalize">{name}</CardTitle>
+        <CardDescription>{value}</CardDescription>
+      </CardHeader>
+    </Card>
   );
 }
 

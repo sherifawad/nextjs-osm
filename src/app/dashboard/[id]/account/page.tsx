@@ -28,13 +28,12 @@ async function AccountPage() {
         alt={user.data.name || "user avatar"}
         className="rounded-full col-span-2 shadow-md mx-auto sm:mx-1"
       />
-      <UserDataInput name="name" value={user.data.name ?? ""} type="text" />
-      <UserDataInput name="role" value={user.data.role ?? ""} type="text" />
-      <UserDataInput name="email" value={user.data.email ?? ""} type="text" />
+      <UserDataInput name="name" value={user.data.name ?? ""} />
+      <UserDataInput name="role" value={user.data.role ?? ""} />
+      <UserDataInput name="email" value={user.data.email ?? ""} />
       <UserDataInput
         name="reputation"
-        value={user.data.userReputation ?? ""}
-        type="number"
+        value={`${user.data.userReputation ?? ""}`}
       />
     </section>
   );
