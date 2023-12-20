@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "@/database": ["./src/database/index.ts"],
       "@/*": ["./src/*"]
     }
   },
