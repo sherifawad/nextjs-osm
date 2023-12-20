@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import Container from "../ui/Container";
 import DarkModeToggle from "./darkMode-toggle";
 import UserButton from "./user-button";
+import { usePathname } from "next/navigation";
+import MainMenuItem from "./menu-item";
 
 const Header = () => {
   const { data: Session, status } = useSession();
@@ -24,41 +26,37 @@ const Header = () => {
                 <nav className="flex flex-col gap-4">
                   <ul className="flex flex-col gap-4">
                     <li>
-                      <Link
-                        prefetch={false}
-                        href={`/map`}
-                        className={`block px-2 py-1 text-lg`}
-                      >
-                        Map
-                      </Link>
+                      <MainMenuItem
+                        link="/map"
+                        title="Map"
+                        variant={"mobile"}
+                      />
                     </li>
-                    <li>
-                      <Link
-                        prefetch={false}
-                        href={`/dashboard/${Session?.user.id}/account`}
-                        className={`block px-2 py-1 text-lg`}
-                      >
-                        Account
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        prefetch={false}
-                        href={`/dashboard/${Session?.user.id}/my/places`}
-                        className={`block px-2 py-1 text-lg`}
-                      >
-                        Places
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        prefetch={false}
-                        href={`/dashboard/${Session?.user.id}/users`}
-                        className={`block px-2 py-1 text-lg`}
-                      >
-                        Users
-                      </Link>
-                    </li>
+                    {status === "authenticated" && (
+                      <>
+                        <li>
+                          <MainMenuItem
+                            link={`/dashboard/${Session?.user.id}/account`}
+                            title="Account"
+                            variant={"mobile"}
+                          />
+                        </li>
+                        <li>
+                          <MainMenuItem
+                            link={`/dashboard/${Session?.user.id}/my/places`}
+                            title="Places"
+                            variant={"mobile"}
+                          />
+                        </li>
+                        <li>
+                          <MainMenuItem
+                            link={`/dashboard/${Session?.user.id}/users`}
+                            title="Users"
+                            variant={"mobile"}
+                          />
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </nav>
               </SheetContent>
@@ -72,41 +70,27 @@ const Header = () => {
           <nav className="mx-6  items-center space-x-4 lg:space-x-6 hidden md:flex ">
             <ul className="items-center space-x-4 lg:space-x-6 hidden md:flex ">
               <li>
-                <Link
-                  prefetch={false}
-                  href={`/map`}
-                  className={`text-sm font-medium transition-colors`}
-                >
-                  Map
-                </Link>
+                <MainMenuItem link="/map" title="Map" />
               </li>
-              {Session && (
+              {status === "authenticated" && (
                 <>
                   <li>
-                    <Link
-                      href={`/dashboard/${Session?.user.id}/account`}
-                      className="text-sm font-medium transition-colors"
-                    >
-                      Account
-                    </Link>
+                    <MainMenuItem
+                      link={`/dashboard/${Session?.user.id}/account`}
+                      title="Account"
+                    />
                   </li>
                   <li>
-                    <Link
-                      prefetch={false}
-                      href={`/dashboard/${Session?.user.id}/my/places`}
-                      className={`text-sm font-medium transition-colors`}
-                    >
-                      Places
-                    </Link>
+                    <MainMenuItem
+                      link={`/dashboard/${Session?.user.id}/my/places`}
+                      title="Places"
+                    />
                   </li>
                   <li>
-                    <Link
-                      prefetch={false}
-                      href={`/dashboard/${Session?.user.id}/users`}
-                      className={`text-sm font-medium transition-colors`}
-                    >
-                      Users
-                    </Link>
+                    <MainMenuItem
+                      link={`/dashboard/${Session?.user.id}/users`}
+                      title="Users"
+                    />
                   </li>
                 </>
               )}
