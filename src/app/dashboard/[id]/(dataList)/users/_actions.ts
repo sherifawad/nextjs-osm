@@ -27,8 +27,8 @@ export const getUsersResult = async ({
   page: number;
   size: number;
   role?: RoleType;
-  column: keyof User;
-  filter?: keyof User;
+  column: (keyof User)[];
+  filter?: (keyof User)[];
   sort: SortingType;
 }) => {
   let inputData: GetUsers = {

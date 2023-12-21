@@ -11,8 +11,8 @@ export const GetUsersSchema = z
   .object({
     id: z.string().cuid(),
     role: RoleSchema.optional(),
-    columnToSort: z.custom<keyof User>(),
-    columnToFilter: z.custom<keyof User>().optional(),
+    columnToSort: z.custom<keyof User>().array(),
+    columnToFilter: z.custom<keyof User>().array().optional(),
     sorting: sortingSchema,
     take: z.number().optional(),
     skip: z.number().optional(),
@@ -29,7 +29,7 @@ export const GetUsersSchema = z
     {
       message: "no column to filter exist",
       path: ["columnToFilter"],
-    },
+    }
   );
 
 export type GetUsers = z.infer<typeof GetUsersSchema>;
@@ -59,7 +59,7 @@ export type FetchedUser = z.infer<typeof FetchedUserSchema>;
 const UsersErrorsSchema = GetUsersSchema.and(
   z.object({
     serverError: z.string(),
-  }),
+  })
 );
 
 type UsersDataErrors = {
@@ -85,7 +85,7 @@ export type UsersCountResponse = UsersCountSuccessResponse | UsersErrorResponse;
 const FetchedUserErrorsSchema = GetUserSchema.merge(
   z.object({
     serverError: z.string(),
-  }),
+  })
 );
 
 type FetchedUserDataErrors = {

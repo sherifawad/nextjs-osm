@@ -40,7 +40,7 @@ export const getUserDbPrisma = async (data: GetUser): Promise<userResponse> => {
 };
 
 export const getPlaceDbPrisma = async (
-  data: GetPlace,
+  data: GetPlace
 ): Promise<FetchedPlaceResponse> => {
   const { errors, validData } = validateData({ schema: GetPlaceSchema, data });
 
@@ -66,7 +66,7 @@ export const getPlaceDbPrisma = async (
 };
 
 export const getUsersDbPrisma = async (
-  data: GetUsers,
+  data: GetUsers
 ): Promise<UsersResponse> => {
   const { errors, validData } = validateData({ schema: GetUsersSchema, data });
 
@@ -78,26 +78,17 @@ export const getUsersDbPrisma = async (
   }
 
   let whereData = {};
-  let sortData = {};
 
   try {
     if (validData.search && validData.columnToFilter) {
       whereData = {
         ...whereData,
-        OR: [
-          {
-            [validData.columnToFilter]: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
+        OR: validData.columnToFilter?.map((value) => ({
+          [value]: {
+            contains: validData.search,
+            mode: "insensitive",
           },
-          {
-            email: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
-          },
-        ],
+        })),
       };
     }
 
@@ -105,10 +96,9 @@ export const getUsersDbPrisma = async (
       whereData = { ...whereData, role: validData.role };
     }
 
-    sortData = {
-      ...sortData,
-      [validData.columnToSort]: validData.sorting,
-    };
+    const sortData = validData.columnToSort?.map((value) => ({
+      [value]: validData.sorting,
+    }));
 
     const dbResult = await prismaDb.user.findMany({
       where: whereData,
@@ -134,7 +124,7 @@ export const getUsersDbPrisma = async (
 };
 
 export const getUsersCountDbPrisma = async (
-  data: GetUsers,
+  data: GetUsers
 ): Promise<UsersCountResponse> => {
   const { errors, validData } = validateData({ schema: GetUsersSchema, data });
 
@@ -144,26 +134,19 @@ export const getUsersCountDbPrisma = async (
       errors,
     };
   }
-  let whereData = {};
+  let whereData: any = {
+    OR: validData.columnToFilter?.map((value) => ({
+      [value]: {
+        contains: validData.search,
+        mode: "insensitive",
+      },
+    })),
+  };
 
   try {
     if (validData.search && validData.columnToFilter) {
       whereData = {
         ...whereData,
-        OR: [
-          {
-            [validData.columnToFilter]: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
-          },
-        ],
       };
     }
 

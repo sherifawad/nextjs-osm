@@ -9,6 +9,7 @@ import { columns } from "./table/columns";
 import { User } from "@/types";
 import { getUsersResult } from "./_actions";
 import { UserSearchParams, UserSearchParamsSchema } from "@/app/schema";
+import { splitStringToArray } from "@/lib/utils/array";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
   let data: User[] = [];
   let count = 0;
   let paramsData: UserSearchParams = {
-    column: "name",
+    column: ["name", "email"],
     page: 1,
     search: "",
     size: 5,
@@ -39,6 +40,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
   };
 
   const parsedSearchParams = UserSearchParamsSchema.safeParse(searchParams);
+
   if (parsedSearchParams.success) {
     const page = parsedSearchParams.data.page;
     const size = parsedSearchParams.data.size;
