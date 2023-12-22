@@ -22,7 +22,7 @@ export const validateData = <T>({
             .replace("invalid enum value. expected", "must be")
             .replace("|", "or"),
         };
-      },
+      }
     );
     return {
       validData: null,
@@ -39,7 +39,7 @@ export const addServerError = <T>(
   serverErrorMessage: string,
   zodErrors: Partial<{
     [key in keyof T]: string;
-  }>,
+  }>
 ): {
   status: "error";
   errors: Partial<{
@@ -59,7 +59,7 @@ export const errorHandler = <T>(
   error: any,
   zodErrors: Partial<{
     [key in keyof T]: string;
-  }>,
+  }>
 ): {
   status: "error";
   errors: Partial<{
