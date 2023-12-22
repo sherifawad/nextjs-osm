@@ -104,8 +104,8 @@ export const getSortedPlacesResult = async ({
   page: number;
   size: number;
   role: RoleType | undefined;
-  column: keyof UserPlaces;
-  filter?: keyof UserPlaces;
+  column: (keyof UserPlaces)[];
+  filter?: (keyof UserPlaces)[];
   sort: SortingType;
 }) => {
   let inputData: GetUserPlaces = {
@@ -130,6 +130,7 @@ export const getSortedPlacesResult = async ({
   if (countResult.status === "success") {
     inputData = { ...inputData, skip: start, take: size };
     const placesResult = await getUserPlaces(inputData);
+    console.log("🚀 ~ file: _actions.ts:119 ~ inputData:", inputData);
     if (placesResult.status === "success") {
       return { data: placesResult.data, count: countResult.data };
     }

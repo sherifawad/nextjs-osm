@@ -36,7 +36,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
     search: "",
     size: 5,
     sort: "desc",
-    filter: undefined,
+    filter: ["name", "email"],
   };
 
   const parsedSearchParams = UserSearchParamsSchema.safeParse(searchParams);

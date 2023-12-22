@@ -134,19 +134,18 @@ export const getUsersCountDbPrisma = async (
       errors,
     };
   }
-  let whereData: any = {
-    OR: validData.columnToFilter?.map((value) => ({
-      [value]: {
-        contains: validData.search,
-        mode: "insensitive",
-      },
-    })),
-  };
+  let whereData: any = {};
 
   try {
     if (validData.search && validData.columnToFilter) {
       whereData = {
         ...whereData,
+        OR: validData.columnToFilter?.map((value) => ({
+          [value]: {
+            contains: validData.search,
+            mode: "insensitive",
+          },
+        })),
       };
     }
 

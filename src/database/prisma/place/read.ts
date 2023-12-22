@@ -11,7 +11,7 @@ import {
 import { validateData, errorHandler } from "@/lib/utils/schema";
 
 export const getPlacesDbPrisma = async (
-  data: GetPlaces,
+  data: GetPlaces
 ): Promise<FetchedPlacesResponse> => {
   const { errors, validData } = validateData({ schema: GetPlacesSchema, data });
 
@@ -57,7 +57,7 @@ export const getPlacesDbPrisma = async (
 };
 
 export const getUserPlacesDbPrisma = async (
-  data: GetUserPlaces,
+  data: GetUserPlaces
 ): Promise<FetchedUserPlacesResponse> => {
   const { errors, validData } = validateData({
     schema: GetUserPlacesSchema,
@@ -71,7 +71,9 @@ export const getUserPlacesDbPrisma = async (
     };
   }
   let whereData = {};
-  let sortData = {};
+  let sortData: any = validData.columnToSort?.map((value) => ({
+    [value]: validData.sorting,
+  }));
 
   try {
     if (validData.placeType === "CREATED") {
@@ -85,13 +87,53 @@ export const getUserPlacesDbPrisma = async (
       };
     }
     if (validData.search && validData.columnToFilter) {
-      whereData = {
-        ...whereData,
-        [validData.columnToFilter]: {
-          contains: validData.search,
-          mode: "insensitive",
-        },
-      };
+      if (!isNaN(Number(validData.search))) {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "latitude" || x === "longitude")
+            .map((value) => {
+              return {
+                AND: [
+                  {
+                    [value]: {
+                      lte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 +
+                        0.05,
+                    },
+                  },
+                  {
+                    [value]: {
+                      gte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 -
+                        0.05,
+                    },
+                  },
+                ],
+              };
+            }),
+        };
+      } else {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "arName" || x === "enName" || x === "name")
+            .map((value) => {
+              return {
+                [value]: {
+                  contains: validData.search,
+                  mode: "insensitive",
+                },
+              };
+            }),
+        };
+      }
     }
 
     whereData = {
@@ -100,20 +142,14 @@ export const getUserPlacesDbPrisma = async (
       hidden: validData.hiddenPlaces,
     };
 
-    if (validData.columnToSort === "rating") {
+    if (validData.columnToSort.includes("rating")) {
       sortData = {
         ...sortData,
         rating: {
           _count: validData.sorting,
         },
       };
-    } else {
-      sortData = {
-        ...sortData,
-        [validData.columnToSort]: validData.sorting,
-      };
     }
-
     const dbResult = await prismaDb.place.findMany({
       where: whereData,
       skip: validData.skip,
@@ -138,7 +174,7 @@ export const getUserPlacesDbPrisma = async (
 };
 
 export const getUserPlacesCountDbPrisma = async (
-  data: GetUserPlaces,
+  data: GetUserPlaces
 ): Promise<FetchedUserPlacesCountResponse> => {
   const { errors, validData } = validateData({
     schema: GetUserPlacesSchema,
@@ -151,7 +187,7 @@ export const getUserPlacesCountDbPrisma = async (
       errors,
     };
   }
-  let whereData = {};
+  let whereData: any = {};
 
   try {
     if (validData.placeType === "CREATED") {
@@ -165,16 +201,66 @@ export const getUserPlacesCountDbPrisma = async (
       };
     }
     if (validData.search && validData.columnToFilter) {
-      whereData = {
-        ...whereData,
-        [validData.columnToFilter]: validData.search,
-      };
+      if (!isNaN(Number(validData.search))) {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "latitude" || x === "longitude")
+            .map((value) => {
+              return {
+                AND: [
+                  {
+                    [value]: {
+                      lte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 +
+                        0.05,
+                    },
+                  },
+                  {
+                    [value]: {
+                      gte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 -
+                        0.05,
+                    },
+                  },
+                ],
+              };
+            }),
+        };
+      } else {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "arName" || x === "enName" || x === "name")
+            .map((value) => {
+              return {
+                [value]: {
+                  contains: validData.search,
+                  mode: "insensitive",
+                },
+              };
+            }),
+        };
+      }
     }
+
     whereData = {
       ...whereData,
       deleted: validData.deletedPlaces,
       hidden: validData.hiddenPlaces,
     };
+
+    console.log(
+      "🚀 ~ file: read.ts:168 ~ whereData:",
+      JSON.stringify(whereData, null, 2)
+    );
+    console.log("🚀 ~ file: read.ts:148 ~ validData:", validData);
 
     const dbResult = await prismaDb.place.count({
       where: whereData,

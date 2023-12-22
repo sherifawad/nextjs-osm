@@ -42,8 +42,15 @@ export type UserSearchParams = z.infer<typeof UserSearchParamsSchema>;
 
 export const PlacesSearchParamsSchema = BasicSearchParamsSchema.merge(
   z.object({
-    column: z.custom<keyof UserPlaces>(),
-    filter: z.custom<keyof UserPlaces>().optional(),
+    column: z
+      .string()
+      .transform((val) => splitStringToArray(val, ","))
+      .pipe(z.custom<keyof UserPlaces>().array()),
+    filter: z
+      .string()
+      .optional()
+      .transform((val) => (val ? splitStringToArray(val, ",") : undefined))
+      .pipe(z.custom<keyof UserPlaces>().array().optional()),
   })
 ).refine(
   (data) => {

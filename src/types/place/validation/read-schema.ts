@@ -22,7 +22,7 @@ export type GetPlace = z.infer<typeof GetPlaceSchema>;
 const FetchedPlaceErrorsSchema = GetPlaceSchema.merge(
   z.object({
     serverError: z.string(),
-  }),
+  })
 );
 
 /**
@@ -89,8 +89,8 @@ export const GetUserPlacesSchema = z
   .object({
     id: z.string().cuid(),
     placeType: UserPlacesTypeSchema,
-    columnToSort: z.custom<keyof UserPlaces>(),
-    columnToFilter: z.custom<keyof UserPlaces>().optional(),
+    columnToSort: z.custom<keyof UserPlaces>().array(),
+    columnToFilter: z.custom<keyof UserPlaces>().array().optional(),
     sorting: sortingSchema,
     take: z.number().optional(),
     skip: z.number().optional(),
@@ -109,7 +109,7 @@ export const GetUserPlacesSchema = z
     {
       message: "no column to filter exist",
       path: ["columnToFilter"],
-    },
+    }
   );
 
 export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
@@ -121,7 +121,7 @@ export type GetUserPlaces = z.infer<typeof GetUserPlacesSchema>;
 const FetchedUserPlacesErrorsSchema = GetUserPlacesSchema.and(
   z.object({
     serverError: z.string(),
-  }),
+  })
 );
 
 type FetchedUserPlacesDataErrors = {
@@ -168,7 +168,7 @@ export type FetchedUserPlacesCountResponse =
 const FetchedPlacesErrorsSchema = GetPlacesSchema.merge(
   z.object({
     serverError: z.string(),
-  }),
+  })
 );
 
 type FetchedPlacesDataErrors = {

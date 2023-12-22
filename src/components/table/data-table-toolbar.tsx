@@ -44,7 +44,7 @@ export function DataTableToolbar<TData>({
         column: { value: string };
       };
       const params = new URLSearchParams(searchParams);
-      params.set("filter", `${target.column.value}`);
+      // params.set("filter", `${target.column.value}`);
       params.set("search", `${target.search.value}`);
       router.replace(`${pathname}?${params}`);
     },

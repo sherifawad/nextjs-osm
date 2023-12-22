@@ -36,15 +36,16 @@ async function PlacesPage({
   let data: UserPlacesDTO[] = [];
   let count = 0;
   let paramsData: PlacesSearchParams = {
-    column: "name",
+    column: ["name"],
     page: 1,
     search: "",
     size: 5,
     sort: "desc",
-    filter: undefined,
+    filter: ["name", "arName", "enName", "latitude", "longitude"],
   };
 
   const parsedSearchParams = PlacesSearchParamsSchema.safeParse(searchParams);
+
   if (parsedSearchParams.success) {
     const page = parsedSearchParams.data.page;
     const size = parsedSearchParams.data.size;
