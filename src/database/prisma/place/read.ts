@@ -256,12 +256,6 @@ export const getUserPlacesCountDbPrisma = async (
       hidden: validData.hiddenPlaces,
     };
 
-    console.log(
-      "🚀 ~ file: read.ts:168 ~ whereData:",
-      JSON.stringify(whereData, null, 2)
-    );
-    console.log("🚀 ~ file: read.ts:148 ~ validData:", validData);
-
     const dbResult = await prismaDb.place.count({
       where: whereData,
     });
