@@ -64,7 +64,7 @@ export const columns: ColumnDef<UserPlacesDTO>[] = [
               variant="destructive"
               className="rounded-sm px-1 font-normal"
             >
-              {rate}
+              -{rate}
             </Badge>
           )}
           {rate === 0 && (

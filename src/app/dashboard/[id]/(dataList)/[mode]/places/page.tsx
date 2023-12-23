@@ -11,6 +11,7 @@ import { getSortedPlacesResult } from "./_actions";
 import { columns } from "./table/columns";
 import { getServerSession } from "next-auth";
 import { PlacesSearchParams, PlacesSearchParamsSchema } from "@/app/schema";
+import PlaceItemCard from "./table/place-item_card";
 
 export const dynamic = "force-dynamic";
 
@@ -116,7 +117,13 @@ async function PlacesPage({
             </TabsContent>
             <TabsContent value="all-places">
               <div className="space-y-4 py-8">
-                <DataTable data={data} columns={columns} />
+                <DataTable
+                  data={data}
+                  columns={columns}
+                  MobileViewItem={data.map((place) => (
+                    <PlaceItemCard key={place.id} data={place} />
+                  ))}
+                />
                 <DataTablePagination count={count} {...paramsData} />
               </div>
             </TabsContent>
@@ -128,7 +135,13 @@ async function PlacesPage({
           fallback={<>Loading .... </>}
         >
           <div className="space-y-4 py-8">
-            <DataTable data={data} columns={columns} />
+            <DataTable
+              data={data}
+              columns={columns}
+              MobileViewItem={data.map((place) => (
+                <PlaceItemCard key={place.id} data={place} />
+              ))}
+            />
             <DataTablePagination count={count} {...paramsData} />
           </div>
         </Suspense>
