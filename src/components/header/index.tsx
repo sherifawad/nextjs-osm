@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <header className="flex sm:justify-between h-20 items-center px-4 border-b ">
       <Container>
-        <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
+        <div className="relative xs:px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">
             <Sheet>
               <SheetTrigger asChild>

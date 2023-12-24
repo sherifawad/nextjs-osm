@@ -111,7 +111,13 @@ async function PlacesPage({
           >
             <TabsContent value="my-places">
               <div className="space-y-4 py-8">
-                <DataTable data={data} columns={columns} />
+                <DataTable
+                  data={data}
+                  columns={columns}
+                  MobileViewItem={data.map((place) => (
+                    <PlaceItemCard key={place.id} data={place} />
+                  ))}
+                />
                 <DataTablePagination count={count} {...paramsData} />
               </div>
             </TabsContent>
