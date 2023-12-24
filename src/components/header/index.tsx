@@ -30,11 +30,13 @@ const Header = () => {
                 <nav className="flex flex-col gap-4">
                   <ul className="flex flex-col gap-4">
                     <li>
-                      <MainMenuItem
-                        link="/map"
-                        title="Map"
-                        variant={"mobile"}
-                      />
+                      <SheetClose>
+                        <MainMenuItem
+                          link="/map"
+                          title="Map"
+                          variant={"mobile"}
+                        />
+                      </SheetClose>
                     </li>
                     {status === "authenticated" && (
                       <>
