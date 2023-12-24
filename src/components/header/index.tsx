@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex sm:justify-between h-20 items-center px-4 border-b ">
+    <header className="flex sm:justify-between h-20 items-center px-2 xs:px-4 border-b ">
       <Container>
         <div className="relative xs:px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">
@@ -31,7 +31,7 @@ const Header = () => {
               <SheetContent
                 ref={sheetRef}
                 side="left"
-                className="w-[300px] sm:w-[400px]"
+                className="w-full sm:w-[400px]"
               >
                 <nav className="flex flex-col gap-4">
                   <ul className="flex flex-col gap-4">

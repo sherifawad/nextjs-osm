@@ -18,7 +18,7 @@ function UserButton() {
 
   if (status !== "authenticated") {
     return (
-      <Button variant={"outline"} onClick={() => signIn("google")}>
+      <Button variant={"outline"} size={"sm"} onClick={() => signIn("google")}>
         Signin
       </Button>
     );
