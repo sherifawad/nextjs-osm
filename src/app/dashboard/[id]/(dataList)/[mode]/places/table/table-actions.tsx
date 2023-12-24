@@ -1,6 +1,6 @@
 "use client";
 
-import { type Place } from "@/types";
+import { type Place, PlaceDbSchema } from "@/types";
 import EditPlaceForm from "@/places-features/edit-place/form";
 import {
   AlertDialog,
@@ -22,8 +22,12 @@ import {
 type PlaceTableActionsProps = {
   place: Place;
 };
-function PlaceTableActions({ place }: PlaceTableActionsProps) {
+function PlaceTableActions({ place: data }: PlaceTableActionsProps) {
   const { data: Session, status } = useSession();
+  const place = PlaceDbSchema.safeParse(data);
+  if (!place.success) {
+    return null;
+  }
 
   return (
     <AlertDialog>
@@ -31,7 +35,7 @@ function PlaceTableActions({ place }: PlaceTableActionsProps) {
         <DropdownMenuItem>
           <Link
             prefetch={false}
-            href={`/map/?lat=${place.latitude}&lon=${place.longitude}`}
+            href={`/map/?lat=${place.data.latitude}&lon=${place.data.longitude}`}
             rel="noopener noreferrer"
             target="_blank"
             className="w-full"
@@ -42,44 +46,44 @@ function PlaceTableActions({ place }: PlaceTableActionsProps) {
         <DropdownMenuItem
           disabled={
             Session?.user.role === "USER" ||
-            (place.verified && Session?.user.role !== "OWNER")
+            (place.data.verified && Session?.user.role !== "OWNER")
           }
           onClick={() =>
             verifyPlaceAction({
-              placeId: place.id,
+              placeId: place.data.id,
               userId: Session?.user.id || "",
-              placeVerifiedStatus: place.verified,
+              placeVerifiedStatus: place.data.verified,
             })
           }
           className="cursor-pointer"
         >
-          {place.verified ? "Un-Verify" : "Verify"}
+          {place.data.verified ? "Un-Verify" : "Verify"}
         </DropdownMenuItem>
         <DropdownMenuItem
           disabled={Session?.user.role === "USER"}
           onClick={() =>
             deletePlaceAction({
-              placeId: place.id,
+              placeId: place.data.id,
               userId: Session?.user.id || "",
-              placeDeleteStatus: place.deleted,
+              placeDeleteStatus: place.data.deleted,
             })
           }
           className="cursor-pointer"
         >
-          {place.deleted ? "Restore" : "Delete"}
+          {place.data.deleted ? "Restore" : "Delete"}
         </DropdownMenuItem>
         <DropdownMenuItem
           disabled={Session?.user.role === "USER"}
           onClick={() =>
             hidePlaceAction({
-              placeId: place.id,
+              placeId: place.data.id,
               userId: Session?.user.id || "",
-              placeHiddenStatus: place.hidden,
+              placeHiddenStatus: place.data.hidden,
             })
           }
           className="cursor-pointer"
         >
-          {place.hidden ? "Un-Hide" : "Hide"}
+          {place.data.hidden ? "Un-Hide" : "Hide"}
         </DropdownMenuItem>
         <DropdownMenuItem>
           <AlertDialogTrigger className="cursor-pointer w-full text-left">
@@ -89,7 +93,7 @@ function PlaceTableActions({ place }: PlaceTableActionsProps) {
       </DropdownMenuContent>
       <AlertDialogContent>
         <EditPlaceForm
-          place={place}
+          place={place.data}
           userId={Session?.user.id}
           userRole={Session?.user.role}
           userReputation={Session?.user.userReputation}

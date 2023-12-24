@@ -130,7 +130,6 @@ export const getSortedPlacesResult = async ({
   if (countResult.status === "success") {
     inputData = { ...inputData, skip: start, take: size };
     const placesResult = await getUserPlaces(inputData);
-    console.log("🚀 ~ file: _actions.ts:119 ~ inputData:", inputData);
     if (placesResult.status === "success") {
       return { data: placesResult.data, count: countResult.data };
     }

@@ -25,16 +25,18 @@ import {
 } from "@/components/ui/table";
 
 import { DataTableToolbar } from "./data-table-toolbar";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  MobileViewItem?: ReactNode;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  MobileViewItem,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -66,7 +68,11 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
-      <div className="rounded-md border">
+      <div
+        className={`rounded-md border ${
+          !!MobileViewItem ? "hidden md:block" : ""
+        } `}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -116,6 +122,9 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      {!!MobileViewItem && (
+        <div className="grid md:hidden gap-4 mx-3">{MobileViewItem}</div>
+      )}
     </div>
   );
 }
