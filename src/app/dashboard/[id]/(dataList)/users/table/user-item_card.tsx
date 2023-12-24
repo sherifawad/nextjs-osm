@@ -20,43 +20,47 @@ export const UserItemCard = ({ data }: Props) => {
   return (
     <Card>
       <CardContent>
-        <div className="flex items-center space-x-3 pt-6">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center space-x-3">
-              <p className="truncate text-sm font-medium">{user.data.name}</p>
-              <Badge
-                variant={"outline"}
-                className="bg-green-100 text-green-800"
-              >
-                {user.data.role}
-              </Badge>
-              <>
-                {user.data.userReputation > 5 && (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-sm px-1 font-normal bg-green-300 dark:bg-green-600"
-                  >
-                    +{user.data.userReputation}
-                  </Badge>
-                )}
-                {user.data.userReputation < 3 && (
-                  <Badge
-                    variant="destructive"
-                    className="rounded-sm px-1 font-normal"
-                  >
-                    {user.data.userReputation}
-                  </Badge>
-                )}
-                {user.data.userReputation >= 3 &&
-                  user.data.userReputation <= 5 && (
+        <div className="flex items-center flex-wrap space-x-3 pt-6 ">
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex items-center flex-wrap space-y-2">
+              <p className="truncate text-sm font-medium mr-3 mt-1">
+                {user.data.name}
+              </p>
+              <div className="flex items-center space-x-3 ">
+                <Badge
+                  variant={"outline"}
+                  className="bg-green-100 text-green-800"
+                >
+                  {user.data.role}
+                </Badge>
+                <>
+                  {user.data.userReputation > 5 && (
                     <Badge
                       variant="secondary"
+                      className="rounded-sm px-1 font-normal bg-green-300 dark:bg-green-600"
+                    >
+                      +{user.data.userReputation}
+                    </Badge>
+                  )}
+                  {user.data.userReputation < 3 && (
+                    <Badge
+                      variant="destructive"
                       className="rounded-sm px-1 font-normal"
                     >
                       {user.data.userReputation}
                     </Badge>
                   )}
-              </>
+                  {user.data.userReputation >= 3 &&
+                    user.data.userReputation <= 5 && (
+                      <Badge
+                        variant="secondary"
+                        className="rounded-sm px-1 font-normal"
+                      >
+                        {user.data.userReputation}
+                      </Badge>
+                    )}
+                </>
+              </div>
             </div>
             <p className="mt-1 truncate text-sm ">{user.data.email}</p>
           </div>

@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils/styles";
 import { VariantProps, cva } from "class-variance-authority";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const MainMenuItemVariants = cva("transition-colors", {
   variants: {
@@ -25,18 +25,19 @@ type Props = VariantProps<typeof MainMenuItemVariants> & {
 
 function MainMenuItem({ className, link, title, variant }: Props) {
   const currentPath = usePathname();
+  const router = useRouter();
 
   return (
-    <Link
-      prefetch={false}
-      href={link}
+    <button
+      type="button"
+      onClick={() => router.push(link)}
       className={cn(
         MainMenuItemVariants({ variant, className }),
         `${currentPath === link ? "text-primary font-bold text-base" : ""}`
       )}
     >
       {title}
-    </Link>
+    </button>
   );
 }
 
