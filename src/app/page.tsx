@@ -108,7 +108,9 @@ async function HomePage() {
                 <li key={idx} className="space-y-4">
                   <div className="grid grid-cols-[auto_1fr] items-center gap-4 ">
                     <Avatar>
-                      <AvatarImage src={m.icon} alt={m.title} />
+                      <div className="bg-background dark:bg-foreground">
+                        <AvatarImage src={m.icon} alt={m.title} />
+                      </div>
                       <AvatarFallback>{m.title}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">

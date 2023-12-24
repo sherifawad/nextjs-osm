@@ -12,6 +12,7 @@ import { columns } from "./table/columns";
 import { getServerSession } from "next-auth";
 import { PlacesSearchParams, PlacesSearchParamsSchema } from "@/app/schema";
 import PlaceItemCard from "./table/place-item_card";
+import { TableSkeleton } from "../../loading";
 
 export const dynamic = "force-dynamic";
 
@@ -107,11 +108,17 @@ async function PlacesPage({
           </TabsList>
           <Suspense
             key={count + paramsData.page + paramsData.size}
-            fallback={<>Loading .... </>}
+            fallback={<TableSkeleton />}
           >
             <TabsContent value="my-places">
               <div className="space-y-4 py-8">
-                <DataTable data={data} columns={columns} />
+                <DataTable
+                  data={data}
+                  columns={columns}
+                  MobileViewItem={data.map((place) => (
+                    <PlaceItemCard key={place.id} data={place} />
+                  ))}
+                />
                 <DataTablePagination count={count} {...paramsData} />
               </div>
             </TabsContent>
@@ -132,7 +139,7 @@ async function PlacesPage({
       ) : (
         <Suspense
           key={count + paramsData.page + paramsData.size}
-          fallback={<>Loading .... </>}
+          fallback={<TableSkeleton />}
         >
           <div className="space-y-4 py-8">
             <DataTable

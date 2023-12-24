@@ -43,11 +43,7 @@ export function DataTableSortOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto md:hidden h-8 flex"
-        >
+        <Button variant="outline" size="sm" className=" md:hidden h-8 flex">
           <ArrowDownUp className="mr-2 h-4 w-4" />
           Sort
         </Button>

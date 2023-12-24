@@ -11,6 +11,7 @@ import { getUsersResult } from "./_actions";
 import { UserSearchParams, UserSearchParamsSchema } from "@/app/schema";
 import { splitStringToArray } from "@/lib/utils/array";
 import UserItemCard from "./table/user-item_card";
+import { TableSkeleton } from "../loading";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,7 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
     <section className="max-w-4xl mx-auto mb-8">
       <Suspense
         key={count + paramsData.page + paramsData.size}
-        fallback={<>Loading .... </>}
+        fallback={<TableSkeleton />}
       >
         <div className="space-y-4 py-8">
           <DataTable

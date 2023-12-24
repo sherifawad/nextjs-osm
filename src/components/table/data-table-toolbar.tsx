@@ -15,7 +15,11 @@ import { DataTableSortOptions } from "./data-table-sort-options";
 const SubmitFilterButton = () => {
   const { pending } = useFormStatus();
 
-  return <Button type="submit">{pending ? "Filtering..." : "Filter"}</Button>;
+  return (
+    <Button size={"sm"} type="submit">
+      {pending ? "Filtering..." : "Filter"}
+    </Button>
+  );
 };
 
 interface DataTableToolbarProps<TData> {
@@ -60,10 +64,10 @@ export function DataTableToolbar<TData>({
   }, [pathname, router, searchParams]);
 
   return (
-    <div className="flex items-center justify-between mx-3">
+    <div className="flex items-center justify-between flex-wrap space-y-2 mx-1 xs:mx-3">
       <form
         onSubmit={formSubmitHandler}
-        className="flex flex-1 items-center space-x-2"
+        className="flex flex-1 items-center space-x-1"
       >
         <Input
           placeholder="Filter Place..."
@@ -87,7 +91,7 @@ export function DataTableToolbar<TData>({
             type="button"
             variant="ghost"
             onClick={() => resetBtnHandler()}
-            className="h-8 px-2 lg:px-3"
+            className="h-8 px-.5 lg:px-3"
           >
             Reset
             <XIcon className="ml-2 h-4 w-4" />

@@ -82,13 +82,15 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {page} of {totalPages}
+        <div className="flex xs:w-[100px] w-[70px] items-center justify-center text-sm font-normal xs:font-medium">
+          Page <span className="font-medium mx-1"> {page}</span> of
+          <span className="font-medium mx-1">{totalPages}</span>
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            size={"sm"}
+            className="hidden h-8 w-8 p-0  lg:flex"
             onClick={() => addParams({ key: "page", value: "1" })}
             disabled={page < 2}
           >
