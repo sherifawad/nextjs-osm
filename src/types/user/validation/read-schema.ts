@@ -11,8 +11,8 @@ export const GetUsersSchema = z
   .object({
     id: z.string().cuid(),
     role: RoleSchema.optional(),
-    columnToSort: z.custom<keyof User>(),
-    columnToFilter: z.custom<keyof User>().optional(),
+    columnToSort: z.custom<keyof User>().array(),
+    columnToFilter: z.custom<keyof User>().array().optional(),
     sorting: sortingSchema,
     take: z.number().optional(),
     skip: z.number().optional(),

@@ -71,7 +71,9 @@ export const getUserPlacesDbPrisma = async (
     };
   }
   let whereData = {};
-  let sortData = {};
+  let sortData: any = validData.columnToSort?.map((value) => ({
+    [value]: validData.sorting,
+  }));
 
   try {
     if (validData.placeType === "CREATED") {
@@ -85,13 +87,53 @@ export const getUserPlacesDbPrisma = async (
       };
     }
     if (validData.search && validData.columnToFilter) {
-      whereData = {
-        ...whereData,
-        [validData.columnToFilter]: {
-          contains: validData.search,
-          mode: "insensitive",
-        },
-      };
+      if (!isNaN(Number(validData.search))) {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "latitude" || x === "longitude")
+            .map((value) => {
+              return {
+                AND: [
+                  {
+                    [value]: {
+                      lte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 +
+                        0.05,
+                    },
+                  },
+                  {
+                    [value]: {
+                      gte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 -
+                        0.05,
+                    },
+                  },
+                ],
+              };
+            }),
+        };
+      } else {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "arName" || x === "enName" || x === "name")
+            .map((value) => {
+              return {
+                [value]: {
+                  contains: validData.search,
+                  mode: "insensitive",
+                },
+              };
+            }),
+        };
+      }
     }
 
     whereData = {
@@ -100,20 +142,14 @@ export const getUserPlacesDbPrisma = async (
       hidden: validData.hiddenPlaces,
     };
 
-    if (validData.columnToSort === "rating") {
+    if (validData.columnToSort.includes("rating")) {
       sortData = {
         ...sortData,
         rating: {
           _count: validData.sorting,
         },
       };
-    } else {
-      sortData = {
-        ...sortData,
-        [validData.columnToSort]: validData.sorting,
-      };
     }
-
     const dbResult = await prismaDb.place.findMany({
       where: whereData,
       skip: validData.skip,
@@ -151,7 +187,7 @@ export const getUserPlacesCountDbPrisma = async (
       errors,
     };
   }
-  let whereData = {};
+  let whereData: any = {};
 
   try {
     if (validData.placeType === "CREATED") {
@@ -165,11 +201,55 @@ export const getUserPlacesCountDbPrisma = async (
       };
     }
     if (validData.search && validData.columnToFilter) {
-      whereData = {
-        ...whereData,
-        [validData.columnToFilter]: validData.search,
-      };
+      if (!isNaN(Number(validData.search))) {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "latitude" || x === "longitude")
+            .map((value) => {
+              return {
+                AND: [
+                  {
+                    [value]: {
+                      lte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 +
+                        0.05,
+                    },
+                  },
+                  {
+                    [value]: {
+                      gte:
+                        Math.round(
+                          (Number(validData.search) + Number.EPSILON) * 100
+                        ) /
+                          100 -
+                        0.05,
+                    },
+                  },
+                ],
+              };
+            }),
+        };
+      } else {
+        whereData = {
+          ...whereData,
+          OR: validData.columnToFilter
+            ?.filter((x) => x === "arName" || x === "enName" || x === "name")
+            .map((value) => {
+              return {
+                [value]: {
+                  contains: validData.search,
+                  mode: "insensitive",
+                },
+              };
+            }),
+        };
+      }
     }
+
     whereData = {
       ...whereData,
       deleted: validData.deletedPlaces,

@@ -104,8 +104,8 @@ export const getSortedPlacesResult = async ({
   page: number;
   size: number;
   role: RoleType | undefined;
-  column: keyof UserPlaces;
-  filter?: keyof UserPlaces;
+  column: (keyof UserPlaces)[];
+  filter?: (keyof UserPlaces)[];
   sort: SortingType;
 }) => {
   let inputData: GetUserPlaces = {

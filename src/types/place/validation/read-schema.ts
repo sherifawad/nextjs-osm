@@ -89,8 +89,8 @@ export const GetUserPlacesSchema = z
   .object({
     id: z.string().cuid(),
     placeType: UserPlacesTypeSchema,
-    columnToSort: z.custom<keyof UserPlaces>(),
-    columnToFilter: z.custom<keyof UserPlaces>().optional(),
+    columnToSort: z.custom<keyof UserPlaces>().array(),
+    columnToFilter: z.custom<keyof UserPlaces>().array().optional(),
     sorting: sortingSchema,
     take: z.number().optional(),
     skip: z.number().optional(),

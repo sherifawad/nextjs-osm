@@ -9,6 +9,8 @@ import { columns } from "./table/columns";
 import { User } from "@/types";
 import { getUsersResult } from "./_actions";
 import { UserSearchParams, UserSearchParamsSchema } from "@/app/schema";
+import { splitStringToArray } from "@/lib/utils/array";
+import UserItemCard from "./table/user-item_card";
 
 export const dynamic = "force-dynamic";
 
@@ -30,15 +32,16 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
   let data: User[] = [];
   let count = 0;
   let paramsData: UserSearchParams = {
-    column: "name",
+    column: ["name", "email"],
     page: 1,
     search: "",
     size: 5,
     sort: "desc",
-    filter: undefined,
+    filter: ["name", "email"],
   };
 
   const parsedSearchParams = UserSearchParamsSchema.safeParse(searchParams);
+
   if (parsedSearchParams.success) {
     const page = parsedSearchParams.data.page;
     const size = parsedSearchParams.data.size;
@@ -78,7 +81,13 @@ async function UserPage({ searchParams, params: pageParams }: UserPageProps) {
         fallback={<>Loading .... </>}
       >
         <div className="space-y-4 py-8">
-          <DataTable data={data} columns={columns} />
+          <DataTable
+            data={data}
+            columns={columns}
+            MobileViewItem={data.map((user) => (
+              <UserItemCard key={user.id} data={user} />
+            ))}
+          />
           <DataTablePagination count={count} {...paramsData} />
         </div>
       </Suspense>

@@ -1,3 +1,4 @@
+import { splitStringToArray } from "@/lib/utils/array";
 import { UserPlaces, type User } from "@/types";
 import { sortingSchema } from "@/types/common";
 import { z } from "zod";
@@ -13,8 +14,15 @@ export type BasicSearchParams = z.infer<typeof BasicSearchParamsSchema>;
 
 export const UserSearchParamsSchema = BasicSearchParamsSchema.merge(
   z.object({
-    column: z.custom<keyof User>(),
-    filter: z.custom<keyof User>().optional(),
+    column: z
+      .string()
+      .transform((val) => splitStringToArray(val, ","))
+      .pipe(z.custom<keyof User>().array()),
+    filter: z
+      .string()
+      .optional()
+      .transform((val) => (val ? splitStringToArray(val, ",") : undefined))
+      .pipe(z.custom<keyof User>().array().optional()),
   })
 ).refine(
   (data) => {
@@ -34,8 +42,15 @@ export type UserSearchParams = z.infer<typeof UserSearchParamsSchema>;
 
 export const PlacesSearchParamsSchema = BasicSearchParamsSchema.merge(
   z.object({
-    column: z.custom<keyof UserPlaces>(),
-    filter: z.custom<keyof UserPlaces>().optional(),
+    column: z
+      .string()
+      .transform((val) => splitStringToArray(val, ","))
+      .pipe(z.custom<keyof UserPlaces>().array()),
+    filter: z
+      .string()
+      .optional()
+      .transform((val) => (val ? splitStringToArray(val, ",") : undefined))
+      .pipe(z.custom<keyof UserPlaces>().array().optional()),
   })
 ).refine(
   (data) => {

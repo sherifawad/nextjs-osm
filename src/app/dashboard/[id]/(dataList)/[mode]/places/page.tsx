@@ -11,6 +11,7 @@ import { getSortedPlacesResult } from "./_actions";
 import { columns } from "./table/columns";
 import { getServerSession } from "next-auth";
 import { PlacesSearchParams, PlacesSearchParamsSchema } from "@/app/schema";
+import PlaceItemCard from "./table/place-item_card";
 
 export const dynamic = "force-dynamic";
 
@@ -36,15 +37,16 @@ async function PlacesPage({
   let data: UserPlacesDTO[] = [];
   let count = 0;
   let paramsData: PlacesSearchParams = {
-    column: "name",
+    column: ["name"],
     page: 1,
     search: "",
     size: 5,
     sort: "desc",
-    filter: undefined,
+    filter: ["name", "arName", "enName", "latitude", "longitude"],
   };
 
   const parsedSearchParams = PlacesSearchParamsSchema.safeParse(searchParams);
+
   if (parsedSearchParams.success) {
     const page = parsedSearchParams.data.page;
     const size = parsedSearchParams.data.size;
@@ -115,7 +117,13 @@ async function PlacesPage({
             </TabsContent>
             <TabsContent value="all-places">
               <div className="space-y-4 py-8">
-                <DataTable data={data} columns={columns} />
+                <DataTable
+                  data={data}
+                  columns={columns}
+                  MobileViewItem={data.map((place) => (
+                    <PlaceItemCard key={place.id} data={place} />
+                  ))}
+                />
                 <DataTablePagination count={count} {...paramsData} />
               </div>
             </TabsContent>
@@ -127,7 +135,13 @@ async function PlacesPage({
           fallback={<>Loading .... </>}
         >
           <div className="space-y-4 py-8">
-            <DataTable data={data} columns={columns} />
+            <DataTable
+              data={data}
+              columns={columns}
+              MobileViewItem={data.map((place) => (
+                <PlaceItemCard key={place.id} data={place} />
+              ))}
+            />
             <DataTablePagination count={count} {...paramsData} />
           </div>
         </Suspense>

@@ -10,6 +10,7 @@ import { DataTableViewOptions } from "./data-table-view-options";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { DataTableSortOptions } from "./data-table-sort-options";
 
 const SubmitFilterButton = () => {
   const { pending } = useFormStatus();
@@ -44,7 +45,7 @@ export function DataTableToolbar<TData>({
         column: { value: string };
       };
       const params = new URLSearchParams(searchParams);
-      params.set("filter", `${target.column.value}`);
+      // params.set("filter", `${target.column.value}`);
       params.set("search", `${target.search.value}`);
       router.replace(`${pathname}?${params}`);
     },
@@ -59,7 +60,7 @@ export function DataTableToolbar<TData>({
   }, [pathname, router, searchParams]);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between mx-3">
       <form
         onSubmit={formSubmitHandler}
         className="flex flex-1 items-center space-x-2"
@@ -94,6 +95,7 @@ export function DataTableToolbar<TData>({
         )}
       </form>
       <DataTableViewOptions table={table} />
+      <DataTableSortOptions table={table} />
     </div>
   );
 }

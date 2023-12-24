@@ -78,26 +78,17 @@ export const getUsersDbPrisma = async (
   }
 
   let whereData = {};
-  let sortData = {};
 
   try {
     if (validData.search && validData.columnToFilter) {
       whereData = {
         ...whereData,
-        OR: [
-          {
-            [validData.columnToFilter]: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
+        OR: validData.columnToFilter?.map((value) => ({
+          [value]: {
+            contains: validData.search,
+            mode: "insensitive",
           },
-          {
-            email: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
-          },
-        ],
+        })),
       };
     }
 
@@ -105,10 +96,9 @@ export const getUsersDbPrisma = async (
       whereData = { ...whereData, role: validData.role };
     }
 
-    sortData = {
-      ...sortData,
-      [validData.columnToSort]: validData.sorting,
-    };
+    const sortData = validData.columnToSort?.map((value) => ({
+      [value]: validData.sorting,
+    }));
 
     const dbResult = await prismaDb.user.findMany({
       where: whereData,
@@ -144,26 +134,18 @@ export const getUsersCountDbPrisma = async (
       errors,
     };
   }
-  let whereData = {};
+  let whereData: any = {};
 
   try {
     if (validData.search && validData.columnToFilter) {
       whereData = {
         ...whereData,
-        OR: [
-          {
-            [validData.columnToFilter]: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
+        OR: validData.columnToFilter?.map((value) => ({
+          [value]: {
+            contains: validData.search,
+            mode: "insensitive",
           },
-          {
-            email: {
-              contains: validData.search,
-              mode: "insensitive",
-            },
-          },
-        ],
+        })),
       };
     }
 
