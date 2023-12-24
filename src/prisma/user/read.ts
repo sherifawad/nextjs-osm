@@ -1,201 +1,207 @@
 import { prismaDb } from "..";
 import {
-	type FetchedPlaceResponse,
-	type GetPlace,
-	type GetUser,
-	type userResponse,
-	GetUserSchema,
-	GetPlaceSchema,
-	GetUsers,
-	GetUsersSchema,
-	UsersResponse,
-	UsersCountResponse,
+  type FetchedPlaceResponse,
+  type GetPlace,
+  type GetUser,
+  type userResponse,
+  GetUserSchema,
+  GetPlaceSchema,
+  GetUsers,
+  GetUsersSchema,
+  UsersResponse,
+  UsersCountResponse,
 } from "@/types";
 import { validateData, errorHandler } from "@/lib/schema-utils";
 
 export const getUserDbPrisma = async (data: GetUser): Promise<userResponse> => {
-	const { errors, validData } = validateData({ schema: GetUserSchema, data });
+  const { errors, validData } = validateData({ schema: GetUserSchema, data });
 
-	if (!validData) {
-		return {
-			status: "error",
-			errors,
-		};
-	}
+  if (!validData) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
 
-	try {
-		const dbResult = await prismaDb.user.findUniqueOrThrow({
-			where: {
-				id: validData.id,
-			},
-		});
+  try {
+    const dbResult = await prismaDb.user.findUniqueOrThrow({
+      where: {
+        id: validData.id,
+      },
+    });
 
-		return {
-			status: "success",
-			data: dbResult,
-		};
-	} catch (error) {
-		return errorHandler(error, errors);
-	}
+    return {
+      status: "success",
+      data: dbResult,
+    };
+  } catch (error) {
+    return errorHandler(error, errors);
+  }
 };
 
-export const getPlaceDbPrisma = async (data: GetPlace): Promise<FetchedPlaceResponse> => {
-	const { errors, validData } = validateData({ schema: GetPlaceSchema, data });
+export const getPlaceDbPrisma = async (
+  data: GetPlace
+): Promise<FetchedPlaceResponse> => {
+  const { errors, validData } = validateData({ schema: GetPlaceSchema, data });
 
-	if (!validData) {
-		return {
-			status: "error",
-			errors,
-		};
-	}
-	try {
-		const dbResult = await prismaDb.place.findUniqueOrThrow({
-			where: {
-				id: validData.id,
-			},
-		});
-		return {
-			status: "success",
-			data: dbResult,
-		};
-	} catch (error) {
-		return errorHandler(error, errors);
-	}
+  if (!validData) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
+  try {
+    const dbResult = await prismaDb.place.findUniqueOrThrow({
+      where: {
+        id: validData.id,
+      },
+    });
+    return {
+      status: "success",
+      data: dbResult,
+    };
+  } catch (error) {
+    return errorHandler(error, errors);
+  }
 };
 
-export const getUsersDbPrisma = async (data: GetUsers): Promise<UsersResponse> => {
-	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
+export const getUsersDbPrisma = async (
+  data: GetUsers
+): Promise<UsersResponse> => {
+  const { errors, validData } = validateData({ schema: GetUsersSchema, data });
 
-	if (!validData) {
-		return {
-			status: "error",
-			errors,
-		};
-	}
+  if (!validData) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
 
-	let whereData = {};
-	let sortData = {};
+  let whereData = {};
+  let sortData = {};
 
-	try {
-		if (validData.search && validData.columnToFilter) {
-			whereData = {
-				...whereData,
-				OR: [
-					{
-						[validData.columnToFilter]: {
-							contains: validData.search,
-							mode: "insensitive",
-						},
-					},
-					{
-						email: {
-							contains: validData.search,
-							mode: "insensitive",
-						},
-					},
-				],
-			};
-		}
+  try {
+    if (validData.search && validData.columnToFilter) {
+      whereData = {
+        ...whereData,
+        OR: [
+          {
+            [validData.columnToFilter as unknown as string]: {
+              contains: validData.search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: validData.search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      };
+    }
 
-		if (validData.role) {
-			whereData = { ...whereData, role: validData.role };
-		}
+    if (validData.role) {
+      whereData = { ...whereData, role: validData.role };
+    }
 
-		sortData = {
-			...sortData,
-			[validData.columnToSort]: validData.sorting,
-		};
+    sortData = {
+      ...sortData,
+      [validData.columnToSort as unknown as string]: validData.sorting,
+    };
 
-		const dbResult = await prismaDb.user.findMany({
-			where: whereData,
-			skip: validData.skip,
-			take: validData.take,
-			include: {
-				rating: {
-					select: {
-						placeReputation: true,
-					},
-				},
-			},
-			orderBy: sortData,
-		});
+    const dbResult = await prismaDb.user.findMany({
+      where: whereData,
+      skip: validData.skip,
+      take: validData.take,
+      include: {
+        rating: {
+          select: {
+            placeReputation: true,
+          },
+        },
+      },
+      orderBy: sortData,
+    });
 
-		return {
-			status: "success",
-			data: dbResult,
-		};
-	} catch (error) {
-		return errorHandler(error, errors);
-	}
+    return {
+      status: "success",
+      data: dbResult,
+    };
+  } catch (error) {
+    return errorHandler(error, errors);
+  }
 };
 
-export const getUsersCountDbPrisma = async (data: GetUsers): Promise<UsersCountResponse> => {
-	const { errors, validData } = validateData({ schema: GetUsersSchema, data });
+export const getUsersCountDbPrisma = async (
+  data: GetUsers
+): Promise<UsersCountResponse> => {
+  const { errors, validData } = validateData({ schema: GetUsersSchema, data });
 
-	if (!validData) {
-		return {
-			status: "error",
-			errors,
-		};
-	}
-	let whereData = {};
+  if (!validData) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
+  let whereData = {};
 
-	try {
-		if (validData.search && validData.columnToFilter) {
-			whereData = {
-				...whereData,
-				OR: [
-					{
-						[validData.columnToFilter]: {
-							contains: validData.search,
-							mode: "insensitive",
-						},
-					},
-					{
-						email: {
-							contains: validData.search,
-							mode: "insensitive",
-						},
-					},
-				],
-			};
-		}
+  try {
+    if (validData.search && validData.columnToFilter) {
+      whereData = {
+        ...whereData,
+        OR: [
+          {
+            [validData.columnToFilter as unknown as string]: {
+              contains: validData.search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: validData.search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      };
+    }
 
-		if (validData.role) {
-			whereData = { ...whereData, role: validData.role };
-		}
+    if (validData.role) {
+      whereData = { ...whereData, role: validData.role };
+    }
 
-		const dbResult = await prismaDb.user.count({
-			where: whereData,
-		});
+    const dbResult = await prismaDb.user.count({
+      where: whereData,
+    });
 
-		return {
-			status: "success",
-			data: dbResult,
-		};
-	} catch (error) {
-		return errorHandler(error, errors);
-	}
+    return {
+      status: "success",
+      data: dbResult,
+    };
+  } catch (error) {
+    return errorHandler(error, errors);
+  }
 };
 
 export const isUserAccountBlockedDbPrisma = async ({
-	provider,
-	providerAccountId,
+  provider,
+  providerAccountId,
 }: {
-	provider: string;
-	providerAccountId: string;
+  provider: string;
+  providerAccountId: string;
 }) => {
-	try {
-		const dbResult = await prismaDb.account.findUniqueOrThrow({
-			where: {
-				provider_providerAccountId: {
-					provider,
-					providerAccountId,
-				},
-			},
-		});
-		return dbResult.blocked;
-	} catch (error) {
-		return false;
-	}
+  try {
+    const dbResult = await prismaDb.account.findUniqueOrThrow({
+      where: {
+        provider_providerAccountId: {
+          provider,
+          providerAccountId,
+        },
+      },
+    });
+    return dbResult.blocked;
+  } catch (error) {
+    return false;
+  }
 };
