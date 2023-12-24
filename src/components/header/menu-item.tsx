@@ -21,15 +21,23 @@ type Props = VariantProps<typeof MainMenuItemVariants> & {
   link: string;
   title: string;
   className?: string;
+  onLinkClick?: () => void;
 };
 
-function MainMenuItem({ className, link, title, variant }: Props) {
+function MainMenuItem({
+  className,
+  link,
+  title,
+  variant,
+  onLinkClick = () => {},
+}: Props) {
   const currentPath = usePathname();
 
   return (
     <Link
       prefetch={false}
       href={link}
+      onClick={onLinkClick}
       className={cn(
         MainMenuItemVariants({ variant, className }),
         `${currentPath === link ? "text-primary font-bold text-base" : ""}`

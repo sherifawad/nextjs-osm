@@ -9,9 +9,15 @@ import DarkModeToggle from "./darkMode-toggle";
 import UserButton from "./user-button";
 import { usePathname } from "next/navigation";
 import MainMenuItem from "./menu-item";
+import { useRef } from "react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
 
 const Header = () => {
   const { data: Session, status } = useSession();
+  const sheetRef = useRef<any>(null);
+  const onMenuItemClick = () => {
+    sheetRef?.current.close();
+  };
 
   return (
     <header className="flex sm:justify-between h-20 items-center px-4 border-b ">
@@ -22,7 +28,11 @@ const Header = () => {
               <SheetTrigger asChild>
                 <Menu className="h-6 md:hidden w-6 flex " />
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <SheetContent
+                ref={sheetRef}
+                side="left"
+                className="w-[300px] sm:w-[400px]"
+              >
                 <nav className="flex flex-col gap-4">
                   <ul className="flex flex-col gap-4">
                     <li>
@@ -39,6 +49,7 @@ const Header = () => {
                             link={`/dashboard/${Session?.user.id}/account`}
                             title="Account"
                             variant={"mobile"}
+                            onLinkClick={onMenuItemClick}
                           />
                         </li>
                         <li>
@@ -46,6 +57,7 @@ const Header = () => {
                             link={`/dashboard/${Session?.user.id}/my/places`}
                             title="Places"
                             variant={"mobile"}
+                            onLinkClick={onMenuItemClick}
                           />
                         </li>
                         <li>
@@ -53,6 +65,7 @@ const Header = () => {
                             link={`/dashboard/${Session?.user.id}/users`}
                             title="Users"
                             variant={"mobile"}
+                            onLinkClick={onMenuItemClick}
                           />
                         </li>
                       </>
